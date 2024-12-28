@@ -2,39 +2,6 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
-class File {
-    var href as String;
-    var id as String;
-    var is_on_device as Boolean;
-    var name as String;
-
-    function initialize(href as String, options as Dictionary) {
-        self.href = href;
-        self.id = options[:id];
-        self.is_on_device = options[:is_on_device];
-        self.name = options[:name];
-    }
-}
-
-class FileHandler {
-    var filelist as Array<File>;
-
-    function initialize(filelist as Array<File>) {
-        self.filelist = filelist;
-    }
-
-    function getById(id as String) as File? {
-        for (var index = 0; index < self.filelist.size(); ++index) {
-            var file = self.filelist[index];
-
-            if (id.equals(file[:id])) {
-                return file;
-            }
-        }
-        return null;
-    }
-}
-
 // WE SHOULD HAVE TWO SOURCES OF FILES
 // 1. TRACKS FROM THE FILESYSTEM (AS EXPOSED BY AN API)
 // 2. TRACKS ON THE DEVICE (AS TRACKED BY AN APPLICATION VARIABLE)
@@ -81,11 +48,11 @@ class pumpConfigureSyncView extends WatchUi.View {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
-        var filelist = self.handler[:filelist];
         var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.syncMenuTitle"});
-
-        for (var index = 0; index < filelist.size(); ++index) {
-            var file = filelist[index];
+        var keys = self.handler.getKeys();
+        
+        for (var index = 0; index < keys.size(); ++index) {
+            var file = handler.getById(keys[index]);
             var item = new WatchUi.CheckboxMenuItem(
                 file[:name],
                 file[:href],

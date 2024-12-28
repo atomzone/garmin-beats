@@ -11,11 +11,24 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
     // The app should begin to download songs chosen in the configure
     // sync view .
     function onStartSync() as Void {
+        // GET SESSION/SERVER GLOBAL VARS....
+        System.println(Application.Storage.getValue("ACTION"));
+        System.println(Application.Storage.getValue("KEYS"));
+        System.println(Application.Storage.getValue("VALUES"));
+
         Communications.notifySyncComplete(null);
     }
 
     // Called by the system to determine if the app needs to be synced.
     function isSyncNeeded() as Boolean {
+        System.println("SYNC CHECK");
+
+        // GET SESSION/SERVER GLOBAL VARS....
+        System.println(Application.Storage.getValue("ACTION"));
+        System.println(Application.Storage.getValue("KEYS"));
+        System.println(Application.Storage.getValue("VALUES"));
+
+        // return Application.Storage.getValue("VALUES").size() > 0 ? true : false;
         return false;
     }
 
