@@ -8,7 +8,7 @@ class FileHandler {
     }
 
     function add(file as File) {
-        self.filelist.put(file[:id], file);
+        self.filelist.put(file.getId(), file);
     }
 
     function addAll(files as Array<File>) {
@@ -29,17 +29,17 @@ class FileHandler {
         return self.filelist.keys();
     }
 
-    // Flattern dictonary to array<string>
-    function toStorage() as Array {    
-        var storage = [];
+    // could this be serialsie/deserialise?
+    function toStorage(store as Storage) as Storage {    
         var keys = getKeys();
 
         for (var index = 0; index < keys.size(); ++index) {
-            var file = getById(keys[index]);
+            var key = keys[index];
+            var file = getById(key);
 
-            storage.add(file.toStorage());
+            store.put(key, file.toStorage());
         }
 
-        return storage;
+        return store;
     }
 }

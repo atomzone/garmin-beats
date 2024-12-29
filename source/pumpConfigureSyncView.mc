@@ -6,7 +6,7 @@ import Toybox.WatchUi;
 // 1. TRACKS FROM THE FILESYSTEM (AS EXPOSED BY AN API)
 // 2. TRACKS ON THE DEVICE (AS TRACKED BY AN APPLICATION VARIABLE)
 function getFiles() as FileHandler {
-    // GET FILESYSTEM
+    // GET FILESYSTEM - Application.Storage
     // GET SYNC
     // COMBINE AND RETURN
     return new FileHandler([
@@ -20,6 +20,11 @@ function getFiles() as FileHandler {
             :is_on_device => true,
             :name => "Radio_1_Dance_Presents_-_Anjunabeats_Above_Beyond_m001ydv7_original"
         }),
+        new File("https://getsamplefiles.com/download/m4a/sample-3.m4a", {
+            :id => "id-3",
+            :is_on_device => false,
+            :name => "Remote Sample"
+        })
     ]);
 }
 
@@ -36,6 +41,11 @@ class pumpConfigureSyncView extends WatchUi.View {
 
     function initialize() {
         View.initialize();
+
+        // all songs reported by the internal storage
+        var storage = new Storage("SONGS");
+        System.println(storage.getAll());
+
         self.handler = getFiles();
     }
 

@@ -5,6 +5,9 @@ class pumpContentIterator extends Media.ContentIterator {
 
     function initialize() {
         ContentIterator.initialize();
+
+        // CREATE PLAYLIST
+        // from Storage (does take arguments?)
     }
 
     // Determine if the the current track can be skipped.
@@ -14,7 +17,13 @@ class pumpContentIterator extends Media.ContentIterator {
 
     // Get the current media content object.
     function get() as Content? {
-        return null;
+        /// give up the tunes
+        // var storage = new Storage("SONGS");
+
+        var ref = new Media.ContentRef(-2030043133, Media.CONTENT_TYPE_AUDIO);
+        return Media.getCachedContentObj(ref);
+
+        // return null;
     }
 
     // Get the current media content playback profile

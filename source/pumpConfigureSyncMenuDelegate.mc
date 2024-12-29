@@ -2,6 +2,7 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 class pumpConfigureSyncMenuDelegate extends WatchUi.Menu2InputDelegate {
+    var syncStore = new Storage("SYNC");
     // DO I EVEN NEED THIS EXTRA LIST?
     // COULD KEEP TRACK OF THE "CHANGED FILES" within "HANDLE"
     var changeList as FileHandler;
@@ -16,20 +17,12 @@ class pumpConfigureSyncMenuDelegate extends WatchUi.Menu2InputDelegate {
     // Stores the songs to delete and download in the object store
     function onDone() {
         System.println("Processess changes with file selection");
-        System.println("CHANGELLIST => " + self.changeList);
 
         // GET FROM THE CHANGELIST
         // 1. THE TRACKS TO SYNC
         // 2. THE TRACKS TO DELETE
 
-        var storage = self.changeList.toStorage();
-        System.println("----------------------------");
-        System.println(storage);
-        System.println("----------------------------");
-
-        Application.Storage.setValue("ACTION", "self.changeList");
-        Application.Storage.setValue("KEYS", self.changeList.getKeys());
-        Application.Storage.setValue("VALUES", storage);
+        self.changeList.toStorage(self.syncStore);
     }
 
     // handle menu item selects
