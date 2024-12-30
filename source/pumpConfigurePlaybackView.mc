@@ -19,7 +19,8 @@ class pumpConfigurePlaybackView extends WatchUi.View {
         // PLAYLIST
         // AN ARRAY OF MEDIA REF-IDS'
         Media.startPlayback({ 
-            "playlist" => [-2030043133, -2030043133]
+            "playlist" => [-2030043133, -2030043132],
+            "title" => "Playlist Name"
         });
     }
 

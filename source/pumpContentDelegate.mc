@@ -10,8 +10,12 @@ typedef TPlaylist as Array;
 class pumpContentDelegate extends Media.ContentDelegate {
     var playlist as TPlaylist = [];
 
-    function initialize(args as PersistableType) {
-        self.playlist = (args as Dictionary)["playlist"];
+    function initialize(args as PersistableType?) {
+        ContentDelegate.initialize();
+
+        if (args != null) {
+            self.playlist = (args as Dictionary)["playlist"];
+        } 
     }
 
     // Returns an iterator that is used by the system to play songs.
