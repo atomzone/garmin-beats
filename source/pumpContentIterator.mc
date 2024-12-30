@@ -32,7 +32,7 @@ class pumpContentIterator extends Media.ContentIterator {
         var ref = new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO);
         
         var tom = new ContentMetadata();
-        tom.title = index + ": TOM";
+        tom.title = (index + 1) + ": Title";
         Media.getCachedContentObj(ref).setMetadata(tom);
 
         System.println("MEDIA" + refId + " INDEX " + index);

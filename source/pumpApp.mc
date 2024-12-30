@@ -26,6 +26,12 @@ class pumpApp extends Application.AudioContentProviderApp {
     function getContentDelegate(args as PersistableType) as ContentDelegate {
         System.println("AudioContentProviderApp.getContentDelegate");
         System.println(args);
+
+        // attempt to load playlist from system storage
+        if (args == null) {
+            System.println("// attempt to load playlist from system storage");
+        }
+        
         return new pumpContentDelegate(args);
     }
 

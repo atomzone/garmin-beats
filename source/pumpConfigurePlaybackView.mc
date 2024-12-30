@@ -1,8 +1,26 @@
 import Toybox.Graphics;
+import Toybox.Lang;
+import Toybox.Media;
 import Toybox.WatchUi;
 
-class pumpConfigurePlaybackView extends WatchUi.View {
+function getCachedAudioRefIds() as Array {
+    var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
+    var refIds = [];
 
+    if (iterator == null) {
+        return refIds;
+    }
+
+    var contentRef = iterator.next();
+    while (contentRef != null) {
+        refIds.add(contentRef.getId());
+        contentRef = iterator.next();
+    }
+
+    return refIds;
+}
+
+class pumpConfigurePlaybackView extends WatchUi.View {
     function initialize() {
         View.initialize();
     }
@@ -16,10 +34,9 @@ class pumpConfigurePlaybackView extends WatchUi.View {
     // the state of this View and prepare it to be shown. This includes
     // loading resources into memory.
     function onShow() as Void {
-        // PLAYLIST
-        // AN ARRAY OF MEDIA REF-IDS'
         Media.startPlayback({ 
-            "playlist" => [-2030043133, -2030043132],
+            // "playlist" => [-2030043133, -2030043132],
+            "playlist" => getCachedAudioRefIds(),
             "title" => "Playlist Name"
         });
     }
