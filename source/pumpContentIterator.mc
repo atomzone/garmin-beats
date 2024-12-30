@@ -2,10 +2,9 @@ import Toybox.Lang;
 import Toybox.Media;
 
 class pumpContentIterator extends Media.ContentIterator {
-    var playlist as TPlaylist = [];
-    var trackpointer as Number = 0;
+    var playlist as Playlist;
 
-    function initialize(playlist as TPlaylist) {
+    function initialize(playlist as Playlist) {
         ContentIterator.initialize();
 
         self.playlist = playlist;
@@ -21,16 +20,20 @@ class pumpContentIterator extends Media.ContentIterator {
     function get() as Content? {
         System.println("get");
         
-        return getMediaContent(self.trackpointer);
+        return getMediaContent(self.playlist.getActiveIndex());
     }
 
     function getMediaContent(index as Number) as Content? {
-        if (index < 0 or index > self.playlist.size() - 1) {
+        if (!self.playlist.isValidIndex(index)) {
             return null;
         }
 
-        var refId = self.playlist[index];
+        var refId = self.playlist.getTrack(index);
         var ref = new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO);
+        
+        var tom = new ContentMetadata();
+        tom.title = index + ": TOM";
+        Media.getCachedContentObj(ref).setMetadata(tom);
 
         System.println("MEDIA" + refId + " INDEX " + index);
 
@@ -57,29 +60,43 @@ class pumpContentIterator extends Media.ContentIterator {
     // Get the next media content object.
     function next() as Content? {
         System.println("next");
+
+        var index = self.playlist.getActiveIndex() + 1;
+        var content = getMediaContent(index);
         
-        return getMediaContent(self.trackpointer + 1);
+        if (content != null) {
+            self.playlist.setActiveIndex(index);
+        }
+        
+        return content;
     }
 
     // Get the next media content object without incrementing the iterator.
     function peekNext() as Content? {
         System.println("peekNext");
         
-        return getMediaContent(self.trackpointer + 1);
+        return getMediaContent(self.playlist.getActiveIndex() + 1);
     }
 
     // Get the previous media content object without decrementing the iterator.
     function peekPrevious() as Content? {
         System.println("peekPrevious");
         
-        return getMediaContent(self.trackpointer - 1);
+        return getMediaContent(self.playlist.getActiveIndex() - 1);
     }
 
     // Get the previous media content object.
     function previous() as Content? {
         System.println("previous");
         
-        return getMediaContent(self.trackpointer - 1);
+        var index = self.playlist.getActiveIndex() - 1;
+        var content = getMediaContent(index);
+        
+        if (content != null) {
+            self.playlist.setActiveIndex(index);
+        }
+        
+        return content;
     }
 
     // Determine if playback is currently set to shuffle.
