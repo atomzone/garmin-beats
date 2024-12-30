@@ -2,12 +2,13 @@ import Toybox.Lang;
 import Toybox.Media;
 
 class pumpContentIterator extends Media.ContentIterator {
+    var playlist as TPlaylist = [];
+    var trackpointer as Number = 0;
 
-    function initialize() {
+    function initialize(playlist as TPlaylist) {
         ContentIterator.initialize();
 
-        // CREATE PLAYLIST
-        // from Storage (does take arguments?)
+        self.playlist = playlist;
     }
 
     // Determine if the the current track can be skipped.
@@ -17,13 +18,11 @@ class pumpContentIterator extends Media.ContentIterator {
 
     // Get the current media content object.
     function get() as Content? {
-        /// give up the tunes
-        // var storage = new Storage("SONGS");
+        // GRAB THE CONTENT FROM ITS REF-ID
+        var refId = self.playlist[self.trackpointer];
+        var ref = new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO);
 
-        var ref = new Media.ContentRef(-2030043133, Media.CONTENT_TYPE_AUDIO);
         return Media.getCachedContentObj(ref);
-
-        // return null;
     }
 
     // Get the current media content playback profile

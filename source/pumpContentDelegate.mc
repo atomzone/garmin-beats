@@ -1,20 +1,24 @@
+import Toybox.Application;
 import Toybox.Lang;
 import Toybox.Media;
+
+typedef TPlaylist as Array;
 
 // This class handles events from the system's media
 // player. getContentIterator() returns an iterator
 // that iterates over the songs configured to play.
 class pumpContentDelegate extends Media.ContentDelegate {
+    var playlist as TPlaylist = [];
 
-    function initialize() {
-        ContentDelegate.initialize();
+    function initialize(args as PersistableType) {
+        self.playlist = (args as Dictionary)["playlist"];
     }
 
     // Returns an iterator that is used by the system to play songs.
     // A custom iterator can be created that extends Media.ContentIterator
     // to return only songs chosen in the sync configuration mode.
     function getContentIterator() as ContentIterator? {
-        return new pumpContentIterator();
+        return new pumpContentIterator(self.playlist);
     }
 
     // Respond to a user ad click

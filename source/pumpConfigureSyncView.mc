@@ -1,5 +1,6 @@
 import Toybox.Graphics;
 import Toybox.Lang;
+import Toybox.Media;
 import Toybox.WatchUi;
 
 // WE SHOULD HAVE TWO SOURCES OF FILES
@@ -41,6 +42,24 @@ class pumpConfigureSyncView extends WatchUi.View {
 
     function initialize() {
         View.initialize();
+
+        // GET ALL CACHED CONTENT
+        var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
+
+        if (iterator != null) {
+            var contentRef = iterator.next();
+            while (contentRef != null) {
+                // content ref_id
+                System.println(contentRef.getId());
+                // content
+                System.println(Media.getCachedContentObj(contentRef));
+                // content metadata
+                System.println(Media.getCachedContentObj(contentRef).getMetadata());
+                contentRef = iterator.next();
+            }
+        }
+
+        // var metaData = Media.getCachedContentObj(ref).getMetadata();
 
         // all songs reported by the internal storage
         var storage = new Storage("SONGS");

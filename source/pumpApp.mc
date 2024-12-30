@@ -12,15 +12,21 @@ class pumpApp extends Application.AudioContentProviderApp {
 
     // onStart() is called on application start up
     function onStart(state as Dictionary?) as Void {
+        System.println("AudioContentProviderApp.onStart");
+        System.println(state);
     }
 
     // onStop() is called when your application is exiting
     function onStop(state as Dictionary?) as Void {
+        System.println("AudioContentProviderApp.onStop");
+        System.println(state);
     }
 
     // Get a Media.ContentDelegate for use by the system to get and iterate through media on the device
-    function getContentDelegate(arg as PersistableType) as ContentDelegate {
-        return new pumpContentDelegate();
+    function getContentDelegate(args as PersistableType) as ContentDelegate {
+        System.println("AudioContentProviderApp.getContentDelegate");
+        System.println(args);
+        return new pumpContentDelegate(args);
     }
 
     // Get a delegate that communicates sync status to the system for syncing media content to the device
