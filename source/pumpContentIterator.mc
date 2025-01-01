@@ -59,43 +59,37 @@ class pumpContentIterator extends Media.ContentIterator {
 
     // Get the next media content object.
     function next() as Content? {
-        System.println("next");
-
         var index = self.playlist.getActiveIndex() + 1;
         var content = getMediaContent(index);
         
-        if (content != null) {
-            self.playlist.setActiveIndex(index);
+        if (content == null) {
+            return null;
         }
         
+        self.playlist.setActiveIndex(index);
         return content;
     }
 
     // Get the next media content object without incrementing the iterator.
     function peekNext() as Content? {
-        System.println("peekNext");
-        
         return getMediaContent(self.playlist.getActiveIndex() + 1);
     }
 
     // Get the previous media content object without decrementing the iterator.
     function peekPrevious() as Content? {
-        System.println("peekPrevious");
-        
         return getMediaContent(self.playlist.getActiveIndex() - 1);
     }
 
     // Get the previous media content object.
     function previous() as Content? {
-        System.println("previous");
-        
         var index = self.playlist.getActiveIndex() - 1;
         var content = getMediaContent(index);
         
-        if (content != null) {
-            self.playlist.setActiveIndex(index);
+        if (content == null) {
+            return null;
         }
         
+        self.playlist.setActiveIndex(index);
         return content;
     }
 
