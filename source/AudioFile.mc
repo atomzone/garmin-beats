@@ -20,4 +20,10 @@ class AudioFile {
     function getContentRef() as Media.ContentRef {
         return new Media.ContentRef(self.refId, Media.CONTENT_TYPE_AUDIO);
     }
+
+    // Faster to convert meta to object properties?
+    // OR will that cost more in mem than lookups?
+    function getTitle() as String {
+        return self.getContent().getMetadata()[:title];
+    }
 }

@@ -39,27 +39,21 @@ function getFiles() as FileHandler {
 // ****
 class pumpConfigureSyncView extends WatchUi.View {
     var handler as FileHandler;
+    var files as Array<AudioFile> = [];
 
     function initialize() {
         View.initialize();
 
         // GET ALL CACHED CONTENT
+        // BEWARE: getCachedAudioRefIds
         var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
-
         if (iterator != null) {
             var contentRef = iterator.next();
             while (contentRef != null) {
-                // content ref_id
-                System.println(contentRef.getId());
-                // content
-                System.println(Media.getCachedContentObj(contentRef));
-                // content metadata
-                System.println(Media.getCachedContentObj(contentRef).getMetadata());
+                self.files.add(new AudioFile(contentRef.getId()));
                 contentRef = iterator.next();
             }
         }
-
-        // var metaData = Media.getCachedContentObj(ref).getMetadata();
 
         // all songs reported by the internal storage
         var storage = new Storage("SONGS");
@@ -80,6 +74,18 @@ class pumpConfigureSyncView extends WatchUi.View {
         var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.syncMenuTitle"});
         var keys = self.handler.getKeys();
         
+        for (var index = 0; index < self.files.size(); ++index) {
+            var file = self.files[index];
+            var item = new WatchUi.CheckboxMenuItem(
+                file.getTitle(),
+                null,
+                file[:refId],
+                true,
+                null
+            );
+            menu.addItem(item);
+        }
+
         for (var index = 0; index < keys.size(); ++index) {
             var file = handler.getById(keys[index]);
             var item = new WatchUi.CheckboxMenuItem(
