@@ -1,4 +1,5 @@
 import Toybox.Lang;
+import Toybox.Media;
 
 class Playlist {
     private var tracks as Array<AudioFile> = [];
@@ -14,10 +15,14 @@ class Playlist {
         return self.playIndex;
     }
 
-    function getTrackByIndex(index as Number) as AudioFile {
-        System.println(index);
-        System.println(self.tracks[index]);
+    function getFileByIndex(index as Number) as AudioFile {
         return self.tracks[index];
+    }
+
+    // TODO: Remove?
+    // is this needed, or just have the `getFileByIndex` -> getContent()
+    function getContentByIndex(index as Number) as Media.Content? {
+        return self.getFileByIndex(index).getContent();
     }
 
     function isValidIndex(index as Number) as Boolean {

@@ -28,16 +28,36 @@ class pumpContentIterator extends Media.ContentIterator {
             return null;
         }
 
-        var track = self.playlist.getTrackByIndex(index);
-        var ref = new Media.ContentRef(track.refId, Media.CONTENT_TYPE_AUDIO);
+        // var file = self.playlist.getFileByIndex(index);
+        // // var ref = new Media.ContentRef(file.refId, Media.CONTENT_TYPE_AUDIO);
+        // var ref = file.getContentRef();
+
+        // System.println("--------");
+        // System.println("1======> " + file.refId);
+        // System.println( file.getContentRef() );
+        // System.println( ref );
+        // System.println("--------");
         
+        // Media.getCachedContentObj(ref).setMetadata(tom);
+
+        var content = self.playlist.getContentByIndex(index);
+
+        System.println("MEDIA" + content + " REF " + content.getContentRef() + " INDEX " + index);
+
         var tom = new ContentMetadata();
-        tom.title = (index + 1) + ": Title";
-        Media.getCachedContentObj(ref).setMetadata(tom);
+        tom.title = (index + 1) + ". TITLE";
 
-        System.println("MEDIA" + track + " REF " + track.refId + " INDEX " + index);
+        content.setMetadata(tom);
 
-        return Media.getCachedContentObj(ref);
+        // EITHER
+        // return self.playlist.getContentByIndex(index);
+        // OR
+        // var file = self.playlist.getFileByIndex(index);
+        // return file.getContent();
+
+        // return Media.getCachedContentObj(ref);
+        // return file.getContent();
+        return self.playlist.getContentByIndex(index);
     }
 
     // Get the current media content playback profile
