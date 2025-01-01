@@ -5,19 +5,9 @@ class Playlist {
     private var trackCount as Number = 0;
     private var playIndex as Number = 0;
 
-    function initialize(tracks as Array<Object>) {
-        self.addTracks(tracks);
+    function initialize(tracks as Array<AudioFile>) {
+        self.tracks = tracks;
         self.trackCount = tracks.size();
-    }
-
-    function addTrack(trackRef as Object) as Void {
-        self.tracks.add(new AudioFile(trackRef));
-    }
-
-    function addTracks(trackRefs as Array<Object>) as Void {
-        for (var index = 0; index < trackRefs.size(); ++index) {
-            self.addTrack(trackRefs[index]);
-        }
     }
 
     function getActiveIndex() as Number {
@@ -25,6 +15,8 @@ class Playlist {
     }
 
     function getTrackByIndex(index as Number) as AudioFile {
+        System.println(index);
+        System.println(self.tracks[index]);
         return self.tracks[index];
     }
 
@@ -35,4 +27,15 @@ class Playlist {
     function setActiveIndex(index as Number) as Void {
         self.playIndex = index;
     }
+}
+
+// Convert array of Media.ContentRef.Id to Playlist of Audiofiles
+function buildPlaylist(mediaRefs as Array<Object>) as Playlist {
+    var tracks = [];
+
+    for (var index = 0; index < mediaRefs.size(); ++index) {
+        tracks.add(new AudioFile(mediaRefs[index]));
+    }
+
+    return new Playlist(tracks);
 }
