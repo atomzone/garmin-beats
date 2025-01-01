@@ -3,7 +3,7 @@ import Toybox.Lang;
 import Toybox.Media;
 import Toybox.WatchUi;
 
-function getCachedAudioRefIds() as Array {
+function getCachedAudioRefIds() as Array<Object> {
     var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
     var refIds = [];
 

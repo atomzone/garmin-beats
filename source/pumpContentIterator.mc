@@ -28,14 +28,14 @@ class pumpContentIterator extends Media.ContentIterator {
             return null;
         }
 
-        var refId = self.playlist.getTrack(index);
-        var ref = new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO);
+        var track = self.playlist.getTrackByIndex(index);
+        var ref = new Media.ContentRef(track.refId, Media.CONTENT_TYPE_AUDIO);
         
         var tom = new ContentMetadata();
         tom.title = (index + 1) + ": Title";
         Media.getCachedContentObj(ref).setMetadata(tom);
 
-        System.println("MEDIA" + refId + " INDEX " + index);
+        System.println("MEDIA" + track + " REF " + track.refId + " INDEX " + index);
 
         return Media.getCachedContentObj(ref);
     }
