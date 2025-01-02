@@ -80,23 +80,12 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         System.println(contentType);
         System.println(refId);
 
-        // persist to storage
+        // persist to `SONGS` storage
         self.songStore.put(refId, context);
-
-        // ALL SONGS
-        System.println(self.songStore.getAll());
 
         // here we should let Audio file have some additional context
         var file = new AudioFile(refId);
-        file.setMetadata();
-
-        // READ METADATA (HOW TO SET??)
-        var metaData = file.getContent().getMetadata();
-        System.println(metaData.album);
-        System.println(metaData.artist);
-        System.println(metaData.genre);
-        System.println(metaData.title);
-        System.println(metaData.trackNumber);
+        file.setMetadata(); // example of using content to set meta data
 
         // REMOVE/UPDATE FROM SYNC STORAGE
         // USES CONTEXT-ID (CONFUSING RIGHT!)
