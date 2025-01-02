@@ -13,7 +13,7 @@ class AudioFile {
         Media.deleteCachedItem(self.getContentRef());
     }
 
-    function getContent() as Content? {
+    function getContent() as Media.Content? {
         return Media.getCachedContentObj(self.getContentRef());
     }
 
@@ -25,5 +25,14 @@ class AudioFile {
     // OR will that cost more in mem than lookups?
     function getTitle() as String {
         return self.getContent().getMetadata()[:title];
+    }
+
+    function setMetadata() as Void {
+        var metaData = new ContentMetadata();
+        metaData.album = "ALBUM";
+        metaData.artist = "ARTIST";
+        metaData.title = "R:" + self.refId;
+
+        self.getContent().setMetadata(metaData);
     }
 }

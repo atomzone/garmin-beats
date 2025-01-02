@@ -63,6 +63,11 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
     }
 
     function onReceive(responseCode as Number, media as Dictionary, context as Dictionary) as Void {
+        System.println("[START] ONRECEIVE!");
+        System.println(responseCode);
+        System.println(media);
+        System.println(context);
+
         if (responseCode != 200) {
             System.println("ONRECEIVE FAILED " + responseCode);
             return;
@@ -71,42 +76,33 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         var contentType = (media as Media.ContentRef).getContentType();
         var refId = (media as Media.ContentRef).getId();
 
-        System.println("[START] ONRECEIVE!");
-        System.println(responseCode);
-        System.println(media);
         System.println("**** MEDIA CONTENT REF ****!");
         System.println(contentType);
         System.println(refId);
-        System.println("**** CONTEXT ****!");
-        System.println(context);
 
+        // persist to storage
         self.songStore.put(refId, context);
+
+        // ALL SONGS
         System.println(self.songStore.getAll());
 
-        // RETRIEVE MEDIA FROM ITS REFID
-        var ref = new Media.ContentRef(refId, contentType);
-
-        // MEDIA METADATA (SHOULD BE USED AS INTERNAL AUDIO FORMAT)
-        var tom = new ContentMetadata();
-        tom.album = "ALBUM";
-        tom.artist = "ARTIST";
-        tom.title = "TOM";
-        Media.getCachedContentObj(ref).setMetadata(tom);
-
-        var metaData = Media.getCachedContentObj(ref).getMetadata();
+        // here we should let Audio file have some additional context
+        var file = new AudioFile(refId);
+        file.setMetadata();
 
         // READ METADATA (HOW TO SET??)
+        var metaData = file.getContent().getMetadata();
         System.println(metaData.album);
         System.println(metaData.artist);
         System.println(metaData.genre);
         System.println(metaData.title);
         System.println(metaData.trackNumber);
 
-        Communications.notifySyncComplete(null);
-
         // REMOVE/UPDATE FROM SYNC STORAGE
         // USES CONTEXT-ID (CONFUSING RIGHT!)
         self.syncStore.delete(context["ID"]);
+
+        Communications.notifySyncComplete(null);
 
         System.println("[END] ONRECEIVE!");        
     }

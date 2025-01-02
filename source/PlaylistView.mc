@@ -3,24 +3,14 @@ import Toybox.Lang;
 import Toybox.Media;
 import Toybox.WatchUi;
 
-function getCachedAudioRefIds() as Array<Object> {
-    var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
-    var refIds = [];
+// VIEW TO OUTPUT PLAYLIST CLASS?
+// THOUGHT THIS SHOULD BE A MENU OF SONGS + COMBINE WITH PLAYLIST
+// NEED TO UNPICK THE COMBINATIONS
 
-    if (iterator == null) {
-        return refIds;
-    }
+// PLAYLIST (SONG)
+// SONGS (SONG)
 
-    var contentRef = iterator.next();
-    while (contentRef != null) {
-        refIds.add(contentRef.getId());
-        contentRef = iterator.next();
-    }
-
-    return refIds;
-}
-
-class pumpConfigurePlaybackView extends WatchUi.View {
+class PlaylistView extends WatchUi.View {
     function initialize() {
         View.initialize();
     }
@@ -79,5 +69,4 @@ class pumpConfigurePlaybackView extends WatchUi.View {
     // memory.
     function onHide() as Void {
     }
-
 }
