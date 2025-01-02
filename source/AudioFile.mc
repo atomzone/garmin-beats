@@ -24,14 +24,18 @@ class AudioFile {
     // Faster to convert meta to object properties?
     // OR will that cost more in mem than lookups?
     function getTitle() as String {
-        return self.getContent().getMetadata()[:title];
+        return self.getMetadata()[:title];
+    }
+
+    function getMetadata() as Media.ContentMetadata {
+        return self.getContent().getMetadata();
     }
 
     function setMetadata() as Void {
-        var metaData = new ContentMetadata();
+        var metaData = self.getMetadata();
         metaData.album = "ALBUM";
         metaData.artist = "ARTIST";
-        metaData.title = "R:" + self.refId;
+        metaData.title = "J:" + self.refId;
 
         self.getContent().setMetadata(metaData);
     }
