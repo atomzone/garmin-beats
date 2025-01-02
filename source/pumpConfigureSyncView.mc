@@ -44,6 +44,15 @@ class pumpConfigureSyncView extends WatchUi.View {
     function initialize() {
         View.initialize();
 
+        var taskQueue = new TaskQueue();
+        taskQueue.add(new Task());
+        taskQueue.add(new Task());
+        taskQueue.add(new Task());
+
+        System.println(taskQueue.queue);
+        taskQueue.process();
+        System.println(taskQueue.queue);
+
         // GET ALL CACHED CONTENT
         // BEWARE /Similar/ method getCachedAudioRefIds
         var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
