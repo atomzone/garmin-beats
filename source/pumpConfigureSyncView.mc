@@ -45,7 +45,7 @@ class pumpConfigureSyncView extends WatchUi.View {
         View.initialize();
 
         // GET ALL CACHED CONTENT
-        // BEWARE: getCachedAudioRefIds
+        // BEWARE /Similar/ method getCachedAudioRefIds
         var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
         if (iterator != null) {
             var contentRef = iterator.next();

@@ -63,6 +63,11 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
     }
 
     function onReceive(responseCode as Number, media as Dictionary, context as Dictionary) as Void {
+        if (responseCode != 200) {
+            System.println("ONRECEIVE FAILED " + responseCode);
+            return;
+        }
+
         var contentType = (media as Media.ContentRef).getContentType();
         var refId = (media as Media.ContentRef).getId();
 
@@ -98,6 +103,10 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         System.println(metaData.trackNumber);
 
         Communications.notifySyncComplete(null);
+
+        // REMOVE/UPDATE FROM SYNC STORAGE
+        // USES CONTEXT-ID (CONFUSING RIGHT!)
+        self.syncStore.delete(context["ID"]);
 
         System.println("[END] ONRECEIVE!");        
     }
