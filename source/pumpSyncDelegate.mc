@@ -10,6 +10,17 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
 
     function initialize() {
         SyncDelegate.initialize();
+
+        // USE SOMETHING LIKE THIS QUEUE...
+        var taskQueue = new TaskQueue();
+        taskQueue.add(new Task());
+        taskQueue.add(new Task());
+        taskQueue.add(new Task());
+
+        System.println(taskQueue.queue);
+        taskQueue.process();
+        System.println(taskQueue.queue);
+
     }
 
     // Called when the system starts a sync of the app.
@@ -62,7 +73,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         Communications.notifySyncProgress(75);
     }
 
-    function onReceive(responseCode as Number, media as Dictionary, context as Dictionary) as Void {
+    function onReceive(responseCode as Number, media as Dictionary?, context as Dictionary) as Void {
         System.println("[START] ONRECEIVE!");
         System.println(responseCode);
         System.println(media);
@@ -84,7 +95,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         self.songStore.put(refId, context);
 
         // here we should let Audio file have some additional context
-        var file = new AudioFile(refId);
+        var file = new AudioAsset(refId);
         file.setMetadata(); // example of using content to set meta data
 
         // REMOVE/UPDATE FROM SYNC STORAGE

@@ -18,11 +18,15 @@ To be defined
 - demonstration
 - howto add meta data for files read from a filesystem
 - what other meta data (e.g. CUE points)
+- logger that is visiable in the App
 - create a cUrl type interface for templating HTTP requests for audio files?
 - link to an external API (Watch has many size limits and any API's prob needs a middleman)
 - what application feature do DJ's/Mixers/playlist builders
 - can playlist be linked to GPS env?
 - can playlist be linked to BPM?
+- remote template creation (cUrl + mapping recipes)
+- code and compiler optimisations (+prettier-extension-monkeyc)
+
 
 ## Scratch
 

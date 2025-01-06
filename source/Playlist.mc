@@ -2,11 +2,11 @@ import Toybox.Lang;
 import Toybox.Media;
 
 class Playlist {
-    private var tracks as Array<AudioFile> = [];
+    private var tracks as Array<AudioAsset> = [];
     private var trackCount as Number = 0;
     private var playIndex as Number = 0;
 
-    function initialize(tracks as Array<AudioFile>) {
+    function initialize(tracks as Array<AudioAsset>) {
         self.tracks = tracks;
         self.trackCount = tracks.size();
     }
@@ -15,7 +15,7 @@ class Playlist {
         return self.playIndex;
     }
 
-    function getFileByIndex(index as Number) as AudioFile {
+    function getFileByIndex(index as Number) as AudioAsset {
         return self.tracks[index];
     }
 
@@ -34,12 +34,12 @@ class Playlist {
     }
 }
 
-// Convert array of Media.ContentRef.Id to Playlist of Audiofiles
+// Convert array of Media.ContentRef.Id to Playlist of AudioAsset
 function buildPlaylist(mediaRefs as Array<Object>) as Playlist {
     var tracks = [];
 
     for (var index = 0; index < mediaRefs.size(); ++index) {
-        tracks.add(new AudioFile(mediaRefs[index]));
+        tracks.add(new AudioAsset(mediaRefs[index]));
     }
 
     return new Playlist(tracks);

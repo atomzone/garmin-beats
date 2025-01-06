@@ -29,6 +29,12 @@ function getFiles() as FileHandler {
     ]);
 }
 
+function getAudioResources() as Array<AudioResource> {
+    return [
+        new AudioResource()
+    ];
+}
+
 // This is the View that is used to configure the songs
 // to sync. New pages may be pushed as needed to complete
 // the configuration.
@@ -39,34 +45,14 @@ function getFiles() as FileHandler {
 // ****
 class pumpConfigureSyncView extends WatchUi.View {
     var handler as FileHandler;
-    var files as Array<AudioFile> = [];
+    var assets as Array<AudioAsset> = [];
+    var resources as Array<AudioResource> = [];
 
     function initialize() {
         View.initialize();
 
-        var taskQueue = new TaskQueue();
-        taskQueue.add(new Task());
-        taskQueue.add(new Task());
-        taskQueue.add(new Task());
-
-        System.println(taskQueue.queue);
-        taskQueue.process();
-        System.println(taskQueue.queue);
-
-        // GET ALL CACHED CONTENT
-        // BEWARE /Similar/ method getCachedAudioRefIds
-        var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
-        if (iterator != null) {
-            var contentRef = iterator.next();
-            while (contentRef != null) {
-                self.files.add(new AudioFile(contentRef.getId()));
-                contentRef = iterator.next();
-            }
-        }
-
-        // all songs reported by the internal storage
-        var storage = new Storage("SONGS");
-        System.println(storage.getAll());
+        self.assets = getAudioAssets();
+        self.resources = getAudioResources();
 
         self.handler = getFiles();
     }
@@ -83,8 +69,8 @@ class pumpConfigureSyncView extends WatchUi.View {
         var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.syncMenuTitle"});
         var keys = self.handler.getKeys();
         
-        for (var index = 0; index < self.files.size(); ++index) {
-            var file = self.files[index];
+        for (var index = 0; index < self.assets.size(); ++index) {
+            var file = self.assets[index];
             var item = new WatchUi.CheckboxMenuItem(
                 file.getTitle(),
                 null,
@@ -121,5 +107,4 @@ class pumpConfigureSyncView extends WatchUi.View {
     // memory.
     function onHide() as Void {
     }
-
 }
