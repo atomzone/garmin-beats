@@ -26,6 +26,7 @@ To be defined
 - can playlist be linked to BPM?
 - remote template creation (cUrl + mapping recipes)
 - code and compiler optimisations (+prettier-extension-monkeyc)
+- Log barrel [https://github.com/garmin/connectiq-apps/tree/master/barrels/LogMonkey]
 
 
 ## Scratch

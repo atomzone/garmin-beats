@@ -20,6 +20,8 @@ class Storage {
         persist(null);
     }
 
+    // GETALL SHOULD BE CACHED?
+    // REDUCE LOOKUPS
     function get(key as PropertyKeyType) as PersistableType {
         var store = getAll();
         return store.get(key);

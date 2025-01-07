@@ -96,6 +96,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
 
         // here we should let Audio file have some additional context
         var file = new AudioAsset(refId);
+        file.setResourceId(context["ID"]);
         file.setMetadata(); // example of using content to set meta data
 
         // REMOVE/UPDATE FROM SYNC STORAGE

@@ -4,8 +4,19 @@ import Toybox.Media;
 // Audio asset owned by the service
 // Extending `AudioFile` which is responsible for storage methods
 class AudioAsset extends AudioFile {
+    var store as Storage = new Storage("AUDIOASSET");
+
     function initialize(refId as Object) {
         AudioFile.initialize(refId);
+    }
+
+    function delete() as Void {
+        store.delete(self.getId());
+        AudioFile.delete();
+    }
+
+    function getResourceId() as String? {
+        return store.get(self.getId());
     }
 
     function getTitle() as String {
@@ -23,6 +34,10 @@ class AudioAsset extends AudioFile {
         metaData.title = "J:" + self.refId;
 
         self.getContent().setMetadata(metaData);
+    }
+
+    function setResourceId(id as String) as Void {
+        store.put(self.getId(), id);
     }
 }
 

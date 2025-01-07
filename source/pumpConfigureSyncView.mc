@@ -3,38 +3,6 @@ import Toybox.Lang;
 import Toybox.Media;
 import Toybox.WatchUi;
 
-// WE SHOULD HAVE TWO SOURCES OF FILES
-// 1. TRACKS FROM THE FILESYSTEM (AS EXPOSED BY AN API)
-// 2. TRACKS ON THE DEVICE (AS TRACKED BY AN APPLICATION VARIABLE)
-function getFiles() as FileHandler {
-    // GET FILESYSTEM - Application.Storage
-    // GET SYNC
-    // COMBINE AND RETURN
-    return new FileHandler([
-        new File("http://192.168.1.222:8000/BBC/Mary_Anne_Hobbs_-_Adam_F_with_the_ICONS_Mix_m0024dwt_original.m4a", {
-            :id => "id-1",
-            :is_on_device => false,
-            :name => "Mary_Anne_Hobbs_-_Adam_F_with_the_ICONS_Mix_m0024dwt_original"
-        }),
-        new File("http://192.168.1.222:8000/BBC/Radio_1_Dance_Presents_-_Anjunabeats_Above_Beyond_m001ydv7_original.m4a", {
-            :id => "id-2",
-            :is_on_device => true,
-            :name => "Radio_1_Dance_Presents_-_Anjunabeats_Above_Beyond_m001ydv7_original"
-        }),
-        new File("https://getsamplefiles.com/download/m4a/sample-3.m4a", {
-            :id => "id-3",
-            :is_on_device => false,
-            :name => "Remote Sample"
-        })
-    ]);
-}
-
-function getAudioResources() as Array<AudioResource> {
-    return [
-        new AudioResource()
-    ];
-}
-
 // This is the View that is used to configure the songs
 // to sync. New pages may be pushed as needed to complete
 // the configuration.
@@ -46,15 +14,23 @@ function getAudioResources() as Array<AudioResource> {
 class pumpConfigureSyncView extends WatchUi.View {
     var handler as FileHandler;
     var assets as Array<AudioAsset> = [];
-    var resources as Array<AudioResource> = [];
+    var resources as Array<File> = [];
 
     function initialize() {
         View.initialize();
 
+        // stuff from disk
         self.assets = getAudioAssets();
+        // stuff from resource provider (e.g. Plex)
         self.resources = getAudioResources();
 
-        self.handler = getFiles();
+        // **
+        // if the asset contains ref to the original source
+        // then we could consider these related
+        // **
+
+        // combine these are resouces could have been converted to assets
+        self.handler = new FileHandler(getAudioResources());
     }
 
     // Load your resources here
@@ -70,22 +46,34 @@ class pumpConfigureSyncView extends WatchUi.View {
         var keys = self.handler.getKeys();
         
         for (var index = 0; index < self.assets.size(); ++index) {
-            var file = self.assets[index];
+            var asset = self.assets[index];
             var item = new WatchUi.CheckboxMenuItem(
-                file.getTitle(),
-                null,
-                file[:refId],
+                asset.getTitle(),
+                asset.getResourceId(),
+                asset[:refId],
                 true,
                 null
             );
             menu.addItem(item);
         }
 
+        // for (var index = 0; index < self.resources.size(); ++index) {
+        //     var file = self.resources[index];
+        //     var item = new WatchUi.CheckboxMenuItem(
+        //         file[:name],
+        //         null,
+        //         file[:id],
+        //         true,
+        //         null
+        //     );
+        //     menu.addItem(item);
+        // }
+
         for (var index = 0; index < keys.size(); ++index) {
             var file = handler.getById(keys[index]);
             var item = new WatchUi.CheckboxMenuItem(
                 file[:name],
-                file[:href],
+                file[:id], // file[:href],
                 file[:id],
                 file[:is_on_device],
                 null

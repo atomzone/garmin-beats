@@ -19,4 +19,8 @@ class AudioFile {
     function getContentRef() as Media.ContentRef {
         return new Media.ContentRef(self.refId, Media.CONTENT_TYPE_AUDIO);
     }
+
+    function getId() as String {
+        return self.refId.toString();
+    }
 }
