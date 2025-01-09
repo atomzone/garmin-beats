@@ -22,6 +22,11 @@ class Playlist {
     // TODO: Remove?
     // is this needed, or just have the `getFileByIndex` -> getContent()
     function getContentByIndex(index as Number) as Media.Content? {
+        // Media.ActiveContent(
+        //     contentRef as Media.ContentRef, 
+        //     metadata as Media.ContentMetadata, 
+        //     playbackStartPos as Lang.Number or Media.PlaybackPosition
+        // )
         return self.getFileByIndex(index).getContent();
     }
 

@@ -3,6 +3,8 @@ import Toybox.Lang;
 import Toybox.Media;
 import Toybox.WatchUi;
 
+// this returns all the cached content
+// would we want to load only 
 function getCachedAudioRefIds() as Array<Object> {
     var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
     var refIds = [];

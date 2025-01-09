@@ -24,11 +24,35 @@ class AudioAsset extends AudioFile {
     }
 
     function getMetadata() as Media.ContentMetadata {
+        // PROFILER HINTS THAT READIND METADATA IS COSTLY
+        // AND IT /SEEMS/ TO CALL 'setMetadata()' \o/
+
+        // var tom = new ContentMetadata();
+
+        // System.println(tom);
+        // System.println(tom[:title]);
+
+        // var fred = self.getContent().getMetadata();
+
+        // System.println(fred);
+        // System.println(fred[:title]);
+
+        // return tom;
+
         return self.getContent().getMetadata();
     }
 
     function setMetadata() as Void {
         var metaData = self.getMetadata();
+
+        System.println("======================");
+        System.println(metaData.album);
+        System.println(metaData.artist);
+        System.println(metaData.genre);
+        System.println(metaData.title);
+        System.println(metaData.trackNumber);
+        System.println("======================");
+
         metaData.album = "ALBUM";
         metaData.artist = "ARTIST";
         metaData.title = "J:" + self.refId;

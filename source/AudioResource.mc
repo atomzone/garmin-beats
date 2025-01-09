@@ -30,7 +30,16 @@ class AudioResource {
 function getAudioResources() as Array<AudioResource> {
     return [
         new AudioResource("https://getsamplefiles.com/download/m4a/sample-3.m4a", {
+            :id => "id-1"
+        }),
+        new AudioResource("https://getsamplefiles.com/download/m4a/sample-3.m4a", {
+            :id => "id-2"
+        }),
+        new AudioResource("https://getsamplefiles.com/download/m4a/sample-3.m4a", {
             :id => "id-3"
+        }),
+        new AudioResource("https://github.com/supermihi/pytaglib/raw/refs/heads/main/tests/data/issue46.m4a", {
+            :id => "id-99"
         })
     ];
 }
