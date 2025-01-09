@@ -42,8 +42,25 @@ class AudioAsset extends AudioFile {
         return self.getContent().getMetadata();
     }
 
+    // Creates defaults for missing metadata
     function setMetadata() as Void {
         var metaData = self.getMetadata();
+        var properties = {
+            :album => "[Album]",
+            :artist => "[Artist]",
+            :genre => "[Genre]",
+            :title => "[Title]",
+            :trackNumber => 0
+        };
+        var methods = properties.keys();
+
+        // use metadata or define some defaults
+        for (var index = 0; index < methods.size(); ++index) {
+            var method = methods[index];
+            if (metaData[method] == null) {
+                metaData[method] = properties.get(method);
+            }
+        }
 
         System.println("======================");
         System.println(metaData.album);
@@ -52,10 +69,6 @@ class AudioAsset extends AudioFile {
         System.println(metaData.title);
         System.println(metaData.trackNumber);
         System.println("======================");
-
-        metaData.album = "ALBUM";
-        metaData.artist = "ARTIST";
-        metaData.title = "J:" + self.refId;
 
         self.getContent().setMetadata(metaData);
     }

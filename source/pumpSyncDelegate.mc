@@ -6,7 +6,7 @@ import Toybox.Media;
 
 class pumpSyncDelegate extends Communications.SyncDelegate {
     var syncStore = new Storage("SYNC");
-    var songStore = new Storage("SONGS");
+    // var songStore = new Storage("SONGS");
 
     function initialize() {
         SyncDelegate.initialize();
@@ -92,7 +92,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         System.println(refId);
 
         // persist to `SONGS` storage
-        self.songStore.put(refId, context);
+        // self.songStore.put(refId, context);
 
         // here we should let Audio file have some additional context
         var file = new AudioAsset(refId);
