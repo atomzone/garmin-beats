@@ -3,25 +3,34 @@ import Toybox.Lang;
 // Source used to create an asset
 // Each `AudioResource` should represent a single provider - e.g. Soundcloud, Plex, Youtube
 class AudioResource {
-    // RESOURCE LOADING/SYNCING
+    var href as String;
+    var id as String;
+
+    function initialize(href as String, options as Dictionary) {
+        self.href = href;
+        self.id = options[:id];
+    }
+
+    function getId() as String {
+        return self.id;
+    }
+
+    function getTitle() as String {
+        return "TITLE " + self.id;
+    }
+
+    function toStorage() {
+        return {
+            "href" => self.href,
+            "id" => getId()
+        };
+    }
 }
 
-function getAudioResources() as Array<File> {
+function getAudioResources() as Array<AudioResource> {
     return [
-        new File("http://192.168.1.222:8000/BBC/Mary_Anne_Hobbs_-_Adam_F_with_the_ICONS_Mix_m0024dwt_original.m4a", {
-            :id => "id-1",
-            :is_on_device => false,
-            :name => "Mary_Anne_Hobbs_-_Adam_F_with_the_ICONS_Mix_m0024dwt_original"
-        }),
-        new File("http://192.168.1.222:8000/BBC/Radio_1_Dance_Presents_-_Anjunabeats_Above_Beyond_m001ydv7_original.m4a", {
-            :id => "id-2",
-            :is_on_device => true,
-            :name => "Radio_1_Dance_Presents_-_Anjunabeats_Above_Beyond_m001ydv7_original"
-        }),
-        new File("https://getsamplefiles.com/download/m4a/sample-3.m4a", {
-            :id => "id-3",
-            :is_on_device => false,
-            :name => "Remote Sample"
+        new AudioResource("https://getsamplefiles.com/download/m4a/sample-3.m4a", {
+            :id => "id-3"
         })
     ];
 }

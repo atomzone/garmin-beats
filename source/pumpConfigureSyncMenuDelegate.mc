@@ -60,7 +60,7 @@ class pumpConfigureSyncMenuDelegate extends WatchUi.Menu2InputDelegate {
 
         // FILES TO SYNC...
         var isItemChecked = (item as WatchUi.CheckboxMenuItem).isChecked();
-        if (file[:is_on_device] != isItemChecked) {
+        if (isItemChecked) {
             self.changeList.add(file);
         } else {
             self.changeList.delete(file);

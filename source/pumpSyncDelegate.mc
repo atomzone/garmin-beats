@@ -31,7 +31,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
 
         System.println(syncStore.getAll());
         
-        var list = syncStore.getAll() as Array<File>;
+        var list = syncStore.getAll() as Array<AudioResource>;
 
         System.println(list);
         System.println(list.size());

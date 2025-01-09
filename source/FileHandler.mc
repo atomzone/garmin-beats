@@ -1,27 +1,29 @@
 import Toybox.Lang;
 
-class FileHandler {
-    hidden var filelist as Dictionary<String, File> = {};
+typedef ResourceType as AudioResource or File;
 
-    function initialize(filelist as Array<File>) {
+class FileHandler {
+    hidden var filelist as Dictionary<String, ResourceType> = {};
+
+    function initialize(filelist as Array<ResourceType>) {
         addAll(filelist);
     }
 
-    function add(file as File) {
+    function add(file as ResourceType) {
         self.filelist.put(file.getId(), file);
     }
 
-    function addAll(files as Array<File>) {
+    function addAll(files as Array<ResourceType>) {
         for (var index = 0; index < files.size(); ++index) {
             add(files[index]);
         }
     }
 
-    function delete(file as File) {
+    function delete(file as ResourceType) {
         self.filelist.remove(file.getId());
     }
 
-    function getById(id as String) as File? {
+    function getById(id as String) as ResourceType? {
         return self.filelist[id];
     }
 

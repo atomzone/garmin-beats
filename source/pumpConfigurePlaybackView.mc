@@ -6,8 +6,12 @@ import Toybox.WatchUi;
 function getCachedAudioRefIds() as Array<Object> {
     var iterator = Media.getContentRefIter({ :contentType => Media.CONTENT_TYPE_AUDIO });
     var refIds = [];
-    var contentRef = iterator.next();
 
+    if (iterator == null) {
+        return refIds;
+    }
+
+    var contentRef = iterator.next();
     while (contentRef != null) {
         refIds.add(contentRef.getId());
         contentRef = iterator.next();

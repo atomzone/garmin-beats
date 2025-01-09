@@ -14,7 +14,7 @@ import Toybox.WatchUi;
 class pumpConfigureSyncView extends WatchUi.View {
     var handler as FileHandler;
     var assets as Array<AudioAsset> = [];
-    var resources as Array<File> = [];
+    var resources as Array<AudioResource> = [];
 
     function initialize() {
         View.initialize();
@@ -72,10 +72,10 @@ class pumpConfigureSyncView extends WatchUi.View {
         for (var index = 0; index < keys.size(); ++index) {
             var file = handler.getById(keys[index]);
             var item = new WatchUi.CheckboxMenuItem(
-                file[:name],
-                file[:id], // file[:href],
+                file.getTitle(),
+                file.getId(),
                 file[:id],
-                file[:is_on_device],
+                false,
                 null
             );
             menu.addItem(item);
