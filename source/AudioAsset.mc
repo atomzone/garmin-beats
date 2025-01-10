@@ -42,6 +42,10 @@ class AudioAsset extends AudioFile {
         return self.getContent().getMetadata();
     }
 
+    // function isEmpty() as Boolean {
+
+    // }
+
     // Creates defaults for missing metadata
     function setMetadata() as Void {
         var metaData = self.getMetadata();
@@ -58,7 +62,14 @@ class AudioAsset extends AudioFile {
         for (var index = 0; index < methods.size(); index++) {
             var method = methods[index] as Symbol;
 
-            if (metaData[method] != "") {
+            System.println("'" + metaData[method] + "'");
+            System.println("'" + (metaData[method] == "") + "'");
+            System.println("'" + (metaData[method].equals("")) + "'");
+
+            // needs a instanceof Lang.String check here :|
+            // not type safe here... :trackNumber is NUmber and number.equals() != exist
+            // if (metaData[method] == "") {
+            if (metaData[method].equals("")) {
                 metaData[method] = properties.get(method);
             }
         }
