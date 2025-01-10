@@ -4,7 +4,7 @@ import Toybox.Media;
 // Audio asset owned by the service
 // Extending `AudioFile` which is responsible for storage methods
 class AudioAsset extends AudioFile {
-    var store as Storage = new Storage("AUDIOASSET");
+    private var store as Storage = new Storage("AUDIOASSET");
 
     function initialize(refId as Object) {
         AudioFile.initialize(refId);
@@ -55,9 +55,10 @@ class AudioAsset extends AudioFile {
         var methods = properties.keys();
 
         // use metadata or define some defaults
-        for (var index = 0; index < methods.size(); ++index) {
-            var method = methods[index];
-            if (metaData[method] == null) {
+        for (var index = 0; index < methods.size(); index++) {
+            var method = methods[index] as Symbol;
+
+            if (metaData[method] != "") {
                 metaData[method] = properties.get(method);
             }
         }
@@ -82,7 +83,7 @@ function getAudioAssets() as Array<AudioAsset> {
     var assets = [];
     var mediaRefs = getCachedAudioRefIds();
     
-    for (var index = 0; index < mediaRefs.size(); ++index) {
+    for (var index = 0; index < mediaRefs.size(); index++) {
         assets.add(new AudioAsset(mediaRefs[index]));
     }
 
