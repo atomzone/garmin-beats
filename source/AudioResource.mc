@@ -1,4 +1,5 @@
 import Toybox.Lang;
+import Toybox.StringUtil;
 
 // Source used to create an asset
 // Each `AudioResource` should represent a single provider - e.g. Soundcloud, Plex, Youtube
@@ -16,7 +17,18 @@ class AudioResource {
     }
 
     function getTitle() as String {
-        return "TITLE " + self.id;
+        // parse href for filename - not really an options no regexp/slow devices
+        // should be done in initialize()
+        var title = self.href.toCharArray().reverse();
+        var split = StringUtil.charArrayToString(title).find("/");
+
+        if (split != null) {
+            title = title.slice(0, split).reverse();
+        }
+        title = StringUtil.charArrayToString(title);
+
+        // return "TITLE " + self.id;
+        return title;
     }
 
     function toStorage() {
