@@ -8,6 +8,12 @@ To allow the syncing of Audio based media from local (provide examples) assets
 ### Audio Sources
 To be defined
 
+### optimisations
+https://forums.garmin.com/developer/connect-iq/f/discussion/252057/best-practices-for-reducing-memory-usage
+https://www.youtube.com/watch?v=IP6OHJVM85Q&ab_channel=ConnectIQGarmin
+
+How much to trade off should we have between readable/maintainable code - and saving memory :|
+
 ### Next
 - define the file model (attributes)
 - define the application workflow

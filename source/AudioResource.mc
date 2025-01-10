@@ -7,7 +7,7 @@ class AudioResource {
     var href as String;
     var id as String;
 
-    function initialize(href as String, options as Dictionary) {
+    function initialize(href as String, options as { :id as String }) {
         self.href = href;
         self.id = options[:id];
     }

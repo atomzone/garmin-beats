@@ -60,7 +60,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
             // delegate.makeWebRequest(mSyncList[ids[0]][SongInfo.URL], null, options);
             // Communications.makeWebRequest(url, {}, {}, self.method(:onReceive));
 
-            Communications.makeWebRequest(url, {}, options, method(:onReceive));
+            Communications.makeWebRequest(url, null, options, method(:onReceive));
             Communications.notifySyncProgress(25);
         }
     }
