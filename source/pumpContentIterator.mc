@@ -41,13 +41,11 @@ class pumpContentIterator extends Media.ContentIterator {
         // Media.getCachedContentObj(ref).setMetadata(tom);
 
         var content = self.playlist.getContentByIndex(index);
-
         System.println("MEDIA" + content + " REF " + content.getContentRef() + " INDEX " + index);
 
-        var tom = new ContentMetadata();
-        tom.title = (index + 1) + ". TITLE";
-
-        content.setMetadata(tom);
+        // var tom = new ContentMetadata();
+        // tom.title = (index + 1) + ". TITLE";
+        // content.setMetadata(tom);
 
         // EITHER
         // return self.playlist.getContentByIndex(index);
