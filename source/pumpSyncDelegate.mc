@@ -39,7 +39,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         var records = syncStore.getAll() as Dictionary;
         var keys = records.keys();
 
-        for (var index = 0; index < keys.size(); ++index) {
+        for (var index = 0; index < keys.size(); index++) {
             var key = keys[index];
             var url = records[key]["href"];
             var id = records[key]["id"];

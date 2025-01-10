@@ -28,7 +28,7 @@ class pumpConfigureSyncMenuDelegate extends WatchUi.Menu2InputDelegate {
 
         // 2. THE TRACKS TO DELETE
         System.println(self.files);
-        for (var index = 0; index < self.files.size(); ++index) {
+        for (var index = 0; index < self.files.size(); index++) {
             var file = new AudioAsset(self.files[index]);
             file.delete();
             // REFRESH THE VIEW (TO REFLECT THE CHANGES)

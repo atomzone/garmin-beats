@@ -3,7 +3,7 @@ import Toybox.Lang;
 typedef ResourceType as AudioResource or File;
 
 class FileHandler {
-    hidden var filelist as Dictionary<String, ResourceType> = {};
+    private var filelist as Dictionary<String, ResourceType> = {};
 
     function initialize(filelist as Array<ResourceType>) {
         addAll(filelist);
@@ -14,7 +14,7 @@ class FileHandler {
     }
 
     function addAll(files as Array<ResourceType>) {
-        for (var index = 0; index < files.size(); ++index) {
+        for (var index = 0; index < files.size(); index++) {
             add(files[index]);
         }
     }
@@ -35,7 +35,7 @@ class FileHandler {
     function toStorage(store as Storage) as Storage {    
         var keys = getKeys();
 
-        for (var index = 0; index < keys.size(); ++index) {
+        for (var index = 0; index < keys.size(); index++) {
             var key = keys[index];
             var file = getById(key);
 

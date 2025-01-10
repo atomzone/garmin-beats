@@ -45,7 +45,7 @@ class pumpConfigureSyncView extends WatchUi.View {
         var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.syncMenuTitle"});
         var keys = self.handler.getKeys();
         
-        for (var index = 0; index < self.assets.size(); ++index) {
+        for (var index = 0; index < self.assets.size(); index++) {
             var asset = self.assets[index];
             var item = new WatchUi.CheckboxMenuItem(
                 asset.getTitle(),
@@ -57,24 +57,12 @@ class pumpConfigureSyncView extends WatchUi.View {
             menu.addItem(item);
         }
 
-        // for (var index = 0; index < self.resources.size(); ++index) {
-        //     var file = self.resources[index];
-        //     var item = new WatchUi.CheckboxMenuItem(
-        //         file[:name],
-        //         null,
-        //         file[:id],
-        //         true,
-        //         null
-        //     );
-        //     menu.addItem(item);
-        // }
-
-        for (var index = 0; index < keys.size(); ++index) {
-            var file = handler.getById(keys[index]);
+        for (var index = 0; index < keys.size(); index++) {
+            var resource = handler.getById(keys[index]);
             var item = new WatchUi.CheckboxMenuItem(
-                file.getTitle(),
-                file.getId(),
-                file[:id],
+                resource.getTitle(),
+                resource.getId(),
+                resource[:id],
                 false,
                 null
             );

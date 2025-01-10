@@ -43,7 +43,7 @@ class PlaylistView extends WatchUi.View {
         // var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.playbackMenuTitle"});
         // var keys = self.handler.getKeys();
         
-        // for (var index = 0; index < self.files.size(); ++index) {
+        // for (var index = 0; index < self.files.size(); index++) {
         //     var file = self.files[index];
         //     var item = new WatchUi.CheckboxMenuItem(
         //         file.getTitle(),

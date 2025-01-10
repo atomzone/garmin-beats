@@ -43,7 +43,7 @@ class Playlist {
 function buildPlaylist(mediaRefs as Array<Object>) as Playlist {
     var tracks = [];
 
-    for (var index = 0; index < mediaRefs.size(); ++index) {
+    for (var index = 0; index < mediaRefs.size(); index++) {
         tracks.add(new AudioAsset(mediaRefs[index]));
     }
 

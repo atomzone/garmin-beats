@@ -5,7 +5,7 @@ import Toybox.Lang;
 // simple inmemory cache
 // should limit by KB (shards)
 class Cache {
-    var cache as Dictionary<String, PersistableType> = {};
+    private var cache as Dictionary<String, PersistableType> = {};
 
     function get(key as String) as PersistableType {
         var value = self.cache.get(key);
@@ -35,8 +35,8 @@ class Cache {
 // namespaced key=>value system storage
 // Keys and values are limited to 8 KB each, and a total of 128 KB of storage is available.
 class Storage {
-    var cache as Cache = new Cache();
-    var partition as String;
+    private var cache as Cache = new Cache();
+    private var partition as String;
 
     function initialize(partition as String) {
         self.partition = partition;

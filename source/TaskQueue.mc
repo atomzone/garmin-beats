@@ -38,7 +38,7 @@ class TaskQueue {
     function process() as Void {
         var tasks = self.queue.values();
 
-        for (var index = 0; index < tasks.size(); ++index) {
+        for (var index = 0; index < tasks.size(); index++) {
             var task = self.get(tasks[index]);
             var callback = new Method(self, :remove);
             
