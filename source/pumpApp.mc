@@ -47,7 +47,7 @@ class pumpApp extends Application.AudioContentProviderApp {
 
     // Get the initial view for configuring sync
     function getSyncConfigurationView() as [Views] or [Views, InputDelegates] {
-        return [ new pumpConfigureSyncView(), new pumpConfigureSyncDelegate() ];
+        return [ new Rez.Menus.configureSyncMenu(), new SyncConfigureDelegate() ];
     }
 
 }
