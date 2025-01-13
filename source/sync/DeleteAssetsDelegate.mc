@@ -2,28 +2,39 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 class DeleteAssetsDelegate extends WatchUi.Menu2InputDelegate {
+    private var assets as Array<String> = [];
+
     function initialize() {
         Menu2InputDelegate.initialize();
     }
 
-    // function onSelect(item as WatchUi.MenuItem) as Void {
-    //     var id = item.getId();
-    //     // var view as WatchUi.Views;
-    //     // var model as WatchUi.InputDelegates;
+    // TODO: Confirmation (Delete YES/NO)
+    function onDone() as Void {
+        System.println("DeleteAssetsDelegate::onDone()");
 
-    //     if (id == :library) {
-    //         System.println("label " + item.getLabel());
+        for (var index = 0; index < self.assets.size(); index++) {
+            var id = self.assets[index];
+            var asset = new AudioAsset(id);
+            
+            // need to also remove from any playlist referencing this track...
+            asset.delete();
+            // maybe not needed (as the view is popped & mem-cleaned?)
+            self.assets.remove(id);
+        }
 
-    //     } else if (id == :add) {
-    //         System.println("label " + item.getLabel());
+        // pop the active view
+        Menu2InputDelegate.onDone();
+    }
 
-    //     } else if (id == :settings) {
-    //         System.println("label " + item.getLabel());
+    function onSelect(item as WatchUi.MenuItem) as Void {
+        var id = item.getId() as String;
 
-    //     }
-
-    //     // WatchUi.pushView(view, model, WatchUi.SLIDE_LEFT);
-    // }
+        if ((item as WatchUi.CheckboxMenuItem).isChecked()) {
+            self.assets.add(id);
+        } else {
+            self.assets.remove(id);
+        }
+    }
 }
 
 // import Toybox.Lang;

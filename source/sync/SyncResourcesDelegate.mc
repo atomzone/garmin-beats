@@ -2,27 +2,51 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
-    function initialize() {
+    private var enabled as Array<String> = [];
+    private var resources as Array<AudioResource> = [];
+
+    function initialize(resources as Array<AudioResource>) {
         Menu2InputDelegate.initialize();
+        self.resources = resources;
+    }
+
+    function getResourceById(id as String) as AudioResource? {
+        for (var index = 0; index < self.resources.size(); index++) {
+            var resource = self.resources[index];
+
+            if (id.equals(resource.getId())) {
+                return resource;
+            }
+        }
+
+        return null;
+    }
+
+    function onDone() as Void {
+        // TODO: Global storage handler? (systemwide)
+        var store = new Storage("SYNC");
+
+        for (var index = 0; index < self.enabled.size(); index++) {
+            var id = self.enabled[index];
+            var resource = self.getResourceById(id);
+
+            if (resource != null) {
+                store.put(id, resource.toStorage());
+            }
+        }
+
+        // pop the active view
+        Menu2InputDelegate.onDone();
     }
 
     function onSelect(item as WatchUi.MenuItem) as Void {
-        var id = item.getId();
-        // var view as WatchUi.Views;
-        // var model as WatchUi.InputDelegates;
+        var id = item.getId() as String;
 
-        if (id == :library) {
-            System.println("label " + item.getLabel());
-
-        } else if (id == :add) {
-            System.println("label " + item.getLabel());
-
-        } else if (id == :settings) {
-            System.println("label " + item.getLabel());
-
+        if ((item as WatchUi.CheckboxMenuItem).isChecked()) {
+            self.enabled.add(id);
+        } else {
+            self.enabled.remove(id);
         }
-
-        // WatchUi.pushView(view, model, WatchUi.SLIDE_LEFT);
     }
 }
 

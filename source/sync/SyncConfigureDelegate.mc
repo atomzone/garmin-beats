@@ -16,14 +16,14 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
 
         if (id == :library) {
             WatchUi.pushView(
-                new DeleteAssetsView(), 
-                new DeleteAssetsDelegate(), 
+                new DeleteAssetsView(getAudioAssets()),
+                null,
                 WatchUi.SLIDE_LEFT
             );
         } else if (id == :add) {
             WatchUi.pushView(
-                new SyncResourcesView(), 
-                new SyncResourcesDelegate(), 
+                new SyncResourcesView(getAudioResources()),
+                null,
                 WatchUi.SLIDE_LEFT
             );
         } else if (id == :settings) {
