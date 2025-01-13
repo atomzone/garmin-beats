@@ -27,11 +27,11 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
                 WatchUi.SLIDE_LEFT
             );
         } else if (id == :settings) {
-            WatchUi.pushView(
-                new pumpConfigureSyncView(), 
-                new pumpConfigureSyncDelegate(),
-                WatchUi.SLIDE_LEFT
-            );
+            // WatchUi.pushView(
+            //     new pumpConfigureSyncView(), 
+            //     new pumpConfigureSyncDelegate(),
+            //     WatchUi.SLIDE_LEFT
+            // );
         }
 
         // WatchUi.pushView(view, model, WatchUi.SLIDE_LEFT);
