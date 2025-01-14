@@ -2,37 +2,34 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 class DeleteAssetsDelegate extends WatchUi.Menu2InputDelegate {
-    private var assets as Array<String> = [];
+    private var assetIds as Array<String> = [];
 
     function initialize() {
         Menu2InputDelegate.initialize();
     }
 
-    // TODO: Confirmation (Delete YES/NO)
     function onDone() as Void {
-        System.println("DeleteAssetsDelegate::onDone()");
-
-        for (var index = 0; index < self.assets.size(); index++) {
-            var id = self.assets[index];
-            var asset = new AudioAsset(id);
-            
-            // need to also remove from any playlist referencing this track...
-            asset.delete();
-            // maybe not needed (as the view is popped & mem-cleaned?)
-            self.assets.remove(id);
+        if (self.assetIds.size() == 0) {
+            Menu2InputDelegate.onDone();
+            return;
         }
 
-        // pop the active view
-        Menu2InputDelegate.onDone();
+        var message = Lang.format("Delete Assets? ($1$)", [self.assetIds.size()]);
+
+        WatchUi.switchToView(
+            new WatchUi.Confirmation(message),
+            new DeleteAssetConfirmation(self.assetIds),
+            WatchUi.SLIDE_IMMEDIATE
+        );
     }
 
     function onSelect(item as WatchUi.MenuItem) as Void {
         var id = item.getId() as String;
 
         if ((item as WatchUi.CheckboxMenuItem).isChecked()) {
-            self.assets.add(id);
+            self.assetIds.add(id);
         } else {
-            self.assets.remove(id);
+            self.assetIds.remove(id);
         }
     }
 }
