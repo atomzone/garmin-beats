@@ -12,7 +12,7 @@ class AudioFile {
         Media.deleteCachedItem(self.getContentRef());
     }
 
-    function getContent() as Media.Content? {
+    function getContent() as Media.Content {
         // instead of writing metadat to the saved audio
         // we could return active content with specific metadata
         // and play position

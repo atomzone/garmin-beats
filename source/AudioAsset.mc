@@ -16,35 +16,18 @@ class AudioAsset extends AudioFile {
     }
 
     function getResourceId() as String? {
-        return store.get(self.getId());
+        return store.get(self.getId()) as String?;
     }
 
     function getTitle() as String {
         return self.getMetadata()[:title];
     }
 
+    // PROFILER HINTS THAT READIND METADATA IS COSTLY
+    // AND IT /SEEMS/ TO CALL 'setMetadata()' \o/
     function getMetadata() as Media.ContentMetadata {
-        // PROFILER HINTS THAT READIND METADATA IS COSTLY
-        // AND IT /SEEMS/ TO CALL 'setMetadata()' \o/
-
-        // var tom = new ContentMetadata();
-
-        // System.println(tom);
-        // System.println(tom[:title]);
-
-        // var fred = self.getContent().getMetadata();
-
-        // System.println(fred);
-        // System.println(fred[:title]);
-
-        // return tom;
-
         return self.getContent().getMetadata();
     }
-
-    // function isEmpty() as Boolean {
-
-    // }
 
     // Creates defaults for missing metadata
     function setMetadata() as Void {
