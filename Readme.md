@@ -14,6 +14,15 @@ https://www.youtube.com/watch?v=IP6OHJVM85Q&ab_channel=ConnectIQGarmin
 
 How much to trade off should we have between readable/maintainable code - and saving memory :|
 
+### Structure
+
+SYNC Configuration
+- Library
+    Delete asset from list of all the AudioAssets available. (ListAssetsView(DELEGATE.mc))
+- Audio resources
+    Checkbox. Upload from a List of resources from a resource provider (ListResoucesView(D?))
+
+
 ### Next
 - define the file model (attributes)
 - define the application workflow

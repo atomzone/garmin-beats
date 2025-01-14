@@ -16,7 +16,7 @@ import Toybox.Lang;
 //     }
 // }
 
-class Task { 
+class Task { // extends Lang.Object { 
     function execute(onComplete as Method) as Void {
         System.println("SYNC TRACK");
         
@@ -25,13 +25,14 @@ class Task {
 }
 
 class TaskQueue {
-    var queue as Dictionary<Number, Task> = {};
+    // why a Dictionary?
+    var queue as Dictionary<Number, Task> = {} as Dictionary<Number, Task>;
 
     function add(task as Task) as Void {
         self.queue.put(task.hashCode(), task);
     }
 
-    function get(task as Task) as Task {
+    function get(task as Task) as Task? {
         return self.queue.get(task.hashCode());
     }
 
@@ -40,9 +41,11 @@ class TaskQueue {
 
         for (var index = 0; index < tasks.size(); index++) {
             var task = self.get(tasks[index]);
-            var callback = new Method(self, :remove);
-            
-            task.execute(callback);
+
+            if (task != null) {
+                var callback = new Method(self, :remove);
+                task.execute(callback);
+            }
         }
     }
 

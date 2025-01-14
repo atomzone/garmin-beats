@@ -1,11 +1,18 @@
 import Toybox.Application;
 import Toybox.Lang;
 
+/*
+SOME PERF NOTES
+EVEN THOUGH (TO ME) THIS IS AN EXCEPTIBLE PATTERN
+STACKING UP FUNCTIONS IS COSTLY TO THE PERFORMANCE
+AND SHOULD BE CONSIDERED "BAD" DESIGN FOR THE TARGET DEVICE
+*/
+
 // ** dangerous! trading memory for storage **
 // simple inmemory cache
 // should limit by KB (shards)
 class Cache {
-    private var cache as Dictionary<String, PersistableType> = {};
+    private var cache as Dictionary<String, PersistableType> = {} as Dictionary<String, PersistableType>;
 
     function get(key as String) as PersistableType {
         var value = self.cache.get(key);
@@ -58,7 +65,7 @@ class Storage {
 
     function getAll() as PersistableType {
         var value = self.cache.get(self.partition);
-        return (value != null) ? value : {};
+        return (value != null) ? value : {} as Dictionary<String, PersistableType>;
     }
 
     function isEmpty() as Boolean {

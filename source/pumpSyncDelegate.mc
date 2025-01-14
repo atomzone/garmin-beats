@@ -5,7 +5,7 @@ import Toybox.Media;
 // import Toybox.PersistedContent;
 
 class pumpSyncDelegate extends Communications.SyncDelegate {
-    var syncStore = new Storage("SYNC");
+    var syncStore as Storage = new Storage("SYNC");
     // var songStore = new Storage("SONGS");
 
     function initialize() {

@@ -9,7 +9,7 @@ class DeleteAssetConfirmation extends WatchUi.ConfirmationDelegate {
         self.assetIds = assetIds;
     }
 
-    function onResponse(response) as Boolean {
+    function onResponse(response as WatchUi.Confirm) as Boolean {
         if (response == WatchUi.CONFIRM_YES) {
             for (var index = 0; index < self.assetIds.size(); index++) {
                 var asset = new AudioAsset(self.assetIds[index]);
