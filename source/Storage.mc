@@ -8,24 +8,29 @@ STACKING UP FUNCTIONS IS COSTLY TO THE PERFORMANCE
 AND SHOULD BE CONSIDERED "BAD" DESIGN FOR THE TARGET DEVICE
 */
 
-// ** dangerous! trading memory for storage **
-// simple inmemory cache
-// should limit by KB (shards)
-class Cache {
-    private var cache as Dictionary<String, PersistableType> = {} as Dictionary<String, PersistableType>;
+typedef ApplicationStore as Dictionary<PropertyKeyType, PersistableType>;
 
-    function get(key as String) as PersistableType {
+// ** dangerous! trading memory for storage **
+// Simple in-memory cache
+class Cache {
+    private var cache as Dictionary<String, ApplicationStore> = {} as Dictionary<String, ApplicationStore>;
+
+    function empty(key as String) as Void {
+        self.cache.remove(key);
+    }
+
+    function get(key as String) as ApplicationStore? {
         var value = self.cache.get(key);
 
         if (value == null) {
-            value = Application.Storage.getValue(key);
+            value = Application.Storage.getValue(key) as ApplicationStore;
             self.cache.put(key, value);
         }
 
         return value;
     }
 
-    function set(key as String, value as PersistableType) as Void {
+    function set(key as String, value as ApplicationStore) as Void {
         self.cache.put(key, value);
         Application.Storage.setValue(key, value);
     }
@@ -56,23 +61,23 @@ class Storage {
     }
 
     function empty() as Void {
-        persist(null);
+        self.cache.empty(self.partition);
     }
 
     function get(key as PropertyKeyType) as PersistableType {
         return self.getAll().get(key);
     }
 
-    function getAll() as PersistableType {
+    function getAll() as ApplicationStore {
         var value = self.cache.get(self.partition);
-        return (value != null) ? value : {} as Dictionary<String, PersistableType>;
+        return (value != null) ? value : {} as ApplicationStore;
     }
 
     function isEmpty() as Boolean {
         return self.getAll().isEmpty();
     }
 
-    function persist(value as PersistableType) as Void {
+    function persist(value as ApplicationStore) as Void {
         self.cache.set(self.partition, value);
     }
 
