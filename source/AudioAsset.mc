@@ -30,6 +30,7 @@ class AudioAsset extends AudioFile {
     }
 
     // Creates defaults for missing metadata
+    (:typecheck(false))
     function setMetadata() as Void {
         var metaData = self.getMetadata();
         var properties = {

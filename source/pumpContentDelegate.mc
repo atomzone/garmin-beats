@@ -13,7 +13,7 @@ class pumpContentDelegate extends Media.ContentDelegate {
         ContentDelegate.initialize();
 
         if (args != null) {
-            self.playlist = buildPlaylist((args as Dictionary)["playlist"]);
+            self.playlist = buildPlaylist((args as Dictionary)["playlist"] as Array<Object>);
         }
         self.songEventHandler = new SongEventHandler(self.playlist);
     }

@@ -41,7 +41,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
 
         for (var index = 0; index < keys.size(); index++) {
             var key = keys[index];
-            var url = records[key]["href"];
+            var url = records[key]["href"] as String;
             var id = records[key]["id"];
 
             var context = {
@@ -73,6 +73,12 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         Communications.notifySyncProgress(75);
     }
 
+    // private function asPersistentContentIterator(value as Object?) as PersistedContent.Iterator? {
+    //     return (value instanceof PersistedContent.Iterator) ? value as PersistedContent.Iterator : null;
+    // }
+
+    // Iterator
+
     function onReceive(responseCode as Number, media as Dictionary?, context as Dictionary) as Void {
         System.println("[START] ONRECEIVE!");
         System.println(responseCode);
@@ -96,12 +102,12 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
 
         // here we should let Audio file have some additional context
         var file = new AudioAsset(refId);
-        file.setResourceId(context["ID"]);
+        file.setResourceId(context["ID"] as String);
         file.setMetadata(); // example of using content to set meta data
 
         // REMOVE/UPDATE FROM SYNC STORAGE
         // USES CONTEXT-ID (CONFUSING RIGHT!)
-        self.syncStore.delete(context["ID"]);
+        self.syncStore.delete(context["ID"] as String);
 
         Communications.notifySyncComplete(null);
 

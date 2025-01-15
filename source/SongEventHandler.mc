@@ -3,10 +3,10 @@ import Toybox.Media;
 
 // !! THIS SHOULD BE RENAMED TrackEventHandler!!
 class SongEventHandler {
-    private var playlist as Playlist;
+    // private var playlist as Playlist;
 
     function initialize(playlist as Playlist) {
-        self.playlist = playlist;
+        // self.playlist = playlist;
     }
 
     function notify(

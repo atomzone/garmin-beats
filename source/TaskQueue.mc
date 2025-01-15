@@ -16,6 +16,8 @@ import Toybox.Lang;
 //     }
 // }
 
+// x as Method(a as Number) as String
+// https://developer.garmin.com/connect-iq/monkey-c/monkey-types/
 class Task { // extends Lang.Object { 
     function execute(onComplete as Method) as Void {
         System.println("SYNC TRACK");
