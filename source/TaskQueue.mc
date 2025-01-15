@@ -16,44 +16,66 @@ import Toybox.Lang;
 //     }
 // }
 
-// x as Method(a as Number) as String
-// https://developer.garmin.com/connect-iq/monkey-c/monkey-types/
-class Task { // extends Lang.Object { 
-    function execute(onComplete as Method) as Void {
-        System.println("SYNC TRACK");
-        
-        onComplete.invoke(self);
+class Task { 
+    var onComplete as Method(task as Task) as Void?;
+
+    function execute() as Void {
+        System.println("Executing task");
+
+        if (self.onComplete != null) {
+            self.onComplete.invoke(self);
+        }
     }
 }
 
-class TaskQueue {
-    // why a Dictionary?
-    var queue as Dictionary<Number, Task> = {} as Dictionary<Number, Task>;
+class DelayedTask extends Task { 
+    var timeout as Number;
 
-    function add(task as Task) as Void {
-        self.queue.put(task.hashCode(), task);
+    function initialize(timeout as Number) {
+        Task.initialize();
+        self.timeout = timeout;
     }
 
-    function get(task as Task) as Task? {
-        return self.queue.get(task.hashCode());
+    function execute() as Void {
+        var myTimer = new Timer.Timer();
+        var callback = new Method(self, :onTimerCallback) as Method() as Void;
+        
+        myTimer.start(callback, self.timeout, false);
+    }
+
+    function onTimerCallback() as Void {
+        Task.execute();
+    }
+}
+
+// class DownloadAudioTask extends Task {
+
+// }
+
+// FIFO: first-in-first-out
+class TaskQueue {
+    private var queue as Array<Task> = [] as Array<Task>;
+
+    function add(task as Task) as Void {
+        task.onComplete = new Method(self, :onTaskComplete) as Method(task as Task) as Void;
+        self.queue.add(task);
+    }
+
+    function onTaskComplete(task as Task) as Void {
+        System.println("TASK COMPLETED: " + task);
+
+        self.remove(task);
+        self.process();
     }
 
     function process() as Void {
-        var tasks = self.queue.values();
-
-        for (var index = 0; index < tasks.size(); index++) {
-            var task = self.get(tasks[index]);
-
-            if (task != null) {
-                var callback = new Method(self, :remove);
-                task.execute(callback);
-            }
+        if (self.queue.size() > 0) {
+            self.queue[0].execute();
         }
     }
 
     function remove(task as Task) as Void {
-        System.println("REMOVE " + task);
-        self.queue.remove(task.hashCode());
+        self.queue.remove(task);
     }
 }
 

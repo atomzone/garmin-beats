@@ -13,14 +13,10 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
 
         // USE SOMETHING LIKE THIS QUEUE...
         var taskQueue = new TaskQueue();
+        taskQueue.add(new DelayedTask(1000));
         taskQueue.add(new Task());
-        taskQueue.add(new Task());
-        taskQueue.add(new Task());
-
-        System.println(taskQueue.queue);
+        taskQueue.add(new DelayedTask(2000));
         taskQueue.process();
-        System.println(taskQueue.queue);
-
     }
 
     // Called when the system starts a sync of the app.
@@ -60,6 +56,9 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
             // delegate.makeWebRequest(mSyncList[ids[0]][SongInfo.URL], null, options);
             // Communications.makeWebRequest(url, {}, {}, self.method(:onReceive));
 
+            System.println("makeWebRequest");
+
+            // SHOULD BE DONE ONCE THE PREVIOUS REQUEST HAS BEEN PROCESSED...
             Communications.makeWebRequest(url, null, options, method(:onReceive));
             Communications.notifySyncProgress(25);
         }
