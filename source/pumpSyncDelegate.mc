@@ -15,6 +15,8 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         var taskQueue = new TaskQueue();
         taskQueue.add(new DelayedTask(1000));
         taskQueue.add(new Task());
+        taskQueue.add(new DownloadAudioTask(getAudioResources()[0]));
+        taskQueue.add(new DownloadAudioTask(getAudioResources()[1]));
         taskQueue.add(new DelayedTask(2000));
         taskQueue.process();
     }

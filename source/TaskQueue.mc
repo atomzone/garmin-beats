@@ -1,21 +1,5 @@
 import Toybox.Lang;
 
-// class DeleteTask extends Task {
-//     function execute() as Boolean {
-//         System.println("DELETE RECORD");
-
-//         return true;
-//     }
-// }
-
-// class SyncTask extends Task {
-//     function execute() as Boolean {
-//         System.println("SYNC TRACK");
-
-//         return true;
-//     }
-// }
-
 class Task { 
     var onComplete as Method(task as Task) as Void?;
 
@@ -29,7 +13,7 @@ class Task {
 }
 
 class DelayedTask extends Task { 
-    var timeout as Number;
+    private var timeout as Number;
 
     function initialize(timeout as Number) {
         Task.initialize();
@@ -47,10 +31,6 @@ class DelayedTask extends Task {
         Task.execute();
     }
 }
-
-// class DownloadAudioTask extends Task {
-
-// }
 
 // FIFO: first-in-first-out
 class TaskQueue {
