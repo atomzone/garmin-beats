@@ -11,6 +11,8 @@ class DownloadAudioTask extends Task {
     }
 
     function execute() as Void {
+        System.println(self.resource);
+        
         var context = {
             "ID" => self.resource.getId(),
             "URL" => self.resource.href
@@ -27,39 +29,39 @@ class DownloadAudioTask extends Task {
     }
 
     function onProgress(totalBytesTransferred as Number, fileSize as Number or Null) as Void {
-        System.println("[+] BYTES RECEIVED");
-        System.println(totalBytesTransferred);
-        System.println(fileSize);
+        System.println("[+]\tBytes transferred " + totalBytesTransferred + " of " + fileSize);
         // Communications.notifySyncProgress(75);
     }
 
     function onReceive(responseCode as Number, media as Dictionary?, context as Dictionary) as Void {
-        System.println("[START] ONRECEIVE!");
-        System.println(responseCode);
-        System.println(media);
-        System.println(context);
+        System.println("[+]\tResponse Code " + responseCode);
+        // System.println(media);
+        System.println("[+]\t" + context);
 
         if (responseCode != 200) {
             System.println("ONRECEIVE FAILED " + responseCode);
+            // TODO REPORT FAILURE
             Task.execute();
         }
 
-        var contentType = (media as Media.ContentRef).getContentType();
+        // var contentType = (media as Media.ContentRef).getContentType();
         var refId = (media as Media.ContentRef).getId();
 
-        System.println("**** MEDIA CONTENT REF ****!");
-        System.println(contentType);
-        System.println(refId);
+        // System.println("**** MEDIA CONTENT REF ****!");
+        // System.println(contentType);
+        // System.println(refId);
 
         // here we should let Audio file have some additional context
         var file = new AudioAsset(refId);
         file.setResourceId(context["ID"] as String);
         file.setMetadata(); // example of using content to set meta data
 
-        Communications.notifySyncComplete(null);
-
         System.println("[END] ONRECEIVE!");
         
         Task.execute();
     }
+}
+
+class DownloadAudioTaskQueue extends TaskQueue {
+
 }

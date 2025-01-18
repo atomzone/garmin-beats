@@ -11,27 +11,28 @@ AND SHOULD BE CONSIDERED "BAD" DESIGN FOR THE TARGET DEVICE
 typedef ApplicationStore as Dictionary<PropertyKeyType, PersistableType>;
 
 // ** dangerous! trading memory for storage **
-// Simple in-memory cache
-class Cache {
-    private var cache as Dictionary<String, ApplicationStore> = {} as Dictionary<String, ApplicationStore>;
+// Simple in-memory store
+class Store {
+    private var store as Dictionary<String, ApplicationStore> = {} as Dictionary<String, ApplicationStore>;
 
     function empty(key as String) as Void {
-        self.cache.remove(key);
+        self.store.remove(key);
+        Application.Storage.deleteValue(key);
     }
 
     function get(key as String) as ApplicationStore? {
-        var value = self.cache.get(key);
+        var value = self.store.get(key);
 
         if (value == null) {
             value = Application.Storage.getValue(key) as ApplicationStore;
-            self.cache.put(key, value);
+            self.store.put(key, value);
         }
 
         return value;
     }
 
     function set(key as String, value as ApplicationStore) as Void {
-        self.cache.put(key, value);
+        self.store.put(key, value);
         Application.Storage.setValue(key, value);
     }
 }
@@ -46,8 +47,8 @@ class Cache {
 
 // namespaced key=>value system storage
 // Keys and values are limited to 8 KB each, and a total of 128 KB of storage is available.
-class Storage {
-    private var cache as Cache = new Cache();
+class StorageManager {
+    private var store as Store = new Store();
     private var partition as String;
 
     function initialize(partition as String) {
@@ -55,35 +56,36 @@ class Storage {
     }
 
     function delete(key as PropertyKeyType) as Void {
-        var store = self.getAll();
-        store.remove(key);
-        persist(store);
+        var storage = self.getAll();
+        storage.remove(key);
+        persist(storage);
     }
 
     function empty() as Void {
-        self.cache.empty(self.partition);
+        self.store.empty(self.partition);
     }
 
     function get(key as PropertyKeyType) as PersistableType {
         return self.getAll().get(key);
     }
 
-    function getAll() as ApplicationStore {
-        var value = self.cache.get(self.partition);
-        return (value != null) ? value : {} as ApplicationStore;
+    private function getAll() as ApplicationStore {
+        var storage = self.store.get(self.partition);
+        return (storage != null) ? storage : {} as ApplicationStore;
     }
 
     function isEmpty() as Boolean {
         return self.getAll().isEmpty();
     }
 
-    function persist(value as ApplicationStore) as Void {
-        self.cache.set(self.partition, value);
+    private function persist(value as ApplicationStore) as Void {
+        self.store.set(self.partition, value);
     }
 
+    // should rename set, like Store
     function put(key as PropertyKeyType, value as PersistableType) as Void {
-        var store = self.getAll();
-        store.put(key, value);
-        persist(store);
+        var storage = self.getAll();
+        storage.put(key, value);
+        persist(storage);
     }
 }

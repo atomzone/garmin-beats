@@ -5,20 +5,15 @@ import Toybox.Media;
 // import Toybox.PersistedContent;
 
 class pumpSyncDelegate extends Communications.SyncDelegate {
-    var syncStore as Storage = new Storage("SYNC");
+    var syncStore as StorageManager = new StorageManager("SYNC");
     // var songStore = new Storage("SONGS");
 
+    // this is called EVERYTIME startSync IS FIRED!
+    // what does this mean for memory?
     function initialize() {
         SyncDelegate.initialize();
 
-        // USE SOMETHING LIKE THIS QUEUE...
-        var taskQueue = new TaskQueue();
-        taskQueue.add(new DelayedTask(1000));
-        taskQueue.add(new Task());
-        taskQueue.add(new DownloadAudioTask(getAudioResources()[0]));
-        taskQueue.add(new DownloadAudioTask(getAudioResources()[1]));
-        taskQueue.add(new DelayedTask(2000));
-        taskQueue.process();
+        System.println("WHY IS THIS CALLED TWICE?");
     }
 
     // Called when the system starts a sync of the app.
@@ -27,43 +22,80 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
     function onStartSync() as Void {
         System.println("onStartSync");
 
-        System.println(syncStore.getAll());
-        
-        var list = syncStore.getAll() as Array<AudioResource>;
+        var resourceData = self.syncStore.get("audio") as Array?;
 
-        System.println(list);
-        System.println(list.size());
-
-        var records = syncStore.getAll() as Dictionary;
-        var keys = records.keys();
-
-        for (var index = 0; index < keys.size(); index++) {
-            var key = keys[index];
-            var url = records[key]["href"] as String;
-            var id = records[key]["id"];
-
-            var context = {
-                "ID" => id,
-                "URL" => url
-            };
-            var options = {
-                :context => context,
-                :fileDownloadProgressCallback => method(:onProgress),
-                :mediaEncoding => Media.ENCODING_M4A,
-                :method => Communications.HTTP_REQUEST_METHOD_GET,
-                :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO
-            };
-
-            // var delegate = new RequestDelegate(method(:onSongDownloaded), context);  
-            // delegate.makeWebRequest(mSyncList[ids[0]][SongInfo.URL], null, options);
-            // Communications.makeWebRequest(url, {}, {}, self.method(:onReceive));
-
-            System.println("makeWebRequest");
-
-            // SHOULD BE DONE ONCE THE PREVIOUS REQUEST HAS BEEN PROCESSED...
-            Communications.makeWebRequest(url, null, options, method(:onReceive));
-            Communications.notifySyncProgress(25);
+        if (resourceData == null) {
+            return;
         }
+
+        var taskQueue = new TaskQueue();
+
+        for (var index = 0; index < resourceData.size(); index++) {
+            // var key = resourceData[index];
+
+            System.println(resourceData);
+            System.println(index);
+            System.println(resourceData[index]);
+
+            // SHIT! NEED TO RECREATE THE STORAGE INTO AN AUDIO RESOURCE!!!!!
+
+            var data = resourceData[index];
+            var audioResource = new AudioResource(data["href"], { :id => data["id"] });
+
+            taskQueue.add(new DownloadAudioTask(audioResource));
+        }
+
+        // USE SOMETHING LIKE THIS QUEUE...
+        taskQueue.add(new DelayedTask(1000));
+        taskQueue.add(new Task());
+        // taskQueue.add(new DownloadAudioTask(getAudioResources()[0]));
+        // taskQueue.add(new DownloadAudioTask(getAudioResources()[1]));
+        taskQueue.add(new DelayedTask(2000));
+        taskQueue.add(new Task());
+        taskQueue.add(new DelayedTask(2000));
+        taskQueue.add(new Task());
+
+        taskQueue.process();
+
+        return;
+
+        // System.println(syncStore.getAll());
+        
+        // var list = syncStore.getAll() as Array<AudioResource>;
+
+        // System.println(list);
+        // System.println(list.size());
+
+        // var records = syncStore.getAll() as Dictionary;
+        // var keys = records.keys();
+
+        // for (var index = 0; index < keys.size(); index++) {
+        //     var key = keys[index];
+        //     var url = records[key]["href"] as String;
+        //     var id = records[key]["id"];
+
+        //     var context = {
+        //         "ID" => id,
+        //         "URL" => url
+        //     };
+        //     var options = {
+        //         :context => context,
+        //         :fileDownloadProgressCallback => method(:onProgress),
+        //         :mediaEncoding => Media.ENCODING_M4A,
+        //         :method => Communications.HTTP_REQUEST_METHOD_GET,
+        //         :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO
+        //     };
+
+        //     // var delegate = new RequestDelegate(method(:onSongDownloaded), context);  
+        //     // delegate.makeWebRequest(mSyncList[ids[0]][SongInfo.URL], null, options);
+        //     // Communications.makeWebRequest(url, {}, {}, self.method(:onReceive));
+
+        //     System.println("makeWebRequest");
+
+        //     // SHOULD BE DONE ONCE THE PREVIOUS REQUEST HAS BEEN PROCESSED...
+        //     Communications.makeWebRequest(url, null, options, method(:onReceive));
+        //     Communications.notifySyncProgress(25);
+        // }
     }
 
     function onProgress(totalBytesTransferred as Number, fileSize as Number or Null) as Void {
@@ -110,7 +142,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
         // USES CONTEXT-ID (CONFUSING RIGHT!)
         self.syncStore.delete(context["ID"] as String);
 
-        Communications.notifySyncComplete(null);
+        // Communications.notifySyncComplete(null);
 
         System.println("[END] ONRECEIVE!");        
     }
@@ -118,11 +150,15 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
     // Called by the system to determine if the app needs to be synced.
     function isSyncNeeded() as Boolean {
         return !self.syncStore.isEmpty();
+        // return self.syncStore.size() > 0;
+        // return true;
     }
 
     // Called when the user chooses to cancel an active sync.
     function onStopSync() as Void {
-        Communications.cancelAllRequests();
-        Communications.notifySyncComplete(null);
+        // STOP THE QUEUE PROCESSING...
+        System.println("[+]\tonStopSync");
+        // Communications.cancelAllRequests();
+        // Communications.notifySyncComplete(null);
     }
 }

@@ -4,7 +4,7 @@ import Toybox.Media;
 // Audio asset owned by the service
 // Extending `AudioFile` which is responsible for storage methods
 class AudioAsset extends AudioFile {
-    private var store as Storage = new Storage("AUDIOASSET");
+    private var store as StorageManager = new StorageManager("AUDIOASSET");
 
     function initialize(refId as Object) {
         AudioFile.initialize(refId);

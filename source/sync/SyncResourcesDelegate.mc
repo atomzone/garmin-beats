@@ -11,6 +11,7 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
         self.resources = resources;
     }
 
+    // DOES INDEXOF MATCH ON OBJECT
     function getResourceById(id as String) as AudioResource? {
         for (var index = 0; index < self.resources.size(); index++) {
             var resource = self.resources[index];
@@ -25,16 +26,20 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
 
     function onDone() as Void {
         // TODO: Global storage handler? (systemwide)
-        var store = new Storage("SYNC");
+        var store = new StorageManager("SYNC");
+        var storage = [] as Array<ApplicationStore>;
 
         for (var index = 0; index < self.enabled.size(); index++) {
             var id = self.enabled[index];
             var resource = self.getResourceById(id);
 
+
             if (resource != null) {
-                store.put(id, resource.toStorage());
+                storage.add(resource.toStorage());
             }
         }
+
+        store.put("audio", storage);
 
         // pop the active view
         Menu2InputDelegate.onDone();

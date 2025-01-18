@@ -4,7 +4,7 @@ class Task {
     var onComplete as Method(task as Task) as Void?;
 
     function execute() as Void {
-        System.println("Executing task");
+        System.println("[+]\tExecuting task: " + self);
 
         if (self.onComplete != null) {
             self.onComplete.invoke(self);
@@ -35,27 +35,35 @@ class DelayedTask extends Task {
 // FIFO: first-in-first-out
 class TaskQueue {
     private var queue as Array<Task> = [] as Array<Task>;
+    private var taskCount as Number = 0;
+    private var activeTask as Number = 0;
 
     function add(task as Task) as Void {
         task.onComplete = new Method(self, :onTaskComplete) as Method(task as Task) as Void;
         self.queue.add(task);
+        self.taskCount++;
     }
 
     function onTaskComplete(task as Task) as Void {
-        System.println("TASK COMPLETED: " + task);
+        System.println(
+            Lang.format("[+]\tTask($3$) $1$ of $2$", [self.activeTask, self.taskCount, self.hashCode()])
+        );
 
-        self.remove(task);
+        var percentageComplete = (100 / self.taskCount) * self.activeTask;
+        System.println(percentageComplete);
+        Communications.notifySyncProgress(percentageComplete);
+
+        self.queue.remove(task);
         self.process();
     }
 
     function process() as Void {
-        if (self.queue.size() > 0) {
-            self.queue[0].execute();
+        if (self.activeTask == self.taskCount) {
+            Communications.notifySyncComplete(null);
+            return;
         }
-    }
-
-    function remove(task as Task) as Void {
-        self.queue.remove(task);
+        
+        self.activeTask++;
+        self.queue[0].execute();
     }
 }
-

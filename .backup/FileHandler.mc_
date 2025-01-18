@@ -32,7 +32,7 @@ class FileHandler {
     }
 
     // could this be serialsie/deserialise?
-    function toStorage(store as Storage) as Storage {    
+    function toStorage(store as StorageManager) as StorageManager {    
         var keys = getKeys();
 
         for (var index = 0; index < keys.size(); index++) {
