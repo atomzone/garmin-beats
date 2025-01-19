@@ -1,3 +1,4 @@
+import Toybox.Application;
 import Toybox.Communications;
 import Toybox.Lang;
 import Toybox.WatchUi;
@@ -26,20 +27,21 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
 
     function onDone() as Void {
         // TODO: Global storage handler? (systemwide)
+        // SHOULD USE STORE NOT STORAGEMANAGER
         var store = new StorageManager("SYNC");
-        var storage = [] as Array<ApplicationStore>;
+        var storage = [] as Array<PersistableType>;
 
         for (var index = 0; index < self.enabled.size(); index++) {
             var id = self.enabled[index];
             var resource = self.getResourceById(id);
-
 
             if (resource != null) {
                 storage.add(resource.toStorage());
             }
         }
 
-        store.put("audio", storage);
+        // SHOULD USE STORE NOT STORAGEMANAGER
+        store.put("audio", storage as PersistableType);
 
         // pop the active view
         Menu2InputDelegate.onDone();
