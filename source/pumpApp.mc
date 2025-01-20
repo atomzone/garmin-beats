@@ -35,11 +35,6 @@ class pumpApp extends Application.AudioContentProviderApp {
         return new pumpContentDelegate(args);
     }
 
-    // Get a delegate that communicates sync status to the system for syncing media content to the device
-    function getSyncDelegate() as Communications.SyncDelegate? {
-        return new pumpSyncDelegate();
-    }
-
     // Get the initial view for configuring playback
     function getPlaybackConfigurationView() as [Views] or [Views, InputDelegates] {
         return [ new pumpConfigurePlaybackView(), new pumpConfigurePlaybackDelegate() ];
@@ -50,6 +45,10 @@ class pumpApp extends Application.AudioContentProviderApp {
         return [ new Rez.Menus.configureSyncMenu(), new SyncConfigureDelegate() ];
     }
 
+    // Get a delegate that communicates sync status to the system for syncing media content to the device
+    function getSyncDelegate() as Communications.SyncDelegate? {
+        return new pumpSyncDelegate();
+    }
 }
 
 function getApp() as pumpApp {
