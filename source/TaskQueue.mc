@@ -1,5 +1,18 @@
 import Toybox.Lang;
 
+/*
+    var taskQueue = new TaskQueue();
+
+    taskQueue.add(new DelayedTask(1000));
+    taskQueue.add(new Task());
+    taskQueue.add(new DownloadAudioTask(getAudioResources()[0]));
+    taskQueue.add(new DelayedTask(2000));
+    taskQueue.add(new Task());
+    taskQueue.add(new DownloadAudioTask(getAudioResources()[1]));
+
+    taskQueue.process();
+*/
+
 class Task { 
     var onComplete as Method(task as Task) as Void?;
 
@@ -44,13 +57,18 @@ class TaskQueue {
         self.taskCount++;
     }
 
+    function onComplete() as Void {
+        // Make noise with Toybox.Attention
+        Communications.notifySyncComplete(null);
+    }
+
     function onTaskComplete(task as Task) as Void {
         System.println(
             Lang.format("[+]\tTask($3$) $1$ of $2$", [self.activeTask, self.taskCount, self.hashCode()])
         );
 
-        var percentageComplete = (100 / self.taskCount) * self.activeTask;
-        System.println(percentageComplete);
+        var percentageComplete = (100 * self.activeTask) / self.taskCount;
+        System.println(percentageComplete + "%");
         Communications.notifySyncProgress(percentageComplete);
 
         self.queue.remove(task);
@@ -59,7 +77,7 @@ class TaskQueue {
 
     function process() as Void {
         if (self.activeTask == self.taskCount) {
-            Communications.notifySyncComplete(null);
+            self.onComplete();
             return;
         }
         

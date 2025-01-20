@@ -4,6 +4,7 @@ import Toybox.Media;
 
 class DownloadAudioTask extends Task {
     private var resource as AudioResource;
+    var onProgressCallback as Method(percentageComplete as Number) as Void?;
 
     function initialize(resource as AudioResource) {
         Task.initialize();
@@ -28,9 +29,21 @@ class DownloadAudioTask extends Task {
         Communications.makeWebRequest(self.resource.href, null, options, method(:onReceive));
     }
 
-    function onProgress(totalBytesTransferred as Number, fileSize as Number or Null) as Void {
-        System.println("[+]\tBytes transferred " + totalBytesTransferred + " of " + fileSize);
-        // Communications.notifySyncProgress(75);
+    function onProgress(totalBytesTransferred as Number, filesize as Number?) as Void {
+        // if (self.onProgressCallback == null) {
+        //     return;
+        // }
+        
+        var percentageComplete = 50; // optimism
+
+        if (filesize != null && totalBytesTransferred > 0) {
+            percentageComplete = (100 * filesize) / totalBytesTransferred;
+        }
+
+        System.println("[+]\tBytes transferred " + totalBytesTransferred + " of " + filesize);
+        System.println("[+]\tpercentageComplete " + percentageComplete);
+
+        // self.onProgressCallback.invoke(percentageComplete);
     }
 
     function onReceive(responseCode as Number, media as Dictionary?, context as Dictionary) as Void {
@@ -62,6 +75,6 @@ class DownloadAudioTask extends Task {
     }
 }
 
-class DownloadAudioTaskQueue extends TaskQueue {
+// class DownloadAudioTaskQueue extends TaskQueue {
 
-}
+// }
