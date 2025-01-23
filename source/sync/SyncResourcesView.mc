@@ -15,7 +15,7 @@ class SyncResourcesView extends WatchUi.View {
 
         var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.syncMenuTitle"});
 
-        for (var index = 0; index < self.resources.size(); index++) {
+        for (var index = 0, limit = self.resources.size(); index < limit; index++) {
             var resource = self.resources[index];
             var item = new WatchUi.CheckboxMenuItem(
                 resource.getTitle(),

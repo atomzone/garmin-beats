@@ -14,7 +14,7 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
 
     // DOES INDEXOF MATCH ON OBJECT
     function getResourceById(id as String) as AudioResource? {
-        for (var index = 0; index < self.resources.size(); index++) {
+        for (var index = 0, limit = self.resources.size(); index < limit; index++) {
             var resource = self.resources[index];
 
             if (id.equals(resource.getId())) {
@@ -31,7 +31,7 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
         var store = new StorageManager("SYNC");
         var storage = [] as Array<PersistableType>;
 
-        for (var index = 0; index < self.enabled.size(); index++) {
+        for (var index = 0, limit = self.enabled.size(); index < limit; index++) {
             var id = self.enabled[index];
             var resource = self.getResourceById(id);
 

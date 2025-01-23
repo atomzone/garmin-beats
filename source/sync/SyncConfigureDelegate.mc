@@ -32,6 +32,12 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
             //     new pumpConfigureSyncDelegate(),
             //     WatchUi.SLIDE_LEFT
             // );
+        } else if (id == :fractal) {
+            // WatchUi.pushView(
+            //     new pumpConfigureSyncView(), 
+            //     new pumpConfigureSyncDelegate(),
+            //     WatchUi.SLIDE_LEFT
+            // );
         }
 
         // WatchUi.pushView(view, model, WatchUi.SLIDE_LEFT);

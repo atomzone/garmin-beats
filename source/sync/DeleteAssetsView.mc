@@ -15,7 +15,7 @@ class DeleteAssetsView extends WatchUi.View {
 
         var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.syncMenuTitle"});
         
-        for (var index = 0; index < self.assets.size(); index++) {
+        for (var index = 0, limit = self.assets.size(); index < limit; index++) {
             var asset = self.assets[index];
             var item = new WatchUi.CheckboxMenuItem(
                 asset.getTitle(),
