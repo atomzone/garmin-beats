@@ -3,5 +3,6 @@
     <menu-item id="add" label="Add" subLabel="Add music"></menu-item>
     <!-- <menu-item id="update" label="Update" subLabel="Update downloads"></menu-item> -->
     <!-- <menu-item id="edit" label="Edit" subLabel="Edit downloads"></menu-item> -->
+    <menu-item id="fractal" label="Fractal" subLabel="Render Mandelbrot"></menu-item>
     <menu-item id="setings" label="Settings" subLabel="View settings"></menu-item>
 </menu2>
