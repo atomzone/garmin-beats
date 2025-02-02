@@ -13,43 +13,11 @@ import Toybox.Lang;
     taskQueue.process();
 */
 
-class Task { 
-    var onComplete as Method(task as Task) as Void?;
-
-    function execute() as Void {
-        System.println("[+]\tExecuting task: " + self);
-
-        if (self.onComplete != null) {
-            self.onComplete.invoke(self);
-        }
-    }
-}
-
-class DelayedTask extends Task { 
-    private var timeout as Number;
-
-    function initialize(timeout as Number) {
-        Task.initialize();
-        self.timeout = timeout;
-    }
-
-    function execute() as Void {
-        var myTimer = new Timer.Timer();
-        var callback = new Method(self, :onTimerCallback) as Method() as Void;
-        
-        myTimer.start(callback, self.timeout, false);
-    }
-
-    function onTimerCallback() as Void {
-        Task.execute();
-    }
-}
-
 // FIFO: first-in-first-out
 class TaskQueue {
     private var queue as Array<Task> = [] as Array<Task>;
-    private var taskCount as Number = 0;
-    private var activeTask as Number = 0;
+    protected var taskCount as Number = 0;
+    protected var activeTask as Number = 0;
 
     function add(task as Task) as Void {
         task.onComplete = new Method(self, :onTaskComplete) as Method(task as Task) as Void;
@@ -57,31 +25,55 @@ class TaskQueue {
         self.taskCount++;
     }
 
-    function onComplete() as Void {
-        // Make noise with Toybox.Attention
-        Communications.notifySyncComplete(null);
-    }
-
     function onTaskComplete(task as Task) as Void {
         System.println(
             Lang.format("[+]\tTask($3$) $1$ of $2$", [self.activeTask, self.taskCount, self.hashCode()])
         );
-
-        var percentageComplete = (100 * self.activeTask) / self.taskCount;
-        System.println(percentageComplete + "%");
-        Communications.notifySyncProgress(percentageComplete);
-
         self.queue.remove(task);
         self.process();
     }
 
-    function process() as Void {
+    private function process() as Void {
         if (self.activeTask == self.taskCount) {
-            self.onComplete();
+            self.stop();
             return;
         }
         
         self.activeTask++;
         self.queue[0].execute();
+    }
+
+    function start() as Void {
+        self.process();
+    }
+
+    function stop() as Void {
+        self.queue = [];
+    }
+}
+
+class CommunicationsQueue extends TaskQueue {
+    function add(task as Task) as Void {
+        // task.onError = new Method(self, :onError) as Method(error as Error) as Void;
+        TaskQueue.add(task);
+    }
+
+    // function onError(error as Error) as Void {
+    //     System.print(error);
+    //     self.stop();
+    // }
+
+    function onTaskComplete(task as Task) as Void {
+        var percentageComplete = (100 * self.activeTask) / self.taskCount;
+        System.println(percentageComplete + "%");
+
+        Communications.notifySyncProgress(percentageComplete);
+
+        TaskQueue.onTaskComplete(task);
+    }
+
+    function stop() as Void {
+        Communications.notifySyncComplete(null);
+        TaskQueue.stop();
     }
 }

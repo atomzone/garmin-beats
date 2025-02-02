@@ -2,9 +2,13 @@ import Toybox.Communications;
 import Toybox.Lang;
 import Toybox.Media;
 
+// typedef Error as { :code as Number, :message as String };
+
 class DownloadAudioTask extends Task {
     private var resource as AudioResource;
-    var onProgressCallback as Method(percentageComplete as Number) as Void?;
+    // var onError as Method(error as Error) as Void;
+    // var onProgressCallback as Method(percentageComplete as Number) as Void?;
+    // var timeout as Number = 100;
 
     function initialize(resource as AudioResource) {
         Task.initialize();
@@ -26,8 +30,27 @@ class DownloadAudioTask extends Task {
             :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO
         };
         
+        System.println(
+            Lang.format("[+]\tTask $1$", [self.hashCode()])
+        );
+
+        // start a timer 
+        // this may allow us to cancel long running tasks
+        // var task = new DelayedTask(self.timeout);
+        // task.onComplete = new Method(self, :onTimeOut) as Method(task as Task) as Void;
+
         Communications.makeWebRequest(self.resource.href, null, options, method(:onReceive));
+        // task.execute();
     }
+
+    // function onTimeOut(task as Task) as Void {
+    //     // here i think we should ERROR
+    //     // and that ERROR stops the queue from processing!
+    //     System.println("TIMEOUT " + task.hashCode()) ;
+    //     self.onError.invoke({ :code => 100, :message => "HI" });
+    //     // Communications.cancelAllRequests();
+
+    // }
 
     function onProgress(totalBytesTransferred as Number, filesize as Number?) as Void {
         // if (self.onProgressCallback == null) {
@@ -55,6 +78,7 @@ class DownloadAudioTask extends Task {
             System.println("ONRECEIVE FAILED " + responseCode);
             // TODO REPORT FAILURE
             Task.execute();
+            return;
         }
 
         // var contentType = (media as Media.ContentRef).getContentType();

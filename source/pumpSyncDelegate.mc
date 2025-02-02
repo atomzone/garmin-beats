@@ -33,7 +33,9 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
             return;
         }
 
-        var taskQueue = new TaskQueue();
+        System.println(resourceData);
+
+        var taskQueue = new CommunicationsQueue();
         for (var index = 0; index < resourceData.size(); index++) {
             // TODO: better serialse/deserialise please
             var data = resourceData[index];
@@ -45,7 +47,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
             taskQueue.add(new DownloadAudioTask(audioResource));
         }
 
-        taskQueue.process();
+        taskQueue.start();
     }
 
     
