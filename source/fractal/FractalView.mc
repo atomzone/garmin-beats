@@ -4,6 +4,7 @@ import Toybox.WatchUi;
 
 // onLayout() → onShow() → onUpdate() → onHide()
 class FractalView extends WatchUi.View {
+    private var step as Number = 0;
     private var y as Number = 0;
     private var x as Number = 0;
     private var height as Number = 0;
@@ -26,8 +27,8 @@ class FractalView extends WatchUi.View {
     }
 
     function onLayout(dc as Graphics.Dc) as Void {
-        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLUE);
-        dc.fillCircle(50, 100, 75);
+        dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLACK);
+        // dc.fillCircle(50, 100, 75);
 
         self.height = dc.getHeight();
         self.width = dc.getWidth();
@@ -63,22 +64,38 @@ class FractalView extends WatchUi.View {
         // dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLUE);
         // dc.fillCircle(50, 100, 75);
 
+        // can we optimise 1000 for each device?
         for (var limit = 0; limit < 1000; limit++) {
-            if (self.inCircle(self.x, self.y)) {
-                System.println(self.x + ", " + self.y);
-                dc.drawPoint(self.x, self.y);
+            var coords = self.stepToCoordinates(self.step);
+            self.step++;
+
+            var x = coords[0];
+            var y = coords[1];
+            // var x = self.x;
+            // var y = self.y;
+
+            if (self.inCircle(x, y)) {
+                System.println(x + ", " + y);
+                dc.drawPoint(x, y);
             }
 
-            if (self.x <= self.width) {
-                self.x += 1;
-            } else if (self.x > self.width) {
-                self.x = 0;
-                if (self.y < self.height) {
-                    self.y += 1;
-                }
-            }
+            // if (x <= self.width) {
+            //     self.x += 1;
+            // } else if (x > self.width) {
+            //     self.x = 0;
+            //     if (y < self.height) {
+            //         self.y += 1;
+            //     }
+            // }
         }
 
         // View.onUpdate(dc);
+    }
+
+    function stepToCoordinates(step as Number) as [Number, Number] {
+        return [
+            (step - 1) % self.width,
+            (step - 1) / self.height,
+        ];
     }
 }

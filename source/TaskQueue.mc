@@ -53,24 +53,24 @@ class TaskQueue {
 }
 
 class CommunicationsQueue extends TaskQueue {
-    function add(task as Task) as Void {
-        // task.onError = new Method(self, :onError) as Method(error as Error) as Void;
-        TaskQueue.add(task);
-    }
+    // function add(task as Task) as Void {
+    //     // task.onError = new Method(self, :onError) as Method(error as Error) as Void;
+    //     TaskQueue.add(task);
+    // }
 
     // function onError(error as Error) as Void {
     //     System.print(error);
     //     self.stop();
     // }
 
-    function onTaskComplete(task as Task) as Void {
-        var percentageComplete = (100 * self.activeTask) / self.taskCount;
-        System.println(percentageComplete + "%");
+    // function onTaskComplete(task as Task) as Void {
+    //     var percentageComplete = (100 / self.taskCount) / self.activeTask;
+    //     System.println(percentageComplete + "%");
 
-        Communications.notifySyncProgress(percentageComplete);
+    //     Communications.notifySyncProgress(percentageComplete);
 
-        TaskQueue.onTaskComplete(task);
-    }
+    //     TaskQueue.onTaskComplete(task);
+    // }
 
     function stop() as Void {
         Communications.notifySyncComplete(null);

@@ -31,7 +31,7 @@ class DownloadAudioTask extends Task {
         };
         
         System.println(
-            Lang.format("[+]\tTask $1$", [self.hashCode()])
+            Lang.format("[+]\tTask -> $1$", [self.hashCode()])
         );
 
         // start a timer 
@@ -40,7 +40,6 @@ class DownloadAudioTask extends Task {
         // task.onComplete = new Method(self, :onTimeOut) as Method(task as Task) as Void;
 
         Communications.makeWebRequest(self.resource.href, null, options, method(:onReceive));
-        // task.execute();
     }
 
     // function onTimeOut(task as Task) as Void {
@@ -57,16 +56,17 @@ class DownloadAudioTask extends Task {
         //     return;
         // }
         
-        var percentageComplete = 50; // optimism
+        var percentageComplete = 0; // optimism
 
-        if (filesize != null && totalBytesTransferred > 0) {
-            percentageComplete = (100 * filesize) / totalBytesTransferred;
+        if (filesize != null && filesize > 0 && totalBytesTransferred > 0) {
+            percentageComplete = ((totalBytesTransferred.toDouble() / filesize.toDouble()) * 100).toNumber();
         }
 
         System.println("[+]\tBytes transferred " + totalBytesTransferred + " of " + filesize);
         System.println("[+]\tpercentageComplete " + percentageComplete);
 
         // self.onProgressCallback.invoke(percentageComplete);
+        Communications.notifySyncProgress(percentageComplete);
     }
 
     function onReceive(responseCode as Number, media as Dictionary?, context as Dictionary) as Void {

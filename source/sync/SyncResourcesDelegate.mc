@@ -44,7 +44,9 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
         store.put("audio", storage as PersistableType);
 
         // pop the active view
-        Menu2InputDelegate.onDone();
+        // THIS SEEM TO FUCKS TUFF UP!
+        // but we need to pop the view right?!
+        // Menu2InputDelegate.onDone();
 
         // TODO: Should we use `startSync2` ?
         // TODO: Can we know a sync is needed (shared func)

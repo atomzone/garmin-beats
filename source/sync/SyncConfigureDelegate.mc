@@ -26,6 +26,12 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
                 null,
                 WatchUi.SLIDE_LEFT
             );
+        } else if (id == :uluru) {
+            WatchUi.pushView(
+                new SyncResourcesView(getUluruAudio()),
+                null,
+                WatchUi.SLIDE_LEFT
+            );
         } else if (id == :settings) {
             // WatchUi.pushView(
             //     new pumpConfigureSyncView(), 
