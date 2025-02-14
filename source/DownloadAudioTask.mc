@@ -7,7 +7,7 @@ import Toybox.Media;
 class DownloadAudioTask extends Task {
     private var resource as AudioResource;
     // var onError as Method(error as Error) as Void;
-    // var onProgressCallback as Method(percentageComplete as Number) as Void?;
+    var onProgressCallback as Method(percentageComplete as Number) as Void?;
     // var timeout as Number = 100;
 
     function initialize(resource as AudioResource) {
@@ -39,6 +39,7 @@ class DownloadAudioTask extends Task {
         // var task = new DelayedTask(self.timeout);
         // task.onComplete = new Method(self, :onTimeOut) as Method(task as Task) as Void;
 
+        // todo: inject this deps
         Communications.makeWebRequest(self.resource.href, null, options, method(:onReceive));
         // task.execute();
     }
@@ -52,21 +53,24 @@ class DownloadAudioTask extends Task {
 
     // }
 
+    // Righ then!
+    // this function should calculate and/or suggest how complete the download is completed
+    // and inform the Queue, so it an update the UI as appropriate 
     function onProgress(totalBytesTransferred as Number, filesize as Number?) as Void {
-        // if (self.onProgressCallback == null) {
-        //     return;
-        // }
+        if (self.onProgressCallback == null) {
+            return;
+        }
         
-        var percentageComplete = 50; // optimism
+        var percentageComplete = 0; // optimism
 
-        if (filesize != null && totalBytesTransferred > 0) {
-            percentageComplete = (100 * filesize) / totalBytesTransferred;
+        if (filesize != null && filesize > 0 && totalBytesTransferred > 0) {
+            percentageComplete = ((totalBytesTransferred.toDouble() / filesize.toDouble()) * 100).toNumber();
         }
 
         System.println("[+]\tBytes transferred " + totalBytesTransferred + " of " + filesize);
         System.println("[+]\tpercentageComplete " + percentageComplete);
 
-        // self.onProgressCallback.invoke(percentageComplete);
+        self.onProgressCallback.invoke(percentageComplete);
     }
 
     function onReceive(responseCode as Number, media as Dictionary?, context as Dictionary) as Void {

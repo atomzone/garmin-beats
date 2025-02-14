@@ -47,6 +47,9 @@ function getAudioResources() as Array<AudioResource> {
         }),
         new AudioResource("https://github.com/supermihi/pytaglib/raw/refs/heads/main/tests/data/issue46.m4a", {
             :id => "id-99"
+        }),
+        new AudioResource("http://192.168.1.222:8001/BBC/The_Ravers_Hour_-_Aho_Ssan_in_the_Mix_m001rrfl_original.m4a", {
+            :id => "uluru-99"
         })
     ];
 }
