@@ -6,13 +6,15 @@ import Toybox.WatchUi;
 class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
     private var enabled as Array<String> = [];
     private var resources as Array<AudioResource> = [];
+    private var syncStore as StorageManager = new StorageManager("SYNC"); // inject/global
 
     function initialize(resources as Array<AudioResource>) {
         Menu2InputDelegate.initialize();
         self.resources = resources;
     }
 
-    // DOES INDEXOF MATCH ON OBJECT
+    // Lookup the resource 
+    // TODO: refactor to key/vals map?
     function getResourceById(id as String) as AudioResource? {
         for (var index = 0, limit = self.resources.size(); index < limit; index++) {
             var resource = self.resources[index];
@@ -25,31 +27,21 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
         return null;
     }
 
+    // deal with the selected items
     function onDone() as Void {
-        // TODO: Global storage handler? (systemwide)
-        // SHOULD USE STORE NOT STORAGEMANAGER
-        var store = new StorageManager("SYNC");
-        var storage = [] as Array<PersistableType>;
+        Menu2InputDelegate.onDone(); // pop the active view
 
-        for (var index = 0, limit = self.enabled.size(); index < limit; index++) {
-            var id = self.enabled[index];
-            var resource = self.getResourceById(id);
-
-            if (resource != null) {
-                storage.add(resource.toStorage());
-            }
+        if (self.enabled.size() == 0) {
+            return;
         }
 
-        // SHOULD USE STORE NOT STORAGEMANAGER
-        store.put("audio", storage as PersistableType);
-
-        // pop the active view
-        Menu2InputDelegate.onDone();
-
-        // TODO: Should we use `startSync2` ?
-        // TODO: Can we know a sync is needed (shared func)
+        // persist selected audio resources 
+        self.storeAudioSyncResources();
+        
         // Exit the AppBase and launch it in sync mode with the provided message.
-        Communications.startSync();
+        Communications.startSync2({
+            :message => "Downloading beats"
+        });
     }
 
     function onSelect(item as WatchUi.MenuItem) as Void {
@@ -60,5 +52,19 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
         } else {
             self.enabled.remove(id);
         }
+    }
+
+    function storeAudioSyncResources() as Void {
+        var storage = [] as Array<PersistableType>;
+
+        for (var index = 0, limit = self.enabled.size(); index < limit; index++) {
+            var resource = self.getResourceById(self.enabled[index]);
+
+            if (resource != null) {
+                storage.add(resource.toStorage());
+            }
+        }
+
+        self.syncStore.put("audio", storage as PersistableType);
     }
 }
