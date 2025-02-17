@@ -47,7 +47,29 @@ class pumpApp extends Application.AudioContentProviderApp {
 
     // Get a delegate that communicates sync status to the system for syncing media content to the device
     function getSyncDelegate() as Communications.SyncDelegate? {
-        return new pumpSyncDelegate();
+        var resources = new StorageManager("SYNC").get("audio") as Array?;
+
+        if (resources == null) {
+            return null;
+        }
+
+        var progressIndicator = new ProgressBarController(
+            new WatchUi.ProgressBar("Download", null)
+        );
+
+        var queue = new CommunicationsQueue(progressIndicator);
+        
+        for (var index = 0; index < resources.size(); index++) {
+            var data = resources[index];
+            var audioResource = new AudioResource(
+                data["href"] as String, 
+                { :id => data["id"] as String }
+            );
+
+            queue.add(new DownloadAudioTask(audioResource));
+        }
+
+        return new pumpSyncDelegate(queue, progressIndicator);
     }
 }
 

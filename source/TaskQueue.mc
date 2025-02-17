@@ -25,6 +25,10 @@ class TaskQueue {
         self.taskCount++;
     }
 
+    function isEmpty() as Boolean {
+        return self.queue.size() == 0;
+    }
+
     function onTaskComplete(task as Task) as Void {
         System.println(
             Lang.format("[+]\tTask($3$) $1$ of $2$", [self.activeTask, self.taskCount, self.hashCode()])
@@ -33,7 +37,7 @@ class TaskQueue {
         self.process();
     }
 
-    private function process() as Void {
+    protected function process() as Void {
         if (self.activeTask == self.taskCount) {
             self.stop();
             return;
@@ -48,15 +52,23 @@ class TaskQueue {
     }
 
     function stop() as Void {
+        // is this enough, what happens calling start()
         self.queue = [];
     }
 }
 
 class CommunicationsQueue extends TaskQueue {
+    var progressIndicator as ProgressBarController;
+
+    function initialize(progressIndicator as ProgressBarController) {
+        TaskQueue.initialize();
+        self.progressIndicator = progressIndicator;
+    }
+
     function add(task as Task) as Void {
+        TaskQueue.add(task);
         // task.onError = new Method(self, :onError) as Method(error as Error) as Void;
         (task as DownloadAudioTask).onProgressCallback = new Method(self, :onProgress) as Method(percentageComplete as Number) as Void;
-        TaskQueue.add(task);
     }
 
     // function onError(error as Error) as Void {
@@ -64,19 +76,15 @@ class CommunicationsQueue extends TaskQueue {
     //     self.stop();
     // }
 
-    // function onTaskComplete(task as DownloadAudioTask) as Void {
-
-
-    //     var percentageComplete = (100 * self.activeTask) / self.taskCount;
-    //     System.println(percentageComplete + "%");
-
-    //     Communications.notifySyncProgress(percentageComplete);
-
-    //     TaskQueue.onTaskComplete(task);
-    // }
+    function onTaskComplete(task as Task) as Void {
+        TaskQueue.onTaskComplete(task);
+        self.progressIndicator.setProgress(100.0);
+    }
 
     function onProgress(taskPercentageComplete as Number) as Void {
         System.println("[+]\tTASK IS percentageComplete " + taskPercentageComplete);
+
+        self.progressIndicator.setProgress(taskPercentageComplete.toFloat());
 
         // queue lenth 1
         // task 1 is 25% complete
@@ -111,6 +119,8 @@ class CommunicationsQueue extends TaskQueue {
 
         Communications.notifySyncProgress(total.toNumber());
 
+        // self.progressIndicator.setProgress(total.toFloat());
+
         // queue is queueProgressPercent% + ((taskMaxPercent% / 100) * 25%) = 74.25% complete
 
         // var queuePercentageComplete = (100 * self.activeTask) / self.taskCount;
@@ -129,9 +139,21 @@ class CommunicationsQueue extends TaskQueue {
         // Communications.notifySyncProgress(combinedPercent.toNumber());
     }
 
+    protected function process() as Void {
+        TaskQueue.process();
+        var message = Lang.format("Downloading\n$1$ of $2$", [self.activeTask, self.taskCount]);
+        self.progressIndicator.setDisplayString(message);
+        self.progressIndicator.setProgress(null);
+    }
+
+    function start() as Void {
+        TaskQueue.start();
+        self.progressIndicator.show();
+    }
+
     function stop() as Void {
-        // Communications.notifySyncProgress(100);
-        Communications.notifySyncComplete(null);
         TaskQueue.stop();
+        self.progressIndicator.hide();
+        Communications.notifySyncComplete(null);
     }
 }

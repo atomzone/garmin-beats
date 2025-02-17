@@ -5,13 +5,18 @@ import Toybox.Media;
 // import Toybox.PersistedContent;
 
 class pumpSyncDelegate extends Communications.SyncDelegate {
-    var syncStore as StorageManager = new StorageManager("SYNC");
+    var progressIndicator as ProgressBarController;
+    var queue as CommunicationsQueue;
 
     // this is called EVERYTIME startSync IS FIRED!
     // what does this mean for memory?
-    function initialize() {
-        System.println("WHY IS THIS CALLED TWICE?");
+    function initialize(
+        queue as CommunicationsQueue,
+        progressIndicator as ProgressBarController
+    ) {
         SyncDelegate.initialize();
+        self.queue = queue;
+        self.progressIndicator = progressIndicator;
     }
 
     function onWifiCheck(result as { :wifiAvailable as Boolean, :errorCode as Communications.WifiConnectionStatus }) as Void {
@@ -24,32 +29,13 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
     // sync view .
     function onStartSync() as Void {
         System.println("onStartSync");
+        System.println(self.queue);
 
-        Communications.checkWifiConnection(method(:onWifiCheck));
+        // leave to the task??
+        // self.progressIndicator.show();
 
-        var resourceData = self.syncStore.get("audio") as Array?;
-
-        if (resourceData == null) {
-            return;
-        }
-
-        System.println(resourceData);
-
-        var taskQueue = new CommunicationsQueue();
-        for (var index = 0; index < resourceData.size(); index++) {
-            // TODO: better serialse/deserialise please
-            var data = resourceData[index];
-            var audioResource = new AudioResource(
-                data["href"] as String, 
-                { :id => data["id"] as String }
-            );
-
-            taskQueue.add(new DownloadAudioTask(audioResource));
-        }
-
-        taskQueue.start();
+        self.queue.start();
     }
-
     
     function onProgress(totalBytesTransferred as Number, fileSize as Number or Null) as Void { }
 
@@ -57,17 +43,17 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
 
     // Called by the system to determine if the app needs to be synced.
     function isSyncNeeded() as Boolean {
-        // TODO: CHECK FOR A MORE ACCURATE PENDING SYNC
-        System.println("IS SYNC NEEDED? " + !self.syncStore.isEmpty());
-
-        return !self.syncStore.isEmpty();
+        return !self.queue.isEmpty();
     }
 
     // Called when the user chooses to cancel an active sync.
     // TODO: STOP THE `taskQueue` PROCESSING...
     function onStopSync() as Void {
         System.println("[+]\tonStopSync");
-        Communications.cancelAllRequests();
-        Communications.notifySyncComplete(null);
+        self.queue.stop();
+
+        // self.progressIndicator.hide();
+        // Communications.cancelAllRequests();
+        // Communications.notifySyncComplete(null);
     }
 }

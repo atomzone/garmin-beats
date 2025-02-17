@@ -29,7 +29,7 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
 
     // deal with the selected items
     function onDone() as Void {
-        Menu2InputDelegate.onDone(); // pop the active view
+        // Menu2InputDelegate.onDone(); // pop the active view
 
         if (self.enabled.size() == 0) {
             return;
