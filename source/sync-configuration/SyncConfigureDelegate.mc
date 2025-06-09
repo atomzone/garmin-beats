@@ -1,3 +1,4 @@
+import Toybox.Application;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
@@ -14,7 +15,12 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
         // var view as WatchUi.Views;
         // var model as WatchUi.InputDelegates;
 
-        if (id == :library) {
+        if (id == :play) {
+            Media.startPlayback({ 
+                "playlist" => getCachedAudioRefIds(),
+                "title" => "Playlist Name"
+            });
+        } else if (id == :library) {
             WatchUi.pushView(
                 new DeleteAssetsView(getAudioAssets()),
                 null,
@@ -43,6 +49,14 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
                 new FractalDelegate(),
                 WatchUi.SLIDE_LEFT
             );
+        } else if (id == :app_config) {
+            // convert config to AudioResource
+            var audioResource = new AudioResource(
+                Properties.getValue("audioSource"),
+                { :id => "input sudio" }
+            ); 
+
+
         }
 
         // WatchUi.pushView(view, model, WatchUi.SLIDE_LEFT);

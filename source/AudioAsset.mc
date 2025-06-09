@@ -46,9 +46,9 @@ class AudioAsset extends AudioFile {
         for (var index = 0; index < methods.size(); index++) {
             var method = methods[index] as Symbol;
 
-            System.println("'" + metaData[method] + "'");
-            System.println("'" + (metaData[method] == "") + "'");
-            System.println("'" + (metaData[method].equals("")) + "'");
+            // System.println("'" + metaData[method] + "'");
+            // System.println("'" + (metaData[method] == "") + "'");
+            // System.println("'" + (metaData[method].equals("")) + "'");
 
             // needs a instanceof Lang.String check here :|
             // not type safe here... :trackNumber is NUmber and number.equals() != exist
@@ -58,13 +58,13 @@ class AudioAsset extends AudioFile {
             }
         }
 
-        System.println("======================");
-        System.println(metaData.album);
-        System.println(metaData.artist);
-        System.println(metaData.genre);
-        System.println(metaData.title);
-        System.println(metaData.trackNumber);
-        System.println("======================");
+        // System.println("======================");
+        // System.println(metaData.album);
+        // System.println(metaData.artist);
+        // System.println(metaData.genre);
+        // System.println(metaData.title);
+        // System.println(metaData.trackNumber);
+        // System.println("======================");
 
         self.getContent().setMetadata(metaData);
     }

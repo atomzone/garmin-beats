@@ -1,0 +1,9 @@
+<settings>
+    <setting propertyKey="@Properties.appVersion" title="Strings.AppVersionTitle">
+        <settingConfig type="alphaNumeric" readonly="true" />
+    </setting>
+
+    <setting propertyKey="@Properties.audioSource" title="Strings.UsernameTitle">
+        <settingConfig type="url" required="false" />
+    </setting>
+</settings>

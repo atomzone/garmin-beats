@@ -66,9 +66,9 @@ class CommunicationsQueue extends TaskQueue {
     }
 
     function add(task as Task) as Void {
+        (task as DownloadAudioTask).onProgressCallback = new Method(self, :onProgress) as Method(percentageComplete as Number) as Void;
         TaskQueue.add(task);
         // task.onError = new Method(self, :onError) as Method(error as Error) as Void;
-        (task as DownloadAudioTask).onProgressCallback = new Method(self, :onProgress) as Method(percentageComplete as Number) as Void;
     }
 
     // function onError(error as Error) as Void {
@@ -106,18 +106,18 @@ class CommunicationsQueue extends TaskQueue {
         // task 3 is 25% complete
         // queue is 33% + 33% + ((33% / 100) * 25%) = 74.25% complete
 
-        var taskMaxPercent = 100 / self.taskCount.toDouble();
-        var queueProgressPercent = taskMaxPercent * (self.activeTask.toDouble() - 1);
-        var currentTaskCompletePercent = (taskMaxPercent / 100) * taskPercentageComplete;
-        var total = queueProgressPercent + currentTaskCompletePercent;
+        // var taskMaxPercent = 100 / self.taskCount.toDouble();
+        // var queueProgressPercent = taskMaxPercent * (self.activeTask.toDouble() - 1);
+        // var currentTaskCompletePercent = (taskMaxPercent / 100) * taskPercentageComplete;
+        // var total = queueProgressPercent + currentTaskCompletePercent;
 
-        System.println("taskPercentageComplete " + taskPercentageComplete);
-        System.println("taskMaxPercent " + taskMaxPercent);
-        System.println("queueProgressPercent " + queueProgressPercent);
-        System.println("currentTaskCompletePercent " + currentTaskCompletePercent);
-        System.println("total " + total);
+        // System.println("taskPercentageComplete " + taskPercentageComplete);
+        // System.println("taskMaxPercent " + taskMaxPercent);
+        // System.println("queueProgressPercent " + queueProgressPercent);
+        // System.println("currentTaskCompletePercent " + currentTaskCompletePercent);
+        // System.println("total " + total);
 
-        Communications.notifySyncProgress(total.toNumber());
+        // Communications.notifySyncProgress(total.toNumber());
 
         // self.progressIndicator.setProgress(total.toFloat());
 

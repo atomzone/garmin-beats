@@ -68,7 +68,7 @@ class DownloadAudioTask extends Task {
         }
 
         System.println("[+]\tBytes transferred " + totalBytesTransferred + " of " + filesize);
-        System.println("[+]\tpercentageComplete " + percentageComplete);
+        // System.println("[+]\tpercentageComplete " + percentageComplete);
 
         self.onProgressCallback.invoke(percentageComplete);
     }

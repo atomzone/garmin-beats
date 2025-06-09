@@ -1,4 +1,5 @@
 <menu2 id="configureSyncMenu" title="Sync">
+    <menu-item id="play" label="Play" subLabel="Play all the tracks"></menu-item>
     <menu-item id="library" label="Library" subLabel="View the library"></menu-item>
     <menu-item id="add" label="Add" subLabel="Add music"></menu-item>
     <!-- <menu-item id="update" label="Update" subLabel="Update downloads"></menu-item> -->

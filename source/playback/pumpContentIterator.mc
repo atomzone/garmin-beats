@@ -70,7 +70,8 @@ class pumpContentIterator extends Media.ContentIterator {
             PLAYBACK_CONTROL_NEXT,
             PLAYBACK_CONTROL_PLAYBACK,
             PLAYBACK_CONTROL_PREVIOUS,
-            PLAYBACK_CONTROL_SKIP_FORWARD
+            PLAYBACK_CONTROL_SKIP_FORWARD,
+            PLAYBACK_CONTROL_LIBRARY
         ];
         profile.playbackNotificationThreshold = 1;
         profile.requirePlaybackNotification = false;

@@ -8,6 +8,11 @@ class pumpApp extends Application.AudioContentProviderApp {
 
     function initialize() {
         AudioContentProviderApp.initialize();
+
+        System.println("<properties.xml>");
+        System.println("appVersion: " + Properties.getValue("appVersion"));
+        System.println("audioSource: " + Properties.getValue("audioSource"));
+        System.println("</properties.xml>");
     }
 
     // onStart() is called on application start up
@@ -37,16 +42,29 @@ class pumpApp extends Application.AudioContentProviderApp {
 
     // Get the initial view for configuring playback
     function getPlaybackConfigurationView() as [Views] or [Views, InputDelegates] {
-        return [ new pumpConfigurePlaybackView(), new pumpConfigurePlaybackDelegate() ];
+        System.println("AudioContentProviderApp.getPlaybackConfigurationView");
+
+        var audioRefs = getCachedAudioRefIds();
+        
+        if (audioRefs.size() == 0) {
+            return getSyncConfigurationView();
+        }
+
+        // return [ new pumpConfigurePlaybackView(), new pumpConfigurePlaybackDelegate() ];
+        return [ new pumpConfigurePlaybackView(audioRefs) ];
     }
 
     // Get the initial view for configuring sync
     function getSyncConfigurationView() as [Views] or [Views, InputDelegates] {
+        System.println("AudioContentProviderApp.getSyncConfigurationView");
+
         return [ new Rez.Menus.configureSyncMenu(), new SyncConfigureDelegate() ];
     }
 
     // Get a delegate that communicates sync status to the system for syncing media content to the device
     function getSyncDelegate() as Communications.SyncDelegate? {
+        System.println("AudioContentProviderApp.getSyncDelegate");
+
         var resources = new StorageManager("SYNC").get("audio") as Array?;
 
         if (resources == null) {

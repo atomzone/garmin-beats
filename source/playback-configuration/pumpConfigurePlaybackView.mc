@@ -23,8 +23,11 @@ function getCachedAudioRefIds() as Array<Object> {
 }
 
 class pumpConfigurePlaybackView extends WatchUi.View {
-    function initialize() {
+    private var audioRefs as Array<Object>;
+
+    function initialize(audioRefs as Array<Object>) {
         View.initialize();
+        self.audioRefs = audioRefs;
     }
 
     // Load your resources here
@@ -46,9 +49,13 @@ class pumpConfigurePlaybackView extends WatchUi.View {
         // BASED ON TWO LISTS 
         // THE SONGS AND THE PLAYLIST (HOW THEY INTERSECT)
 
+        if (self.audioRefs.size() == 0) {
+            return;
+        }
+
         Media.startPlayback({ 
             // "playlist" => [-2030043133, -2030043132],
-            "playlist" => getCachedAudioRefIds(),
+            "playlist" => self.audioRefs,
             "title" => "Playlist Name"
         });
 

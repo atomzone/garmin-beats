@@ -1,0 +1,4 @@
+<properties>
+    <property id="appVersion" type="string">1.0.0</property>
+    <property id="audioSource" type="string">http://127.0.0.1:8080/</property>    
+</properties>
