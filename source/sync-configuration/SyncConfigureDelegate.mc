@@ -63,13 +63,21 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
             );
         } else if (id == :app_config) {
             // POC. convert config to AudioResource
+            // and download that config driven resource!!
+            // basically here is the download contract handed to the 
+            // resource retriever...
             var audioResource = new AudioResource(
-                Properties.getValue("audioSource"),
-                { :id => "input sudio" }
+                Properties.getValue("audioSource").toString(),
+                { :id => "source-from-app-property" }
             ); 
-            // download this resource....
+            
+            // view this time
+            // could download and play automagically
+            WatchUi.pushView(
+                new SyncResourcesView([audioResource]),
+                null,
+                WatchUi.SLIDE_LEFT
+            );
         }
-
-        // WatchUi.pushView(view, model, WatchUi.SLIDE_LEFT);
     }
 }
