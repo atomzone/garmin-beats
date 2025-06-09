@@ -1,7 +1,7 @@
 <menu2 id="configureSyncMenu" title="Sync">
     <menu-item id="play" label="Play" subLabel="Play all the tracks"></menu-item>
     <menu-item id="library" label="Library" subLabel="View the library"></menu-item>
-    <menu-item id="add" label="Add" subLabel="Add music"></menu-item>
+    <menu-item id="add_local" label="Add" subLabel="Add music"></menu-item>
     <!-- <menu-item id="update" label="Update" subLabel="Update downloads"></menu-item> -->
     <!-- <menu-item id="edit" label="Edit" subLabel="Edit downloads"></menu-item> -->
     <menu-item id="fractal" label="Fractal" subLabel="Render Mandelbrot"></menu-item>

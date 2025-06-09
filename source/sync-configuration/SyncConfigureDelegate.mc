@@ -16,19 +16,31 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
         // var model as WatchUi.InputDelegates;
 
         if (id == :play) {
+            // lets check each time (i see another pattern)
+            var audioRefIds = getCachedAudioRefIds();
+            if (audioRefIds.size() == 0) { return; }
+
             Media.startPlayback({ 
-                "playlist" => getCachedAudioRefIds(),
+                "playlist" => audioRefIds,
                 "title" => "Playlist Name"
             });
         } else if (id == :library) {
+            // lets check each time (i see another pattern)
+            var audioAssets = getAudioAssets();
+            if (audioAssets.size() == 0) { return; }
+
             WatchUi.pushView(
-                new DeleteAssetsView(getAudioAssets()),
+                new DeleteAssetsView(audioAssets),
                 null,
                 WatchUi.SLIDE_LEFT
             );
-        } else if (id == :add) {
+        } else if (id == :add_local) {
+            // lets check each time (i see another pattern)
+            var audioResources = getAudioResources();
+            if (audioResources.size() == 0) { return; }
+
             WatchUi.pushView(
-                new SyncResourcesView(getAudioResources()),
+                new SyncResourcesView(audioResources),
                 null,
                 WatchUi.SLIDE_LEFT
             );
@@ -50,13 +62,12 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
                 WatchUi.SLIDE_LEFT
             );
         } else if (id == :app_config) {
-            // convert config to AudioResource
+            // POC. convert config to AudioResource
             var audioResource = new AudioResource(
                 Properties.getValue("audioSource"),
                 { :id => "input sudio" }
             ); 
-
-
+            // download this resource....
         }
 
         // WatchUi.pushView(view, model, WatchUi.SLIDE_LEFT);
