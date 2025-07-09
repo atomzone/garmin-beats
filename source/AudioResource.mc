@@ -13,6 +13,10 @@ class AudioResource {
         self.id = options[:id] as String;
     }
 
+    function download() {
+        
+    }
+
     function getId() as String {
         return self.id;
     }
