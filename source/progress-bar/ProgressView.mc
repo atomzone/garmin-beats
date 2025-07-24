@@ -1,14 +1,14 @@
-// import Toybox.Application;
-// import Toybox.Communications;
 import Toybox.Lang;
 import Toybox.Media;
 import Toybox.WatchUi;
 
 class ProgressBarController {
     var progressBar as WatchUi.ProgressBar;
+    var isViewActive as Boolean;
 
     function initialize(progressBar as WatchUi.ProgressBar) {
         self.progressBar = progressBar;
+        self.isViewActive = false;
     }
     
     function setDisplayString(displayString as Lang.String) as Void {
@@ -20,11 +20,21 @@ class ProgressBarController {
     }
 
     function show() as Void {
+        if (self.isViewActive) {
+            return;
+        }
+
         WatchUi.pushView(self.progressBar, null, WatchUi.SLIDE_IMMEDIATE);
+        self.isViewActive = true;
     }
 
     function hide() as Void {
+        if (!self.isViewActive) {
+            return;
+        }
+
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+        self.isViewActive = false;
     }
 }
 

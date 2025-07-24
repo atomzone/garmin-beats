@@ -5,7 +5,14 @@ class HttpRequestOptions {
 
     function initialize(context as Lang.Object?) {
         self.options[:context] = context;
+        self.options[:headers] = {};
         self.setAuthorization("MediaBrowser Client=\"client\", Device=\"device\", DeviceId=\"device-id\", Version=\"version\", Token=\"8f63a081dc484594b0cc7c1cb48ebd4f\"");
+    }
+
+    function audioM4a() as HttpRequestOptions {
+        self.options[:mediaEncoding] = Media.ENCODING_M4A;
+        self.options[:responseType] = Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO;
+        return self;
     }
 
     function get() as HttpRequestOptions {
@@ -19,10 +26,7 @@ class HttpRequestOptions {
     }
 
     function setAuthorization(authorization as Lang.String) as Void {
-        // refine with a merge
-        self.options[:headers] = {
-            "Authorization" => authorization
-        };
+        self.options[:headers]["Authorization"] = authorization;
     }
 }
 
@@ -53,17 +57,15 @@ class HttpRequest {
         );
     }
 
-    // function download(context as Lang.Object?) {
-    //     var options = {
-    //         :context => context,
-    //         // :fileDownloadProgressCallback => method(:onProgress),
-    //         :mediaEncoding => Media.ENCODING_M4A,
-    //         :method => Communications.HTTP_REQUEST_METHOD_GET,
-    //         :responseType => Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO
-    //     };
-        
-    //     Communications.makeWebRequest(self.href, null, options, method(:onResponse));       
-    // }
+    function download(
+        context as Lang.Object?, 
+        onProgressCallback as Method(totalBytesTransferred as Number, filesize as Number?) as Void
+    ) as Void {
+        var settings = new HttpRequestOptions(context).get().audioM4a();
+        settings.options[:fileDownloadProgressCallback] = onProgressCallback;
+
+        self.makeRequest(settings);
+    }
 
     function onResponse(responseCode as Number, data as Dictionary?, context as Object) as Void {
         System.println("[+]\tResponse Code " + responseCode);
