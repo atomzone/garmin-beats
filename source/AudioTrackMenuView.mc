@@ -2,6 +2,71 @@ import Toybox.Graphics;
 import Toybox.Lang;
 import Toybox.WatchUi;
 
+class AudioTrackViewLoop extends ViewLoop {
+    // function initialize(
+    //     factory as WatchUi.ViewLoopFactory, 
+    //     options as { :page as Lang.Number, :wrap as Lang.Boolean, :color as Graphics.ColorType } or Null
+    // ) {
+    //     ViewLoop.initialize(factory, options);
+    // }
+    
+    function changeView(direction as ViewLoop.Direction) as Lang.Boolean {
+        return true;
+    }
+}
+
+/*
+class AudioTrackViewLoopFactory extends ViewLoopFactory {
+    function initialize(resources as Array<AudioTrackModel>) {
+        ViewLoopFactory.initialize();
+
+        self.resources = resources;
+    }
+    
+    function getSize() as Lang.Number {
+        return self.resources.size();
+    }
+
+    // could be called on each chnageView
+    function getView(page as Lang.Number) as [ ViewLoopFactory.Views ] or [ ViewLoopFactory.Views, ViewLoopFactory.Delegates ]
+        // var view = new WatchUi.View();
+        // view.initialize();
+        // var delegate = new MyLoopDelegate(page);
+        // return [view, delegate];
+        // return [ null ];
+    }
+}
+
+import Toybox.WatchUi as WatchUi;
+import Toybox.Graphics as Gfx;
+
+class MyLoopDelegate extends WatchUi.ViewLoopDelegate {
+    var pageIndex as Number;
+
+    function initialize(viewLoop as WatchUi.ViewLoop, page as Number) {
+        ViewLoopDelegate.initialize(viewLoop);
+        pageIndex = page;
+    }
+
+    function onShow() {
+        // optional per-page init
+    }
+
+    function onUpdate(dc as Gfx.Dc) {
+        dc.clear();
+        dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Gfx.FONT_MEDIUM, "Page " + (pageIndex+1), Gfx.TEXT_JUSTIFY_CENTER);
+    }
+
+    function onNextView() as Boolean {
+        return viewLoop.changeView(WatchUi.ViewLoop.DIRECTION_NEXT);
+    }
+
+    function onPreviousView() as Boolean {
+        return viewLoop.changeView(WatchUi.ViewLoop.DIRECTION_PREVIOUS);
+    }
+}
+*/
+
 class AudioTrackMenuView extends WatchUi.View {
     private var resources as Array<AudioTrackModel> = [];
 

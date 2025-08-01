@@ -82,6 +82,16 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
                 null,
                 WatchUi.SLIDE_LEFT
             );
+        } else if (id == :x) {
+            // experiement
+            var jelly = new Jellyfin("jellyfin.hoveoffice.com");
+            var browser = new JellyfinBrowser(jelly);
+
+            WatchUi.pushView(
+                browser.getPaginatedView(), 
+                null,
+                WatchUi.SLIDE_LEFT
+            );
         }
     }
 
