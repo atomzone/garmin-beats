@@ -1,23 +1,24 @@
 import Toybox.Lang;
 import Toybox.WatchUi;
 
+// THIS IS KINDA SPEIFIC TO VIEW LOOPS
 class JellyfinBrowser {
-    var jelly as Jellyfin;
+    private var view as WatchUi.ViewLoop;
+    private var controller as WatchUi.ViewLoopDelegate;
 
     function initialize(jelly as Jellyfin) {
-        self.jelly = jelly;
+        var factory = new JellyfinBrowserPaginationViewFactory(jelly);
+
+        self.view = new WatchUi.ViewLoop(factory, { :page => 0 });
+        self.controller = new WatchUi.ViewLoopDelegate(self.view);
     }
 
-    function getView() as WatchUi.View {
-        return new JellyfinDefaultBrowserView();
+    function getView() as WatchUi.ViewLoop {
+        return self.view;
     }
 
-    function getPaginatedView() as WatchUi.ViewLoop {
-        // move progress indicator from Jellyfin and into view factory
-        var factory = new JellyfinBrowserPaginationViewFactory(self.jelly);
-
-        // return new WatchUi.ViewLoop(factory, { :page => 1 });
-        return new JellyfinBrowserPaginationView(factory, { :page => 1 });
+    function getDelegate() as WatchUi.ViewLoopDelegate {
+        return self.controller;
     }
 }
 
@@ -38,23 +39,7 @@ class JellyfinBrowserPaginationViewFactory extends WatchUi.ViewLoopFactory {
 
         // this is a depenancy inject
         var view = new JellyfinDefaultBrowserView();
-
-        return [view];
-    }
-}
-
-class JellyfinBrowserPaginationView extends WatchUi.ViewLoop {
-    function initialize(
-        factory as WatchUi.ViewLoopFactory, 
-        options as { :page as Lang.Number } or Null
-    ) {
-        System.println("[+]\tJellyfinBrowserPaginationView: " + self);
-        ViewLoop.initialize(factory, options);
-    }
-
-    function changeView(direction as ViewLoop.Direction) as Lang.Boolean {
-        System.println("[+]\tJellyfinBrowserPaginationView.changeView: " + direction);
-        return true;
+        return [view, new WatchUi.BehaviorDelegate()];
     }
 }
 
@@ -62,23 +47,6 @@ class JellyfinBrowserPaginationView extends WatchUi.ViewLoop {
 class JellyfinDefaultBrowserView extends WatchUi.View {
     function initialize() {
         View.initialize();
-    }
-
-    // Resources are loaded here
-    function onLayout(dc) {
-    }
-
-    // onShow() is called when this View is brought to the foreground
-    function onShow() {
-    }
-
-    // onUpdate() is called periodically to update the View
-    function onUpdate(dc) {
-        View.onUpdate(dc);
-    }
-
-    // onHide() is called when this View is removed from the screen
-    function onHide() {
     }
 }
 

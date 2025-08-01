@@ -88,8 +88,8 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
             var browser = new JellyfinBrowser(jelly);
 
             WatchUi.pushView(
-                browser.getPaginatedView(), 
-                null,
+                browser.getView(), 
+                browser.getDelegate(), 
                 WatchUi.SLIDE_LEFT
             );
         }

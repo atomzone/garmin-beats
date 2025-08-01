@@ -8,4 +8,5 @@
     <menu-item id="fractal" label="Fractal" subLabel="Render Mandelbrot"></menu-item>
     <menu-item id="settings" label="Settings" subLabel="View settings"></menu-item>
     <menu-item id="app_config" label="Configuration" subLabel="Application configuration"></menu-item>
+    <menu-item id="x" label="Xperimento" subLabel="Roll the dice"></menu-item>
 </menu2>
