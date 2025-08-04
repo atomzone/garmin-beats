@@ -38,7 +38,8 @@ class JellyfinBrowserPaginationViewFactory extends WatchUi.ViewLoopFactory {
         System.println("[+]\tJellyfinBrowserPaginationViewFactory.getView: " + self);
 
         // this is a depenancy inject
-        var view = new JellyfinDefaultBrowserView();
+        // var view = new JellyfinDefaultBrowserView();
+        var view = new PlaybackConfigureMenuView();
         return [view, new WatchUi.BehaviorDelegate()];
     }
 }

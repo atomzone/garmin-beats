@@ -47,6 +47,7 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
         } else if (id == :add_jellyfin) {
             var jelly = new Jellyfin("jellyfin.hoveoffice.com");
             // jelly.getArtists(method(:renderArtists));
+            // jelly.getArtists(method(:renderItems));
             jelly.getAlbums(method(:renderItems));
         } else if (id == :settings) {
             // WatchUi.pushView(
@@ -121,6 +122,7 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
         // var view = new AudioTrackViewLoopFactory(audioResource);
 
         var view = new AudioTrackMenuView(audioResources);
+        // var view = new AudioTrackPaginationMenuView(audioResources);
 
         WatchUi.pushView(
             view, null, WatchUi.SLIDE_LEFT

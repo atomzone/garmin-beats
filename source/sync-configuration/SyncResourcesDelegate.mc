@@ -44,6 +44,16 @@ class SyncResourcesDelegate extends WatchUi.Menu2InputDelegate {
         });
     }
 
+    function onNextPage() as Lang.Boolean {
+        System.println("nextpage!!");
+        return true;
+    }
+
+    function onPreviousPage() as Lang.Boolean {
+        System.println("nextpage!!");
+        return true;
+    }
+
     function onSelect(item as WatchUi.MenuItem) as Void {
         var id = item.getId() as String;
 

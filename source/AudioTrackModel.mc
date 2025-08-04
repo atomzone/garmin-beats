@@ -19,6 +19,7 @@ class AudioTrackModel {
         genre = fields.getString("genre");
     }
 
+    // these are more view, than model...
     function getReadableDuration() as String {
         var minutes = durationSeconds / 60.0;
         var seconds = durationSeconds % 60;

@@ -84,6 +84,7 @@ class pumpApp extends Application.AudioContentProviderApp {
                 { :id => data["id"] as String }
             );
 
+            // this download task has hardcoded stuff...
             queue.add(new DownloadAudioTask(audioResource));
         }
 
