@@ -4,13 +4,13 @@ import Toybox.Media;
 class pumpContentIterator extends Media.ContentIterator {
     var playlist as Playlist;
 
-    function initialize(playlist as Playlist) {
+    function initialize(playlist as Playlist?) {
         ContentIterator.initialize();
 
-        self.playlist = playlist;
+        self.playlist = (playlist != null) ? playlist : ([] as Array<AudioAsset>);
     }
 
-    // Determine if the the current track can be skipped.
+    // Determine if the th[]e current track can be skipped.
     function canSkip() as Boolean {
         System.println("canSkip");
         return false;
