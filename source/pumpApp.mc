@@ -52,6 +52,8 @@ class pumpApp extends Application.AudioContentProviderApp {
         return new pumpContentDelegate(args);
     }
 
+    // CONFIG---------------------
+
     // Get the initial view for configuring playback
     function getPlaybackConfigurationView() as [Views] or [Views, InputDelegates] {
         $.am.debug("AudioContentProviderApp.getPlaybackConfigurationView");
@@ -73,16 +75,20 @@ class pumpApp extends Application.AudioContentProviderApp {
         return [ new Rez.Menus.configureSyncMenu(), new SyncConfigureDelegate() ];
     }
 
+    // CONFIG---------------------
+
     // Get a delegate that communicates sync status to the system for syncing media content to the device
     function getSyncDelegate() as Communications.SyncDelegate? {
         $.am.debug("AudioContentProviderApp.getSyncDelegate");
+        // lets return something!
 
+//
         var resources = new StorageManager("SYNC").get("audio") as Array?;
 
-        if (resources == null) {
-            $.am.debug("[!] No SYNC resources found");
-            return null;
-        }
+        // if (resources == null) {
+        //     $.am.debug("[!] No SYNC resources found");
+        //     return null;
+        // }
 
         var progressIndicator = new ProgressBarController(
             new WatchUi.ProgressBar("Download", null)
@@ -90,18 +96,21 @@ class pumpApp extends Application.AudioContentProviderApp {
 
         var queue = new CommunicationsQueue(progressIndicator);
         
-        for (var index = 0; index < resources.size(); index++) {
-            var data = resources[index];
-            var audioResource = new AudioResource(
-                data["href"] as String, 
-                { :id => data["id"] as String }
-            );
+        if (resources != null) {
+            for (var index = 0; index < resources.size(); index++) {
+                var data = resources[index];
+                var audioResource = new AudioResource(
+                    data["href"] as String, 
+                    { :id => data["id"] as String }
+                );
 
-            $.am.debug("[!] Building Dowaload task for " + data["href"] as String);
+                $.am.debug("[!] Building Dowaload task for " + data["href"] as String);
 
-            // this download task has hardcoded stuff...
-            queue.add(new DownloadAudioTask(audioResource));
+                // this download task has hardcoded stuff...
+                queue.add(new DownloadAudioTask(audioResource));
+            }
         }
+    
 
         return new pumpSyncDelegate(queue, progressIndicator);
     }
