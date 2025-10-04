@@ -76,7 +76,7 @@ class AudioTrackMenuView extends WatchUi.View {
     }
 
     function onShow() as Void {
-        System.println("AudioTrackMenuView::onShow()");
+        $.am.debug("AudioTrackMenuView::onShow()");
 
         var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.syncMenuTitle"});
         var audioResources = [];

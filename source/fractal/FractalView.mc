@@ -22,7 +22,7 @@ class FractalView extends WatchUi.View {
     }
 
     function onHide() as Void {
-        System.println("onHide");
+        $.am.debug("onHide");
     }
 
     function onLayout(dc as Graphics.Dc) as Void {
@@ -35,37 +35,37 @@ class FractalView extends WatchUi.View {
         self.centerX = self.width / 2;
         self.centerY = self.height / 2;
 
-        System.println("onLayout");
-        System.println(self.width + "," + self.height);
+        $.am.debug("onLayout");
+        $.am.debug(self.width + "," + self.height);
 
-        // System.println("Drawing");
+        // $.am.debug("Drawing");
         // self.gridRunner(width, height);
-        // System.println("Done");
+        // $.am.debug("Done");
         // View.onLayout(dc);
     }
 
     function gridRunner(width as Number, height as Number) as Void {
         for (var x = 0; x < width; x++) {
             for (var y = 0; y < height; y++) {
-                System.println(x + "," + y);
+                $.am.debug(x + "," + y);
             }
         }
     }
 
     function onShow() as Void {
-        System.println("onShow");
+        $.am.debug("onShow");
     }
 
 // this is called SOOOO offtern, it shoudl ONLY render
     function onUpdate(dc as Graphics.Dc) as Void {
-        System.println("onUpdate");
+        $.am.debug("onUpdate");
 
         // dc.setColor(Graphics.COLOR_RED, Graphics.COLOR_BLUE);
         // dc.fillCircle(50, 100, 75);
 
         for (var limit = 0; limit < 1000; limit++) {
             if (self.inCircle(self.x, self.y)) {
-                System.println(self.x + ", " + self.y);
+                $.am.debug(self.x + ", " + self.y);
                 dc.drawPoint(self.x, self.y);
             }
 

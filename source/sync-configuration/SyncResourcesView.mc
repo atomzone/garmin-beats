@@ -11,7 +11,7 @@ class SyncResourcesView extends WatchUi.View {
     }
 
     function onShow() as Void {
-        System.println("SyncResourcesView::onShow()");
+        $.am.debug("SyncResourcesView::onShow()");
 
         var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.syncMenuTitle"});
 

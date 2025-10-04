@@ -30,7 +30,7 @@ class TaskQueue {
     }
 
     function onTaskComplete(task as Task) as Void {
-        System.println(
+        $.am.debug(
             Lang.format("[+]\tTask($3$) $1$ of $2$", [self.activeTask, self.taskCount, self.hashCode()])
         );
         self.queue.remove(task);
@@ -82,7 +82,7 @@ class CommunicationsQueue extends TaskQueue {
     }
 
     function onProgress(taskPercentageComplete as Number) as Void {
-        System.println("[+]\tTASK IS percentageComplete " + taskPercentageComplete);
+        $.am.debug("[+]\tTASK IS percentageComplete " + taskPercentageComplete);
 
         self.progressIndicator.setProgress(taskPercentageComplete.toFloat());
         Communications.notifySyncProgress(taskPercentageComplete);
@@ -112,11 +112,11 @@ class CommunicationsQueue extends TaskQueue {
         // var currentTaskCompletePercent = (taskMaxPercent / 100) * taskPercentageComplete;
         // var total = queueProgressPercent + currentTaskCompletePercent;
 
-        // System.println("taskPercentageComplete " + taskPercentageComplete);
-        // System.println("taskMaxPercent " + taskMaxPercent);
-        // System.println("queueProgressPercent " + queueProgressPercent);
-        // System.println("currentTaskCompletePercent " + currentTaskCompletePercent);
-        // System.println("total " + total);
+        // $.am.debug("taskPercentageComplete " + taskPercentageComplete);
+        // $.am.debug("taskMaxPercent " + taskMaxPercent);
+        // $.am.debug("queueProgressPercent " + queueProgressPercent);
+        // $.am.debug("currentTaskCompletePercent " + currentTaskCompletePercent);
+        // $.am.debug("total " + total);
 
         // Communications.notifySyncProgress(total.toNumber());
 
@@ -128,14 +128,14 @@ class CommunicationsQueue extends TaskQueue {
         // var taskPercent = (100 / self.taskCount);
         // var combinedPercent = taskPercentageComplete.toDouble() * (taskPercent.toDouble() / 100);
 
-        // System.println(taskPercentageComplete.toDouble());
-        // System.println((taskPercent / 100).toDouble());
-        // System.println((taskPercent.toDouble() / 100));
-        // System.println((taskPercent.toDouble() / 100) * 100);
+        // $.am.debug(taskPercentageComplete.toDouble());
+        // $.am.debug((taskPercent / 100).toDouble());
+        // $.am.debug((taskPercent.toDouble() / 100));
+        // $.am.debug((taskPercent.toDouble() / 100) * 100);
 
-        // System.println(queuePercentageComplete + "!");
-        // System.println(taskPercent + "!");
-        // System.println(combinedPercent + "!");
+        // $.am.debug(queuePercentageComplete + "!");
+        // $.am.debug(taskPercent + "!");
+        // $.am.debug(combinedPercent + "!");
 
         // Communications.notifySyncProgress(combinedPercent.toNumber());
     }

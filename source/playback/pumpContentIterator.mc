@@ -12,13 +12,13 @@ class pumpContentIterator extends Media.ContentIterator {
 
     // Determine if the th[]e current track can be skipped.
     function canSkip() as Boolean {
-        System.println("canSkip");
+        $.am.debug("canSkip");
         return false;
     }
 
     // Get the current media content object.
     function get() as Content? {
-        System.println("get");
+        $.am.debug("get");
         
         return getMediaContent(self.playlist.getActiveIndex());
     }
@@ -32,18 +32,18 @@ class pumpContentIterator extends Media.ContentIterator {
         // // var ref = new Media.ContentRef(file.refId, Media.CONTENT_TYPE_AUDIO);
         // var ref = file.getContentRef();
 
-        // System.println("--------");
-        // System.println("1======> " + file.refId);
-        // System.println( file.getContentRef() );
-        // System.println( ref );
-        // System.println("--------");
+        // $.am.debug("--------");
+        // $.am.debug("1======> " + file.refId);
+        // $.am.debug( file.getContentRef() );
+        // $.am.debug( ref );
+        // $.am.debug("--------");
         
         // Media.getCachedContentObj(ref).setMetadata(tom);
 
         var content = self.playlist.getContentByIndex(index);
         
         if (content != null) {
-            System.println("MEDIA" + content + " REF " + content.getContentRef() + " INDEX " + index);
+            $.am.debug("MEDIA" + content + " REF " + content.getContentRef() + " INDEX " + index);
         }
 
         // var tom = new ContentMetadata();
@@ -121,7 +121,7 @@ class pumpContentIterator extends Media.ContentIterator {
 
     // Determine if playback is currently set to shuffle.
     function shuffling() as Boolean {
-        System.println("shuffling");
+        $.am.debug("shuffling");
         return false;
     }
 

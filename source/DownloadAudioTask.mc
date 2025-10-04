@@ -34,11 +34,11 @@ class DownloadAudioTask extends Task {
             "URL" => self.resource.href
         };
         
-        System.println("[!] Begin (async) request.download()");
+        $.am.debug("[!] Begin (async) request.download()");
         request.download(context, method(:onProgress));
-        System.println("[!] End (call) request.download()");
+        $.am.debug("[!] End (call) request.download()");
     
-        System.println(
+        $.am.debug(
             Lang.format("[+]\tTask $1$", [self.hashCode()])
         );
 
@@ -51,7 +51,7 @@ class DownloadAudioTask extends Task {
     // function onTimeOut(task as Task) as Void {
     //     // here i think we should ERROR
     //     // and that ERROR stops the queue from processing!
-    //     System.println("TIMEOUT " + task.hashCode()) ;
+    //     $.am.debug("TIMEOUT " + task.hashCode()) ;
     //     self.onError.invoke({ :code => 100, :message => "HI" });
     //     // Communications.cancelAllRequests();
     // }
@@ -71,7 +71,7 @@ class DownloadAudioTask extends Task {
             percentageComplete = self.calculatePercentage(totalBytesTransferred, filesize);
         }
 
-        System.println("[+]\tTransferred: " + totalBytesTransferred + " / " + filesize + " (" + percentageComplete + "%)");
+        $.am.debug("[+]\tTransferred: " + totalBytesTransferred + " / " + filesize + " (" + percentageComplete + "%)");
 
         if (self.onProgressCallback != null) {
             self.onProgressCallback.invoke(percentageComplete);
@@ -82,12 +82,12 @@ class DownloadAudioTask extends Task {
         data as Dictionary or String or Null, 
         context as { :callback as Method }
     ) as Void {
-        System.println("[D]\t" + data);
-        System.println("[C]\t" + context);
+        $.am.debug("[D]\t" + data);
+        $.am.debug("[C]\t" + context);
 
         var refId = (data as Media.ContentRef).getId();
 
-        System.println("[R]\t" + refId);
+        $.am.debug("[R]\t" + refId);
 
         // here we should let Audio file have some additional context
         var file = new AudioAsset(refId);

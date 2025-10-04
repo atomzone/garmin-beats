@@ -84,7 +84,7 @@ module pretty {
     //! Write the pretty representation of an object to output.
     //!
     //! write the pretty representation of the given object as if
-    //! by calling to System.println(pretty.dumps(obj)).
+    //! by calling to $.am.debug(pretty.dumps(obj)).
     //!
     //! @param [obj] The object to write.
     //! @throws UnexpectedTypeException if an object type is not known.

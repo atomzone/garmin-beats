@@ -68,16 +68,16 @@ class HttpRequest {
     }
 
     function onResponse(responseCode as Number, data as Dictionary?, context as Object) as Void {
-        System.println("[+]\tResponse Code " + responseCode);
+        $.am.debug("[+]\tResponse Code " + responseCode);
 
         // return response class
         self.handler.invoke(data, context);
     }
 
     function makeRequest(httpRequest as HttpRequestOptions) as Void {
-        System.println("[+]\tHREF " + self.href);
-        System.println("[+]\tHTTP params " + self.parameters);
-        System.println("[+]\tHTTP options " + httpRequest.options);
+        $.am.debug("[+]\tHREF " + self.href);
+        $.am.debug("[+]\tHTTP params " + self.parameters);
+        $.am.debug("[+]\tHTTP options " + httpRequest.options);
 
         Communications.makeWebRequest(
             self.href, 

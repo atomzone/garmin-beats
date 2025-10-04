@@ -20,16 +20,16 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
     }
 
     function onWifiCheck(result as { :wifiAvailable as Boolean, :errorCode as Communications.WifiConnectionStatus }) as Void {
-        System.println(result[:wifiAvailable]);
-        System.println(result[:errorCode]);
+        $.am.debug(result[:wifiAvailable].toString());
+        $.am.debug(result[:errorCode].toString());
     }
 
     // Called when the system starts a sync of the app.
     // The app should begin to download songs chosen in the configure
     // sync view .
     function onStartSync() as Void {
-        System.println("onStartSync");
-        System.println(self.queue);
+        $.am.debug("onStartSync");
+        $.am.debug(self.queue.toString());
 
         // leave to the task??
         // self.progressIndicator.show();
@@ -43,7 +43,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
 
     // Called by the system to determine if the app needs to be synced.
     function isSyncNeeded() as Boolean {
-        System.println("isSyncNeeded" + (self.queue.isEmpty() == false));
+        $.am.debug("isSyncNeeded" + (self.queue.isEmpty() == false));
 
         return self.queue.isEmpty() == false;
     }
@@ -51,7 +51,7 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
     // Called when the user chooses to cancel an active sync.
     // TODO: STOP THE `taskQueue` PROCESSING...
     function onStopSync() as Void {
-        System.println("[+]\tonStopSync");
+        $.am.debug("[+]\tonStopSync");
         self.queue.stop();
 
         // self.progressIndicator.hide();

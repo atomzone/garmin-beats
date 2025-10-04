@@ -16,7 +16,7 @@ class SongEventHandler {
     ) as Void {
         var SongEvents = ["Start", "Skip Next", "Skip Previous", "Playback Notify", "Complete", "Stop", "Pause", "Resume"];
 
-        // System.println(contentRefId);
-        System.println("SONG EVENT: (" + songEvent + ") " + SongEvents[songEvent] + " Track: " + playbackPosition);
+        // $.am.debug(contentRefId);
+        $.am.debug("SONG EVENT: (" + songEvent + ") " + SongEvents[songEvent] + " Track: " + playbackPosition);
     }
 }

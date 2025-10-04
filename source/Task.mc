@@ -4,7 +4,7 @@ class Task {
     var onComplete as Method(task as Task) as Void?;
 
     function execute() as Void {
-        System.println("[+]\tExecuting task: " + self);
+        $.am.debug("[+]\tExecuting task: " + self);
 
         if (self.onComplete != null) {
             self.onComplete.invoke(self);
@@ -33,7 +33,7 @@ class DelayedTask extends Task {
 }
 
 // function tom(task as Task) as Void {
-//     System.println(task);
+//     $.am.debug(task);
 // }
 
 // var task = new DelayedTask(2000);

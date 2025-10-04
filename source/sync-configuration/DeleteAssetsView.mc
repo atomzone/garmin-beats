@@ -11,7 +11,7 @@ class DeleteAssetsView extends WatchUi.View {
     }
 
     function onShow() as Void {
-        System.println("DeleteAssetsView::onShow()");
+        $.am.debug("DeleteAssetsView::onShow()");
 
         var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.syncMenuTitle"});
         

@@ -10,7 +10,7 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item as WatchUi.MenuItem) as Void {
         var id = item.getId();
 
-        System.println("label " + item.getLabel());
+        $.am.debug("label " + item.getLabel());
 
         // var view as WatchUi.Views;
         // var model as WatchUi.InputDelegates;
@@ -97,8 +97,8 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function renderItems(data as Dictionary or String or Null) as Void {
-        System.println("Rendering items");
-        System.println(data);
+        $.am.debug("Rendering items");
+        $.am.debug(data);
 
         var audioResources = [] as Array<AudioTrackModel>;
         var translator = new JellyfinAudioTranslator();
@@ -107,10 +107,10 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
             var jellyfinItem = data["Items"][index] as Dictionary;
             var model = translator.translate(jellyfinItem);
 
-            System.println("Id " + model.id);
-            System.println("Image " + model.image);
-            System.println("Title " + model.title);
-            System.println("Description " + model.artist + ", " + model.album);
+            $.am.debug("Id " + model.id);
+            $.am.debug("Image " + model.image);
+            $.am.debug("Title " + model.title);
+            $.am.debug("Description " + model.artist + ", " + model.album);
 
             audioResources.add(model);
         }
@@ -130,18 +130,18 @@ class SyncConfigureDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function renderArtists(data as Dictionary or String or Null) as Void {
-        System.println("Rendering artists");
-        System.println(data);
+        $.am.debug("Rendering artists");
+        $.am.debug(data);
 
         var translator = new JellyfinAudioTranslator();
 
         for (var index = 0, limit = data["Items"].size(); index < limit; index++) {
-            // System.println(data["Items"][index]["Name"]);
+            // $.am.debug(data["Items"][index]["Name"]);
 
             var jellyfinItem = data["Items"][index] as Dictionary;
             var model = translator.translate(jellyfinItem);
 
-            System.println("(" + model.id + ")" + model.title + " by " + model.artist + " (" + model.durationSeconds + "s)");
+            $.am.debug("(" + model.id + ")" + model.title + " by " + model.artist + " (" + model.durationSeconds + "s)");
         }
     }
 }

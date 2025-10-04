@@ -22,8 +22,8 @@ class pumpApp extends Application.AudioContentProviderApp {
 
         // var resources = new StorageManager("SYNC").get("audio") as Array?;
 
-        // System.println("Audio refs " + getCachedAudioRefIds());
-        // System.println("Audio refs " + resources);
+        // $.am.debug("Audio refs " + getCachedAudioRefIds());
+        // $.am.debug("Audio refs " + resources);
     }
 
     // onStop() is called when your application is exiting
@@ -32,8 +32,8 @@ class pumpApp extends Application.AudioContentProviderApp {
 
         // var resources = new StorageManager("SYNC").get("audio") as Array?;
 
-        // System.println("Audio refs " + getCachedAudioRefIds());
-        // System.println("Audio refs " + resources);
+        // $.am.debug("Audio refs " + getCachedAudioRefIds());
+        // $.am.debug("Audio refs " + resources);
     }
 
     function onSettingsChanged() as Void {

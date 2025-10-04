@@ -30,12 +30,12 @@ class JellyfinBrowserPaginationViewFactory extends WatchUi.ViewLoopFactory {
 
     // Return how many pages or views you want to support
     function getSize() as Number {
-        System.println("[+]\tJellyfinBrowserPaginationViewFactory.getCount: " + self);
+        $.am.debug("[+]\tJellyfinBrowserPaginationViewFactory.getCount: " + self);
         return 5; // Number of pages
     }
 
     // function getView(page as Number) as [WatchUi.View] or [WatchUi.View, WatchUi.BehaviorDelegate] {
-    //     System.println("[+]\tJellyfinBrowserPaginationViewFactory.getView: " + self);
+    //     $.am.debug("[+]\tJellyfinBrowserPaginationViewFactory.getView: " + self);
 
     //     // this is a depenancy inject
     //     // var view = new JellyfinDefaultBrowserView();

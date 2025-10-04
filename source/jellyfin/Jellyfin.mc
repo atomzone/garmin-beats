@@ -76,7 +76,7 @@ class AudioPager {
         }
 
         var fakeData = { "Items" => items };
-        System.println("Fetched page " + pageIndex);
+        $.am.debug("Fetched page " + pageIndex);
         handleApiData(callback, fakeData);
     }
 
