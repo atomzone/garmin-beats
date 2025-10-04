@@ -22,6 +22,10 @@ class pumpContentDelegate extends Media.ContentDelegate {
     // A custom iterator can be created that extends Media.ContentIterator
     // to return only songs chosen in the sync configuration mode.
     function getContentIterator() as ContentIterator? {
+        if (self.playlist == null || self.playlist.getTrackCount() == 0) {
+            return null;
+        }
+
         return new pumpContentIterator(self.playlist);
     }
 

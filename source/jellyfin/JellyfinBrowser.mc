@@ -34,14 +34,14 @@ class JellyfinBrowserPaginationViewFactory extends WatchUi.ViewLoopFactory {
         return 5; // Number of pages
     }
 
-    function getView(page as Number) as [WatchUi.View] or [WatchUi.View, WatchUi.BehaviorDelegate] {
-        System.println("[+]\tJellyfinBrowserPaginationViewFactory.getView: " + self);
+    // function getView(page as Number) as [WatchUi.View] or [WatchUi.View, WatchUi.BehaviorDelegate] {
+    //     System.println("[+]\tJellyfinBrowserPaginationViewFactory.getView: " + self);
 
-        // this is a depenancy inject
-        // var view = new JellyfinDefaultBrowserView();
-        var view = new PlaybackConfigureMenuView();
-        return [view, new WatchUi.BehaviorDelegate()];
-    }
+    //     // this is a depenancy inject
+    //     // var view = new JellyfinDefaultBrowserView();
+    //     var view = new PlaybackConfigureMenuView();
+    //     return [view, new WatchUi.BehaviorDelegate()];
+    // }
 }
 
 // general "api browser" view

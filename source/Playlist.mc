@@ -3,12 +3,10 @@ import Toybox.Media;
 
 class Playlist {
     private var tracks as Array<AudioAsset> = [];
-    private var trackCount as Number = 0;
     private var playIndex as Number = 0;
 
     function initialize(tracks as Array<AudioAsset>) {
         self.tracks = tracks;
-        self.trackCount = tracks.size();
     }
 
     function getActiveIndex() as Number {
@@ -17,6 +15,10 @@ class Playlist {
 
     function getFileByIndex(index as Number) as AudioAsset {
         return self.tracks[index];
+    }
+
+    function getTrackCount() as Number {
+        return self.tracks.size();
     }
 
     // TODO: Remove?
@@ -31,7 +33,7 @@ class Playlist {
     }
 
     function isValidIndex(index as Number) as Boolean {
-        return !(index < 0 or index > self.trackCount - 1);
+        return !(index < 0 or index > getTrackCount() - 1);
     }
 
     function setActiveIndex(index as Number) as Void {

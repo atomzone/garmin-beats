@@ -18,13 +18,21 @@ class pumpApp extends Application.AudioContentProviderApp {
     // onStart() is called on application start up
     function onStart(state as Dictionary?) as Void {
         System.println("AudioContentProviderApp.onStart");
-        System.println(state);
+
+        // var resources = new StorageManager("SYNC").get("audio") as Array?;
+
+        // System.println("Audio refs " + getCachedAudioRefIds());
+        // System.println("Audio refs " + resources);
     }
 
     // onStop() is called when your application is exiting
     function onStop(state as Dictionary?) as Void {
         System.println("AudioContentProviderApp.onStop");
-        System.println(state);
+
+        // var resources = new StorageManager("SYNC").get("audio") as Array?;
+
+        // System.println("Audio refs " + getCachedAudioRefIds());
+        // System.println("Audio refs " + resources);
     }
 
     // Get a Media.ContentDelegate for use by the system to get and iterate through media on the device
@@ -68,6 +76,7 @@ class pumpApp extends Application.AudioContentProviderApp {
         var resources = new StorageManager("SYNC").get("audio") as Array?;
 
         if (resources == null) {
+            System.println("[!] No SYNC resources found");
             return null;
         }
 
@@ -83,6 +92,8 @@ class pumpApp extends Application.AudioContentProviderApp {
                 data["href"] as String, 
                 { :id => data["id"] as String }
             );
+
+            System.println("[!] Building Dowaload task for " + data["href"] as String);
 
             // this download task has hardcoded stuff...
             queue.add(new DownloadAudioTask(audioResource));

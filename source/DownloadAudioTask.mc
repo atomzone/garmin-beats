@@ -16,8 +16,6 @@ class DownloadAudioTask extends Task {
     }
 
     function execute() as Void {
-        System.println(self.resource);
-
         // with params this request is jellyfin specific
         var request = new HttpRequest({ 
             :href => self.resource.href,
@@ -36,7 +34,9 @@ class DownloadAudioTask extends Task {
             "URL" => self.resource.href
         };
         
+        System.println("[!] Begin (async) request.download()");
         request.download(context, method(:onProgress));
+        System.println("[!] End (call) request.download()");
     
         System.println(
             Lang.format("[+]\tTask $1$", [self.hashCode()])

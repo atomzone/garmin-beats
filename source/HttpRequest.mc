@@ -6,7 +6,7 @@ class HttpRequestOptions {
     function initialize(context as Lang.Object?) {
         self.options[:context] = context;
         self.options[:headers] = {};
-        self.setAuthorization("MediaBrowser Client=\"client\", Device=\"device\", DeviceId=\"device-id\", Version=\"version\", Token=\"8f63a081dc484594b0cc7c1cb48ebd4f\"");
+        self.setAuthorization("MediaBrowser Client=\"client\", Device=\"device\", DeviceId=\"device-id\", Version=\"version\", Token=\"17f2a2b1f5eb4deea49c993a87b23a0a\"");
     }
 
     function audioM4a() as HttpRequestOptions {

@@ -85,6 +85,7 @@ class CommunicationsQueue extends TaskQueue {
         System.println("[+]\tTASK IS percentageComplete " + taskPercentageComplete);
 
         self.progressIndicator.setProgress(taskPercentageComplete.toFloat());
+        Communications.notifySyncProgress(taskPercentageComplete);
 
         // queue lenth 1
         // task 1 is 25% complete

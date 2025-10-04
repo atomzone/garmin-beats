@@ -43,6 +43,8 @@ class pumpSyncDelegate extends Communications.SyncDelegate {
 
     // Called by the system to determine if the app needs to be synced.
     function isSyncNeeded() as Boolean {
+        System.println("isSyncNeeded" + (self.queue.isEmpty() == false));
+
         return self.queue.isEmpty() == false;
     }
 

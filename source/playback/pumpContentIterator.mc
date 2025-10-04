@@ -63,7 +63,7 @@ class pumpContentIterator extends Media.ContentIterator {
 
     // Get the current media content playback profile
     function getPlaybackProfile() as PlaybackProfile? {
-        var profile = new Media.PlaybackProfile();
+        var profile = new PlaybackProfile();
         profile.attemptSkipAfterThumbsDown = false;
         profile.playbackControls = [
             PLAYBACK_CONTROL_SKIP_BACKWARD,
@@ -71,11 +71,15 @@ class pumpContentIterator extends Media.ContentIterator {
             PLAYBACK_CONTROL_PLAYBACK,
             PLAYBACK_CONTROL_PREVIOUS,
             PLAYBACK_CONTROL_SKIP_FORWARD,
+            PLAYBACK_CONTROL_RATING,
+            PLAYBACK_CONTROL_VOLUME,
+            PLAYBACK_CONTROL_SOURCE,
             PLAYBACK_CONTROL_LIBRARY
         ];
         profile.playbackNotificationThreshold = 1;
         profile.requirePlaybackNotification = false;
         profile.skipPreviousThreshold = null;
+        
         return profile;
     }
 
