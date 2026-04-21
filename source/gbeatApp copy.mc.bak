@@ -1,0 +1,540 @@
+// =====================================================
+// GARMIN ACP BOILERPLATE - STRONGLY-TYPED (MONKEY C)
+// Single-file, provider-driven, Spotify-like navigation
+// Focus:
+//  - Provider singleton (NOT re-created per call)
+//  - Clear data contracts (song maps)
+//  - Minimal but correct ACP lifecycle
+//  - Jellyfin stub included
+// =====================================================
+
+using Toybox.Application as App;
+using Toybox.WatchUi as Ui;
+using Toybox.Media as Media;
+using Toybox.Communications as Comm;
+using Toybox.System as Sys;
+
+import Toybox.Lang;
+
+// =====================================================
+// TYPES (DOCUMENTED CONTRACTS)
+// =====================================================
+// Song map contract used across UI → Sync → Storage
+// {
+//   "id" => String,        // provider id
+//   "name" => String,      // display name
+//   "url" => String        // download url (or resolved endpoint)
+// }
+
+// Stored metadata (per cached refId)
+// {
+//   "provider" => String,
+//   "remoteId" => String,
+//   "title" => String
+// }
+
+// =====================================================
+// 1. APP ENTRY
+// =====================================================
+
+class AppEntry extends App.AudioContentProviderApp {
+
+    // -vv Single provider instance for app lifecycle
+    private var mProvider; // IProvider
+
+    function initialize() {
+        // Choose provider here (could be based on settings)
+        // mProvider = new StaticProvider();
+        mProvider = new StaticProvider();
+
+        App.AudioContentProviderApp.initialize();
+    }
+
+    function getContentDelegate(args) {
+        return new ContentDelegate();
+    }
+
+    function getSyncDelegate() {
+        return new SyncDelegate(mProvider);
+    }
+
+    function getPlaybackConfigurationView() {
+        return [ new RootMenuView(mProvider) ];
+    }
+
+    function getSyncConfigurationView() as [Ui.Views] or [Ui.Views, Ui.InputDelegates] {
+        return getPlaybackConfigurationView();
+    }
+}
+
+// =====================================================
+// 2. ROOT MENU
+// =====================================================
+
+class RootMenuView extends Ui.View {
+
+    private var mProvider; // IProvider
+    private var mShown = false;
+
+    function initialize(provider) {
+        Ui.View.initialize();
+        mProvider = provider;
+    }
+
+    function onShow() {
+        if (mShown) {
+            Ui.popView(Ui.SLIDE_IMMEDIATE);
+            return;
+        }
+
+        var menu = new Ui.Menu2({:title => "Audio"});
+        menu.addItem(new Ui.MenuItem("Library", null, :library, {}));
+        menu.addItem(new Ui.MenuItem("Browse", null, :browse, {}));
+        menu.addItem(new Ui.MenuItem("Settings", null, :settings, {}));
+
+        Ui.pushView(menu, new RootMenuDelegate(mProvider), Ui.SLIDE_IMMEDIATE);
+        mShown = true;
+    }
+}
+
+class RootMenuDelegate extends Ui.Menu2InputDelegate {
+
+    private var mProvider; // IProvider
+
+    function initialize(provider) {
+        Ui.Menu2InputDelegate.initialize();
+        mProvider = provider;
+    }
+
+    function onSelect(item as Ui.MenuItem) as Void {
+        var id = item.getId();
+        
+        if (id == :library) {
+            Ui.pushView(new LibraryView(), null, Ui.SLIDE_IMMEDIATE);
+        } else if (id == :browse) {
+            Ui.pushView(mProvider.getBrowseView(), null, Ui.SLIDE_IMMEDIATE);
+        } else if (id == :settings) {
+            Ui.pushView(mProvider.getSettingsView(), null, Ui.SLIDE_IMMEDIATE);
+        }
+    }
+}
+
+// =====================================================
+// 3. LIBRARY (DEVICE CACHE)
+// =====================================================
+
+class LibraryView extends Ui.View {
+
+    private var mShown = false;
+
+    function onShow() {
+        if (mShown) {
+            Ui.popView(Ui.SLIDE_IMMEDIATE);
+            return;
+        }
+
+        var iter = Media.getContentRefIter({:contentType => Media.CONTENT_TYPE_AUDIO});
+        var menu = new Ui.Menu2({:title => "Library"});
+
+        var hasContent = false;
+
+        if (iter != null) {
+            var ref = iter.next();
+            while (ref != null) {
+                hasContent = true;
+
+                var obj = Media.getCachedContentObj(ref);
+                var meta = obj.getMetadata();
+
+                menu.addItem(new Ui.MenuItem(meta.title, null, ref.getId(), {}));
+                ref = iter.next();
+            }
+        }
+
+        if (!hasContent) {
+            menu.addItem(new Ui.MenuItem("No content - Browse", null, "empty", {}));
+        }
+
+        Ui.pushView(menu, new LibraryDelegate(hasContent), Ui.SLIDE_IMMEDIATE);
+        mShown = true;
+    }
+}
+
+class LibraryDelegate extends Ui.Menu2InputDelegate {
+
+    private var mHasContent;
+
+    function initialize(hasContent) {
+        Ui.Menu2InputDelegate.initialize();
+        mHasContent = hasContent;
+    }
+
+    function onSelect(item) {
+        if (!mHasContent) {
+            Ui.popView(Ui.SLIDE_IMMEDIATE);
+            return;
+        }
+
+        // -vv Plays all cached content via iterator
+        Media.startPlayback(null);
+    }
+}
+
+// =====================================================
+// 4. PLAYBACK (DELEGATE + ITERATOR)
+// =====================================================
+
+class ContentDelegate extends Media.ContentDelegate {
+
+    private var mIterator; // ContentIterator
+
+    function initialize() {
+        Media.ContentDelegate.initialize();
+        mIterator = new ContentIterator();
+    }
+
+    function getContentIterator() {
+        return mIterator;
+    }
+}
+
+class ContentIterator extends Media.ContentIterator {
+
+    private var mIndex;    // Number
+    private var mList;     // Array<String>
+
+    function initialize() {
+        Media.ContentIterator.initialize();
+
+        mIndex = 0;
+        mList = [];
+
+        var iter = Media.getContentRefIter({:contentType => Media.CONTENT_TYPE_AUDIO});
+        if (iter != null) {
+            var ref = iter.next();
+            while (ref != null) {
+                mList.add(ref.getId());
+                ref = iter.next();
+            }
+        }
+    }
+
+    function get() {
+        if (mIndex < mList.size()) {
+            return Media.getCachedContentObj(new Media.ContentRef(mList[mIndex], Media.CONTENT_TYPE_AUDIO));
+        }
+        return null;
+    }
+
+    function next() {
+        mIndex++;
+        return get();
+    }
+
+    function previous() {
+        if (mIndex > 0) {
+            mIndex--;
+        }
+        return get();
+    }
+}
+
+// =====================================================
+// 5. SYNC (PROVIDER-DRIVEN)
+// =====================================================
+
+class SyncDelegate extends Comm.SyncDelegate {
+
+    private var mProvider; // IProvider
+    private var mQueue;    // Array<Map>
+
+    function initialize(provider) {
+        Comm.SyncDelegate.initialize();
+        mProvider = provider;
+
+        var app = App.getApp();
+        var q = app.getProperty("SYNC_SELECTION");
+        mQueue = (q != null) ? q : [];
+    }
+
+    function isSyncNeeded() {
+        return mQueue.size() > 0;
+    }
+
+    function onStartSync() {
+        processNext();
+    }
+
+    function processNext() {
+        if (mQueue.size() == 0) {
+            Media.notifySyncComplete(null);
+            return;
+        }
+
+        var song = mQueue.remove(0);
+
+        var context = {
+            "provider" => mProvider.getName(),
+            "remoteId" => song["id"],
+            "title" => song["name"]
+        };
+
+        var options = {
+            :method => Comm.HTTP_REQUEST_METHOD_GET,
+            :responseType => Comm.HTTP_RESPONSE_CONTENT_TYPE_AUDIO,
+            :mediaEncoding => Media.ENCODING_MP3
+        };
+
+        var url = mProvider.getStreamUrl(song);
+
+        Comm.makeWebRequest(url, context, options, method(:onDownloaded));
+    }
+
+    function onDownloaded(code as Number, data as Dictionary?, context as Dictionary) as Void {
+        if (code == 200) {
+            var app = App.getApp();
+            var songs = app.getProperty("SONGS");
+            if (songs == null) { songs = {}; }
+
+            // songs[data.getId()] = {
+            //     "provider" => context["provider"],
+            //     "remoteId" => context["remoteId"],
+            //     "title" => context["title"]
+            // };
+
+            // thsi needs a real ID!
+            songs[1] = context["title"]; // simplest
+
+            app.setProperty("SONGS", songs);
+            processNext();
+        } else {
+            Media.notifySyncComplete("Download failed");
+        }
+    }
+}
+
+// =====================================================
+// 6. PROVIDER INTERFACE (BY CONVENTION)
+// =====================================================
+
+// NOTE: Monkey C has no interfaces; document expected methods:
+// getName() : String
+// getBrowseView() : Ui.View
+// getSettingsView() : Ui.View
+// fetchSongs(callback(method))
+// getStreamUrl(song) : String
+
+// =====================================================
+// 7. STATIC PROVIDER (SIMPLE)
+// =====================================================
+
+class StaticProvider {
+
+    function getName() { return "static"; }
+
+    function getBrowseView() {
+        return new StaticBrowseView(self);
+    }
+
+    function getSettingsView() {
+        return new StaticSettingsView();
+    }
+
+    function fetchSongs(callback) {
+        var songs = [
+            {"id" => "1","name" => "Track 1","url" => "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"},
+            {"id" => "2","name" => "Track 2","url" => "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"}
+        ];
+        callback.invoke(songs);
+    }
+
+    function getStreamUrl(song) {
+        return song["url"];
+    }
+}
+
+// =====================================================
+// 8. JELLYFIN PROVIDER (STUB)
+// =====================================================
+
+class JellyfinProvider {
+
+    private var mBaseUrl;   // String
+    private var mApiKey;    // String
+
+    function initialize() {
+        // -vv In real app, load from storage/settings
+        mBaseUrl = "http://your-jellyfin-server:8096";
+        mApiKey = "API_KEY";
+    }
+
+    function getName() { return "jellyfin"; }
+
+    function getBrowseView() {
+        return new JellyfinBrowseView(self);
+    }
+
+    function getSettingsView() {
+        return new JellyfinSettingsView();
+    }
+
+    function fetchSongs(callback) {
+        // -vv Simplified: fetch items (tracks)
+        var url = mBaseUrl + "/Items?IncludeItemTypes=Audio&Recursive=true&api_key=" + mApiKey;
+
+        Comm.makeWebRequest(url, null, { :callback => callback }, method(:onResponse));
+    }
+
+    function onResponse(code as Number, data as Dictionary?, context as Dictionary) as Void {
+        var out = [];
+
+        if (code == 200 && data != null && data["Items"] != null) {
+            var items = data["Items"];
+
+            for (var i = 0; i < items.size(); ++i) {
+                var it = items[i];
+
+                out.add({
+                    "id" => it["Id"],
+                    "name" => it["Name"],
+                    "url" => mBaseUrl + "/Audio/" + it["Id"] + "/stream?api_key=" + mApiKey
+                });
+            }
+        }
+
+        context[:callback].invoke(out);
+    }
+
+    function getStreamUrl(song) {
+        return song["url"]; // already resolved
+    }
+}
+
+// =====================================================
+// 9. BROWSE (GENERIC CHECKBOX FLOW)
+// =====================================================
+
+class StaticBrowseView extends Ui.View {
+
+    private var mProvider;
+    private var mShown = false;
+
+    function initialize(provider) {
+        Ui.View.initialize();
+        mProvider = provider;
+    }
+
+    function onShow() {
+        if (mShown) {
+            Ui.popView(Ui.SLIDE_IMMEDIATE);
+            return;
+        }
+
+        mProvider.fetchSongs(method(:onSongs));
+        mShown = true;
+    }
+
+    function onSongs(songs) {
+        var menu = new Ui.CheckboxMenu({:title => "Browse"});
+
+        for (var i = 0; i < songs.size(); ++i) {
+            var s = songs[i];
+            menu.addItem(new Ui.CheckboxMenuItem(s["name"], null, s, false, {}));
+        }
+
+        Ui.pushView(menu, new BrowseDelegate(), Ui.SLIDE_IMMEDIATE);
+    }
+}
+
+class JellyfinBrowseView extends StaticBrowseView {
+    function initialize(provider) {
+        StaticBrowseView.initialize(provider);
+    }
+}
+
+class BrowseDelegate extends Ui.Menu2InputDelegate {
+
+    private var mSelected = []; // Array<Map>
+
+    function onSelect(item) {
+        if ((item as Ui.CheckboxMenuItem).isChecked()) {
+            mSelected.add(item.getId());
+        } else {
+            mSelected.remove(item.getId());
+        }
+    }
+
+    function onDone() {
+        App.getApp().setProperty("SYNC_SELECTION", mSelected);
+        Media.startPlayback(null);
+    }
+}
+
+// =====================================================
+// 10. SETTINGS (STUBS)
+// =====================================================
+
+class StaticSettingsView extends Ui.View {
+    function onUpdate(dc) {
+        dc.clear();
+        dc.drawText(10, 10, Graphics.FONT_SMALL, "Static Settings", 0);
+    }
+}
+
+class JellyfinSettingsView extends Ui.View {
+    function onUpdate(dc) {
+        dc.clear();
+        dc.drawText(10, 10, Graphics.FONT_SMALL, "Jellyfin Settings", 0);
+    }
+}
+
+// =====================================================
+// END
+// =====================================================
+
+
+// import Toybox.Application;
+// import Toybox.Communications;
+// import Toybox.Lang;
+// import Toybox.Media;
+// import Toybox.WatchUi;
+
+// class gbeatApp extends Application.AudioContentProviderApp {
+
+//     function initialize() {
+//         AudioContentProviderApp.initialize();
+//     }
+
+//     // onStart() is called on application start up
+//     function onStart(state as Dictionary?) as Void {
+//     }
+
+//     // onStop() is called when your application is exiting
+//     function onStop(state as Dictionary?) as Void {
+//     }
+
+//     // Get a Media.ContentDelegate for use by the system to get and iterate through media on the device
+//     function getContentDelegate(arg as PersistableType) as ContentDelegate? {
+//         return new gbeatContentDelegate();
+//     }
+
+//     // Get a delegate that communicates sync status to the system for syncing media content to the device
+//     function getSyncDelegate() as Communications.SyncDelegate? {
+//         return new gbeatSyncDelegate();
+//     }
+
+//     // Get the initial view for configuring playback
+//     function getPlaybackConfigurationView() as [Views] or [Views, InputDelegates] {
+//         return [ new gbeatConfigurePlaybackView(), new gbeatConfigurePlaybackDelegate() ];
+//     }
+
+//     // Get the initial view for configuring sync
+//     function getSyncConfigurationView() as [Views] or [Views, InputDelegates] {
+//         return [ new gbeatConfigureSyncView(), new gbeatConfigureSyncDelegate() ];
+//     }
+
+// }
+
+// function getApp() as gbeatApp {
+//     return Application.getApp() as gbeatApp;
+// }
