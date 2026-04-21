@@ -20,6 +20,9 @@ class PlaybackConfigureDelegate extends WatchUi.Menu2InputDelegate {
             "playlist" => self.enabled,
             "title" => "Playlist Name"
         });
+
+        // most folks do
+        // Media.startPlayback(null);
     }
 
     function onSelect(item as WatchUi.MenuItem) as Void {

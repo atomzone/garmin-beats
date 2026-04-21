@@ -85,6 +85,8 @@ class pumpContentIterator extends Media.ContentIterator {
 
     // Get the next media content object.
     function next() as Content? {
+        $.am.debug("nezt");
+
         var index = self.playlist.getActiveIndex() + 1;
         var content = getMediaContent(index);
         
@@ -98,16 +100,22 @@ class pumpContentIterator extends Media.ContentIterator {
 
     // Get the next media content object without incrementing the iterator.
     function peekNext() as Content? {
+        $.am.debug("peekNext");
+
         return getMediaContent(self.playlist.getActiveIndex() + 1);
     }
 
     // Get the previous media content object without decrementing the iterator.
     function peekPrevious() as Content? {
+        $.am.debug("peekPrevious");
+
         return getMediaContent(self.playlist.getActiveIndex() - 1);
     }
 
     // Get the previous media content object.
     function previous() as Content? {
+        $.am.debug("previous");
+
         var index = self.playlist.getActiveIndex() - 1;
         var content = getMediaContent(index);
         

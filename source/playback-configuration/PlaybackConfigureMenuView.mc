@@ -20,7 +20,7 @@ class PlaybackConfigureMenuView extends WatchUi.View {
         var cachedAudio = getCachedAudioRefIds();
 
         if (cachedAudio.size == 0) {
-            $.am.debug("pumpConfigurePlaybackView.onShow - No cached audio found");
+            System.println("pumpConfigurePlaybackView.onShow - No cached audio found");
             return;
         }
 

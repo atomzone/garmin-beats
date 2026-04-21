@@ -22,6 +22,18 @@ function getCachedAudioRefIds() as Array<Object> {
     return refIds;
 }
 
+class Tom extends WatchUi.Menu2InputDelegate {
+    function initialize() {
+        Menu2InputDelegate.initialize();
+    }
+
+    function onDone() as Void {
+        WatchUi.switchToView(
+            new Rez.Menus.configureSyncMenu(), new SyncConfigureDelegate(), WatchUi.SLIDE_IMMEDIATE
+        );
+    }
+}
+
 class pumpConfigurePlaybackView extends WatchUi.View {
     private var audioRefs as Array<Object>;
 
@@ -53,28 +65,27 @@ class pumpConfigurePlaybackView extends WatchUi.View {
             return;
         }
 
-        Media.startPlayback({ 
-            // "playlist" => [-2030043133, -2030043132],
-            "playlist" => self.audioRefs,
-            "title" => "Playlist Name"
-        });
+        // Media.startPlayback({ 
+        //     // "playlist" => [-2030043133, -2030043132],
+        //     "playlist" => self.audioRefs,
+        //     "title" => "Playlist Name"
+        // });
 
-        // var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.playbackMenuTitle"});
-        // var keys = self.handler.getKeys();
+        var menu = new WatchUi.CheckboxMenu({:title => "Rez.Strings.playbackMenuTitle"});
         
-        // for (var index = 0; index < self.files.size(); index++) {
-        //     var file = self.files[index];
-        //     var item = new WatchUi.CheckboxMenuItem(
-        //         file.getTitle(),
-        //         null,
-        //         file[:refId],
-        //         true,
-        //         null
-        //     );
-        //     menu.addItem(item);
-        // }
+        for (var index = 0; index < self.audioRefs.size(); index++) {
+            // var file = self.audioRefs[index];
+            var item = new WatchUi.CheckboxMenuItem(
+                index.toString(),
+                null,
+                index,
+                true,
+                null
+            );
+            menu.addItem(item);
+        }
 
-        // WatchUi.pushView(menu, new pumpConfigureSyncMenuDelegate(self.handler), WatchUi.SLIDE_IMMEDIATE);
+        WatchUi.pushView(menu, new Tom(), WatchUi.SLIDE_IMMEDIATE); //new pumpConfigureSyncMenuDelegate(self.handler), WatchUi.SLIDE_IMMEDIATE);
     }
 
     // Update the view

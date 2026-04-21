@@ -12,11 +12,11 @@ class SongEventHandler {
     function notify(
         contentRefId as Object, 
         songEvent as SongEvent, 
-        playbackPosition as Number or PlaybackPosition
+        playbackTime as Number or PlaybackPosition
     ) as Void {
-        var SongEvents = ["Start", "Skip Next", "Skip Previous", "Playback Notify", "Complete", "Stop", "Pause", "Resume"];
+        var songEvents = ["Start", "Skip Next", "Skip Previous", "Playback Notify", "Complete", "Stop", "Pause", "Resume"];
+        var eventTitle = songEvents[songEvent] != null ? songEvents[songEvent] : "Unknown";
 
-        // $.am.debug(contentRefId);
-        $.am.debug("SONG EVENT: (" + songEvent + ") " + SongEvents[songEvent] + " Track: " + playbackPosition);
+        $.am.debug("SongEventHandler.notify(" + songEvent + ", '" + eventTitle + "', playback-time => " + playbackTime + ")");
     }
 }

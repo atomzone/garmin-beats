@@ -64,8 +64,8 @@ class pumpApp extends Application.AudioContentProviderApp {
             return getSyncConfigurationView();
         }
 
-        // return [ new pumpConfigurePlaybackView(), new pumpConfigurePlaybackDelegate() ];
-        return [ new pumpConfigurePlaybackView(audioRefs) ];
+        return [ new PlaybackConfigureMenuView() ];
+        // return [ new pumpConfigurePlaybackView(audioRefs) ];
     }
 
     // Get the initial view for configuring sync
@@ -80,16 +80,8 @@ class pumpApp extends Application.AudioContentProviderApp {
     // Get a delegate that communicates sync status to the system for syncing media content to the device
     function getSyncDelegate() as Communications.SyncDelegate? {
         $.am.debug("AudioContentProviderApp.getSyncDelegate");
-        // lets return something!
 
-//
         var resources = new StorageManager("SYNC").get("audio") as Array?;
-
-        // if (resources == null) {
-        //     $.am.debug("[!] No SYNC resources found");
-        //     return null;
-        // }
-
         var progressIndicator = new ProgressBarController(
             new WatchUi.ProgressBar("Download", null)
         );
@@ -110,7 +102,6 @@ class pumpApp extends Application.AudioContentProviderApp {
                 queue.add(new DownloadAudioTask(audioResource));
             }
         }
-    
 
         return new pumpSyncDelegate(queue, progressIndicator);
     }
