@@ -1,7 +1,7 @@
 import Toybox.Lang;
 
 class HttpRequestOptions {
-    var options as Lang.Object = {};
+    var options as { :context as Lang.Object } = {};
 
     function initialize(context as Lang.Object?) {
         self.options[:context] = context;
