@@ -12,13 +12,13 @@ import Toybox.Lang;
 
 class TestSyncDelegate extends Comm.SyncDelegate {
 
-    private var mQueue as Array;
+    private var mQueue as Array<AudioResource>;
 
     function initialize() {
         Comm.SyncDelegate.initialize();
 
-        var q = Application.Storage.getValue("SYNC_SELECTION") as Array?;
-        mQueue = (q != null) ? q : [];
+        var resources = Application.Storage.getValue("SYNC_SELECTION") as Array<AudioResourceType>;
+        mQueue = buildResources(resources);
     }
 
     function isSyncNeeded() as Boolean {
@@ -37,7 +37,7 @@ class TestSyncDelegate extends Comm.SyncDelegate {
         $.am.debug("[!] SYNC DONE");
     }
 
-    function downloadNext() {
+    function downloadNext() as Void {
 
         if (mQueue.size() == 0) {
             onStopSync();
@@ -47,7 +47,7 @@ class TestSyncDelegate extends Comm.SyncDelegate {
         var track = mQueue[0];
         var context = { :track => track };
         var request = new HttpRequest({ 
-            :href => track["url"],
+            :href => track.getSourceUrl(),
             :parameters => {}
         }, method(:onResponse));
       

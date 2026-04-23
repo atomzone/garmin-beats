@@ -20,13 +20,11 @@ class AppEntry extends App.AudioContentProviderApp {
     }
 
     function getContentDelegate(audioRefs as App.PersistableType) as Media.ContentDelegate {
-        $.am.debug("App.getContentDelegate() " + audioRefs);
-
         var tracks = [];
 
         if (audioRefs instanceof Array) {
-            for (var index = 0; index < audioRefs.size(); index++) {
-                tracks.add(new AudioFile(audioRefs[index]));
+            for (var index = 0, limit = audioRefs.size(); index < limit; index++) {
+                tracks.add(new AudioFile(audioRefs[index] as Object));
             }
         }
 

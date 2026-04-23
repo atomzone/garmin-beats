@@ -1,12 +1,12 @@
 import Toybox.Lang;
 
 class HttpRequestOptions {
-    var options as { :context as Lang.Object } = {};
+    var options as { :context as Lang.Object, :headers as Dictionary } = {};
 
-    function initialize(context as Lang.Object?) {
+    function initialize(context as Lang.Object) {
         self.options[:context] = context;
         self.options[:headers] = {};
-        self.setAuthorization("MediaBrowser Client=\"client\", Device=\"device\", DeviceId=\"device-id\", Version=\"version\", Token=\"17f2a2b1f5eb4deea49c993a87b23a0a\"");
+        // self.setAuthorization("MediaBrowser Client=\"client\", Device=\"device\", DeviceId=\"device-id\", Version=\"version\", Token=\"17f2a2b1f5eb4deea49c993a87b23a0a\"");
     }
 
     function audio() as HttpRequestOptions {
@@ -34,9 +34,9 @@ class HttpRequestOptions {
         return self;
     }
 
-    function setAuthorization(authorization as Lang.String) as Void {
-        self.options[:headers]["Authorization"] = authorization;
-    }
+    // function setAuthorization(authorization as Lang.String) as Void {
+    //     self.options[:headers]["Authorization"] = authorization;
+    // }
 }
 
 typedef ResourceType as { 
@@ -55,19 +55,19 @@ class HttpRequest {
         resource as ResourceType,
         handler as HandlerType
     ) {
-        self.href = resource[:href];
+        self.href = resource[:href] as String;
         self.parameters = resource[:parameters];
         self.handler = handler;
     }
 
-    function getJson(context as Lang.Object?) as Void {
+    function getJson(context as Lang.Object) as Void {
         self.makeRequest(
             new HttpRequestOptions(context).get().json()
         );
     }
 
     function downloadMp3(
-        context as Lang.Object?, 
+        context as Lang.Object, 
         onProgressCallback as Method(totalBytesTransferred as Number, filesize as Number?) as Void
     ) as Void {
         var settings = new HttpRequestOptions(context).get().mp3();
@@ -94,7 +94,7 @@ class HttpRequest {
         Communications.makeWebRequest(
             self.href, 
             self.parameters, 
-            httpRequest.options, 
+            httpRequest.options,
             method(:onResponse)
         ); 
     }
