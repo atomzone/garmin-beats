@@ -1,2 +1,4 @@
 bin/
+connectiq-sdk/
 developer_key
+.DS_Store
