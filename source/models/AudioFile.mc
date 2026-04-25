@@ -1,11 +1,11 @@
+using Toybox.Media;
 import Toybox.Lang;
-import Toybox.Media;
 
 class AudioFile {
-    var refId as Object;
+    private var _refId as Object;
 
     function initialize(refId as Object) {
-        self.refId = refId;
+        self._refId = refId;
     }
 
     function delete() as Void {
@@ -18,7 +18,7 @@ class AudioFile {
         // and play position
         //
         // var content = Media.getCachedContentObj(self.getContentRef());
-		// var metadata = content.getMetadata();
+        // var metadata = content.getMetadata();
         // var playbackStartPos = 0; // think podcast and resuming long mixes
         // return new Media.ActiveContent(self.getContentRef(), metadata, playbackStartPos);
         //
@@ -26,10 +26,10 @@ class AudioFile {
     }
 
     function getContentRef() as Media.ContentRef {
-        return new Media.ContentRef(self.refId, Media.CONTENT_TYPE_AUDIO);
+        return new Media.ContentRef(self._refId, Media.CONTENT_TYPE_AUDIO);
     }
 
     function getId() as String {
-        return self.refId.toString();
+        return self._refId.toString();
     }
 }

@@ -4,10 +4,10 @@ typedef AudioResourceType as { "source" as AudioResouceSourceType };
 typedef AudioResouceSourceType as { "url" as String };
 
 class AudioResource extends Object {   
-    private var resource as AudioResourceType;
+    private var _resource as AudioResourceType;
 
     function initialize(resource as AudioResourceType) {
-        self.resource = resource;
+        self._resource = resource;
     }
 
     public function getId() as String {
@@ -15,7 +15,7 @@ class AudioResource extends Object {
     }
 
     public function getSourceUrl() as String {
-        return (self.resource["source"] as AudioResouceSourceType)["url"] as String;
+        return (self._resource["source"] as AudioResouceSourceType)["url"] as String;
     }
 
     public function serialize() as AudioResourceType {

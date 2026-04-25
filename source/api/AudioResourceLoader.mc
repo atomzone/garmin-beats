@@ -1,21 +1,16 @@
-using Toybox.Application as App;
-using Toybox.WatchUi as Ui;
-using Toybox.Media as Media;
-using Toybox.Communications as Comm;
 using Toybox.System as Sys;
-
 import Toybox.Lang;
 
 class AudioResourceLoader {
-    var href as String;
+    private var _href as String;
 
     function initialize(href as String) {
-        self.href = href;
+        self._href = href;
     }
 
     function fetchResources(callback as Method) as Void {
         var request = new HttpRequest({ 
-            :href => self.href,
+            :href => self._href,
             :parameters => {}
         }, method(:onResponseBuildResources));
 

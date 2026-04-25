@@ -3,7 +3,6 @@ using Toybox.WatchUi as Ui;
 using Toybox.Media as Media;
 using Toybox.Communications as Comm;
 using Toybox.System as Sys;
-
 import Toybox.Lang;
 
 class MainMenuInputController extends Ui.Menu2InputDelegate {

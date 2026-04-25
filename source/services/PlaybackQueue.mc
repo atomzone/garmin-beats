@@ -1,40 +1,36 @@
-using Toybox.Application as App;
-using Toybox.WatchUi as Ui;
 using Toybox.Media as Media;
-using Toybox.Communications as Comm;
 using Toybox.System as Sys;
-
 import Toybox.Lang;
 
 class PlaybackQueue extends Media.ContentIterator {
 
-    private var tracks as Array<AudioFile>;
-    private var playIndex as Number;
+    private var _tracks as Array<AudioFile>;
+    private var _playIndex as Number;
 
     function initialize(tracks as Array<AudioFile>) {
         Media.ContentIterator.initialize();
 
-        self.tracks = tracks;
-        self.playIndex = 0;
+        self._tracks = tracks;
+        self._playIndex = 0;
     }
 
     function get() as Media.Content? {
-        if (self.playIndex > self.tracks.size() - 1) {
+        if (self._playIndex > self._tracks.size() - 1) {
             return null;
         }
 
-        var file = self.tracks[self.playIndex];
+        var file = self._tracks[self._playIndex];
         return file.getContent();
     }
 
     function next() as Media.Content? {
-        self.playIndex += 1;
+        self._playIndex += 1;
         return get();
     }
 
     function previous() as Media.Content? {
-        if (self.playIndex > 0) {
-            self.playIndex -= 1;
+        if (self._playIndex > 0) {
+            self._playIndex -= 1;
         }
         return get();
     }

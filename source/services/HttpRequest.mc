@@ -1,17 +1,18 @@
+using Toybox.Communications as Comm;
 import Toybox.Lang;
 
 class HttpRequest {
-    private var handler as HandlerType;
-    private var href as String;
-    private var parameters as Lang.Dictionary<Lang.Object, Lang.Object>?;
+    private var _handler as HandlerType;
+    private var _href as String;
+    private var _parameters as Lang.Dictionary<Lang.Object, Lang.Object>?;
 
     function initialize(
         resource as ResourceType,
         handler as HandlerType
     ) {
-        self.href = resource[:href] as String;
-        self.parameters = resource[:parameters];
-        self.handler = handler;
+        self._href = resource[:href] as String;
+        self._parameters = resource[:parameters];
+        self._handler = handler;
     }
 
     function getJson(context as Lang.Object) as Void {
@@ -37,19 +38,26 @@ class HttpRequest {
         // Media.notifySyncComplete("Fail");
 
         // return response class
-        self.handler.invoke(data, context);
+        self._handler.invoke(data, context);
     }
 
     function makeRequest(httpRequest as HttpRequestOptions) as Void {
-        $.am.debug("[+]\tHREF " + self.href);
-        $.am.debug("[+]\tHTTP params " + self.parameters);
+        $.am.debug("[+]\tHREF " + self._href);
+        $.am.debug("[+]\tHTTP params " + self._parameters);
         $.am.debug("[+]\tHTTP options " + httpRequest.options);
 
-        Communications.makeWebRequest(
-            self.href, 
-            self.parameters, 
+        Comm.makeWebRequest(
+            self._href, 
+            self._parameters, 
             httpRequest.options,
             method(:onResponse)
         ); 
     }
 }
+
+typedef ResourceType as { 
+    :href as String, 
+    :parameters as Lang.Dictionary<Lang.Object, Lang.Object>?
+};
+
+typedef HandlerType as Method(args as Dictionary or String or Null, Context as Object) as Void;

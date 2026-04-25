@@ -1,24 +1,22 @@
 using Toybox.Application as App;
-using Toybox.WatchUi as Ui;
 using Toybox.Media as Media;
 using Toybox.Communications as Comm;
 using Toybox.System as Sys;
-
 import Toybox.Lang;
 
 class SyncManager extends Comm.SyncDelegate {
 
-    private var mQueue as Array<AudioResource>;
+    private var _mQueue as Array<AudioResource>;
 
     function initialize() {
         Comm.SyncDelegate.initialize();
 
         var resources = Application.Storage.getValue("SYNC_SELECTION") as Array<AudioResourceType>;
-        mQueue = buildResources(resources);
+        _mQueue = buildResources(resources);
     }
 
     function isSyncNeeded() as Boolean {
-        return mQueue.size() > 0;
+        return _mQueue.size() > 0;
     }
 
     function onStartSync() {
@@ -35,12 +33,12 @@ class SyncManager extends Comm.SyncDelegate {
 
     function downloadNext() as Void {
 
-        if (mQueue.size() == 0) {
+        if (_mQueue.size() == 0) {
             onStopSync();
             return;
         }
 
-        var track = mQueue[0];
+        var track = _mQueue[0];
         var context = { :track => track };
         var request = new HttpRequest({ 
             :href => track.getSourceUrl(),
@@ -91,7 +89,7 @@ class SyncManager extends Comm.SyncDelegate {
         Application.Storage.setValue("TRACKS", trackRefs);
         
         // remove track from from queue; (on sucess, we need also on fail....)
-        mQueue.remove(context[:track]);
+        _mQueue.remove(context[:track]);
         downloadNext();
     }
 

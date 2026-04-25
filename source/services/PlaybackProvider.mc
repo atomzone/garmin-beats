@@ -1,24 +1,19 @@
-using Toybox.Application as App;
-using Toybox.WatchUi as Ui;
 using Toybox.Media as Media;
-using Toybox.Communications as Comm;
-using Toybox.System as Sys;
-
 import Toybox.Lang;
 
 class PlaybackProvider extends Media.ContentDelegate {
 
-    private var mIterator as Media.ContentIterator;
+    private var _mIterator as Media.ContentIterator;
 
     function initialize(playlist as Array<AudioFile>) {
         Media.ContentDelegate.initialize();
 
         // mIterator = new pumpContentIterator(playlist);
-        mIterator = new PlaybackQueue(playlist);
+        self._mIterator = new PlaybackQueue(playlist);
     }
 
     function getContentIterator() as Media.ContentIterator? {
-        return mIterator;
+        return self._mIterator;
     }
 
     // Respond to a user ad click

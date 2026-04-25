@@ -1,7 +1,9 @@
+using Toybox.Communications as Comm;
+using Toybox.Media as Media;
 import Toybox.Lang;
 
 class HttpRequestOptions {
-    var options as { :context as Lang.Object, :headers as Dictionary } = {};
+    public var options as { :context as Lang.Object, :headers as Dictionary } = {};
 
     function initialize(context as Lang.Object) {
         self.options[:context] = context;
@@ -10,7 +12,7 @@ class HttpRequestOptions {
     }
 
     function audio() as HttpRequestOptions {
-        self.options[:responseType] = Communications.HTTP_RESPONSE_CONTENT_TYPE_AUDIO;
+        self.options[:responseType] = Comm.HTTP_RESPONSE_CONTENT_TYPE_AUDIO;
         return self;
     }
 
@@ -25,12 +27,12 @@ class HttpRequestOptions {
     }
 
     function get() as HttpRequestOptions {
-        self.options[:method] = Communications.HTTP_REQUEST_METHOD_GET;
+        self.options[:method] = Comm.HTTP_REQUEST_METHOD_GET;
         return self;
     }
 
     function json() as HttpRequestOptions {
-        self.options[:responseType] = Communications.HTTP_RESPONSE_CONTENT_TYPE_JSON;
+        self.options[:responseType] = Comm.HTTP_RESPONSE_CONTENT_TYPE_JSON;
         return self;
     }
 
@@ -38,10 +40,3 @@ class HttpRequestOptions {
     //     self.options[:headers]["Authorization"] = authorization;
     // }
 }
-
-typedef ResourceType as { 
-    :href as String, 
-    :parameters as Lang.Dictionary<Lang.Object, Lang.Object>?
-};
-
-typedef HandlerType as Method(args as Dictionary or String or Null, Context as Object) as Void;
