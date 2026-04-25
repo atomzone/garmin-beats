@@ -6,7 +6,7 @@ using Toybox.System as Sys;
 
 import Toybox.Lang;
 
-class MainMenuDelegate extends Ui.Menu2InputDelegate {
+class MainMenuInputController extends Ui.Menu2InputDelegate {
 
     function initialize() {
         Ui.Menu2InputDelegate.initialize();
@@ -49,7 +49,7 @@ class MainMenuDelegate extends Ui.Menu2InputDelegate {
         $.am.debug("dd" + resources);
 
         var view = new ResourceView(resources);
-        var delegate = new ResourceDelegate(resources);
+        var delegate = new ResourceInputController(resources);
 
         Ui.pushView(view, delegate, Ui.SLIDE_BLINK);
     }

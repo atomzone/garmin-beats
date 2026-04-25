@@ -6,7 +6,7 @@ using Toybox.System as Sys;
 
 import Toybox.Lang;
 
-class TestContentDelegate extends Media.ContentDelegate {
+class PlaybackProvider extends Media.ContentDelegate {
 
     private var mIterator as Media.ContentIterator;
 
@@ -14,7 +14,7 @@ class TestContentDelegate extends Media.ContentDelegate {
         Media.ContentDelegate.initialize();
 
         // mIterator = new pumpContentIterator(playlist);
-        mIterator = new TestIterator(playlist);
+        mIterator = new PlaybackQueue(playlist);
     }
 
     function getContentIterator() as Media.ContentIterator? {

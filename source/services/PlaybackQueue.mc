@@ -6,7 +6,7 @@ using Toybox.System as Sys;
 
 import Toybox.Lang;
 
-class TestIterator extends Media.ContentIterator {
+class PlaybackQueue extends Media.ContentIterator {
 
     private var tracks as Array<AudioFile>;
     private var playIndex as Number;

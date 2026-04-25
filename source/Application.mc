@@ -28,15 +28,15 @@ class AppEntry extends App.AudioContentProviderApp {
             }
         }
 
-        return new TestContentDelegate(tracks);
+        return new PlaybackProvider(tracks);
     }
 
     function getSyncDelegate() as Comm.SyncDelegate? {
-        return new TestSyncDelegate();
+        return new SyncManager();
     }
 
     function getPlaybackConfigurationView() {
-        return [ new MainMenuView(), new MainMenuDelegate() ];
+        return [ new MainMenuView(), new MainMenuInputController() ];
     }
 
     function getSyncConfigurationView() {

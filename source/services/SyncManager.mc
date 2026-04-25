@@ -6,7 +6,7 @@ using Toybox.System as Sys;
 
 import Toybox.Lang;
 
-class TestSyncDelegate extends Comm.SyncDelegate {
+class SyncManager extends Comm.SyncDelegate {
 
     private var mQueue as Array<AudioResource>;
 

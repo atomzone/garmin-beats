@@ -6,7 +6,7 @@ using Toybox.System as Sys;
 
 import Toybox.Lang;
 
-class ResourceDelegate extends Ui.Menu2InputDelegate {
+class ResourceInputController extends Ui.Menu2InputDelegate {
     private var enabled as Array<AudioResource> = [];
     private var resources as Array<AudioResource>;
 
