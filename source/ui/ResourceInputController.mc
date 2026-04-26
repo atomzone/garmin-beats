@@ -21,7 +21,7 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
             return;
         }
 
-        Application.Storage.setValue("SYNC_SELECTION", serializeResources(self._enabled));
+        StorageManager.set("SYNC", serializeResources(self._enabled));
         Communications.startSync();
     }
 

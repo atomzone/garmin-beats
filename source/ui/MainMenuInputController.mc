@@ -22,9 +22,8 @@ class MainMenuInputController extends Ui.Menu2InputDelegate {
                     "url" => "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
                 }
             });
-
-            Application.Storage.setValue("SYNC_SELECTION", serializeResources([resource]));
-
+            
+            StorageManager.set("SYNC", serializeResources([resource]));
             Communications.startSync();
 
         } else if (id == :play) {
@@ -32,11 +31,19 @@ class MainMenuInputController extends Ui.Menu2InputDelegate {
             Sys.println("PLAY");
 
             // launch it in playback mode
-            var storedTracks = Application.Storage.getValue("TRACKS") as App.PersistableType?;
-            if (storedTracks == null) { return; }
+            var storedTracks = StorageManager.getOrDefault("TRACKS", []) as Array<TrackRecord>;
+            if (storedTracks.size() == 0) { return; }
 
-            // A serializable object to pass to AudioContentProviderApp.getContentDelegate() when the app starts in playback mode
-            Media.startPlayback(storedTracks);
+            var tracks = [];
+            for (var index = 0, limit = storedTracks.size(); index < limit; index++) {
+                var track = Track.deserialize(storedTracks[index]);
+
+                if (track != null) {
+                    tracks.add(track.getContentRefId());
+                }
+            }
+            
+            Media.startPlayback(tracks as App.PersistableType);
         
         } else if (id == :resources) {
             var loader = new AudioResourceLoader("https://atomzone.github.io/static/tracks.json");

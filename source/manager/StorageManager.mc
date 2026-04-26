@@ -1,53 +1,29 @@
 import Toybox.Application;
 import Toybox.Lang;
 
-typedef StorageKey as String;
-typedef StorageValue as Storage.ValueType;
-typedef PartitionStore as Dictionary<StorageKey, StorageValue>;
+typedef StorageDict as Dictionary<String, StorageDict>;
 
 class StorageManager {
-    private var _partition as String;
-    
-    function initialize(partition as String) {
-        _partition = partition;
+
+    static function get(key as Storage.KeyType) as Storage.ValueType? {
+        return Application.Storage.getValue(key);
     }
-    
-    function get(key as StorageKey) as StorageValue? {
-        var store = getStore();
-        return store.get(key);
-    }
-    
-    function set(key as StorageKey, value as StorageValue) as Void {
-        var store = getStore();
-        store.put(key, value);
-        persist(store);
-    }
-    
-    function delete(key as StorageKey) as Void {
-        var store = getStore();
-        store.remove(key);
-        persist(store);
-    }
-    
-    function hasKey(key as StorageKey) as Boolean {
-        var store = getStore();
-        return store.hasKey(key);
-    }
-    
-    function getOrDefault(key as StorageKey, defaultValue as StorageValue) as StorageValue {
+
+    static function getOrDefault(key as Storage.KeyType, defaultValue as Storage.ValueType) as Storage.ValueType {
         var value = get(key);
         return (value != null) ? value : defaultValue;
     }
-    
-    private function getStore() as PartitionStore {
-        var stored = Storage.getValue(_partition as Storage.KeyType);
-        if (stored instanceof Dictionary) {
-            return stored as PartitionStore;
-        }
-        return {} as PartitionStore;
+
+    static function getArray(key as Storage.KeyType) as Array {
+        var value = get(key);
+        return (value instanceof Array) ? value as Array: [];
     }
     
-    private function persist(store as PartitionStore) as Void {
-        Storage.setValue(_partition as Storage.KeyType, store as StorageValue);
+    static function set(key as Storage.KeyType, value as Storage.ValueType) as Void {
+        Application.Storage.setValue(key, value);
+    }
+
+    static function delete(key as Storage.KeyType) as Void {
+        Application.Storage.deleteValue(key);
     }
 }

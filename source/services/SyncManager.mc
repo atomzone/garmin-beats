@@ -11,7 +11,7 @@ class SyncManager extends Comm.SyncDelegate {
     function initialize() {
         Comm.SyncDelegate.initialize();
 
-        var resources = Application.Storage.getValue("SYNC_SELECTION") as Array<AudioResourceType>;
+        var resources = StorageManager.getArray("SYNC") as Array<AudioResourceType>;
         _mQueue = buildResources(resources);
     }
 
@@ -26,7 +26,7 @@ class SyncManager extends Comm.SyncDelegate {
 
     function onStopSync() as Void {
         $.am.debug("[!] SYNC STOP");
-        Application.Storage.deleteValue("SYNC_SELECTION");
+        StorageManager.delete("SYNC");
         Comm.notifySyncComplete(null);
         $.am.debug("[!] SYNC DONE");
     }
@@ -68,7 +68,7 @@ class SyncManager extends Comm.SyncDelegate {
 
     function onResponse(
         data as Dictionary or String or Null, 
-        context as { :callback as Method }
+        context as { :track as AudioResource }
     ) as Void {
         $.am.debug("[D]\t" + data);
         $.am.debug("[C]\t" + context);
@@ -76,17 +76,17 @@ class SyncManager extends Comm.SyncDelegate {
         var refId = (data as Media.ContentRef).getId();
         $.am.debug("[R]\t" + refId);
 
-        // // here we should let Audio file have some additional context
-        // var file = new AudioAsset(refId);
+        // build and store track
+        var track = new Track(
+            refId,
+            refId.toString(),
+            (context[:track] as AudioResource).getSourceUrl(),
+            "Unknown Title"
+        );
 
-        // // what is this doing?
-        // file.setResourceId(context["ID"] as String); 
-        // file.setMetadata(); // example of using content to set meta data
-
-        var trackRefs = Application.Storage.getValue("TRACKS") as Array?;
-        trackRefs = (trackRefs == null) ? [] : trackRefs;
-        trackRefs.add(refId);
-        Application.Storage.setValue("TRACKS", trackRefs);
+        var stored = StorageManager.getOrDefault("TRACKS", []) as Array<TrackRecord>;
+        stored.add(track.serialize());
+        StorageManager.set("TRACKS", stored as App.Storage.ValueType);
         
         // remove track from from queue; (on sucess, we need also on fail....)
         _mQueue.remove(context[:track]);

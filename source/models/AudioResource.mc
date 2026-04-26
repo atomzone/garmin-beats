@@ -1,3 +1,4 @@
+import Toybox.Application;
 import Toybox.Lang;
 
 typedef AudioResourceType as { "source" as AudioResouceSourceType };
@@ -39,7 +40,7 @@ function buildResources(resources as Array<AudioResourceType>) as Array<AudioRes
     return audio;
 }
 
-function serializeResources(resources as Array<AudioResource>) as Array<$.Toybox.Application.Storage.ValueType> {
+function serializeResources(resources as Array<AudioResource>) as Array<Application.Storage.ValueType> {
     var audio = [];
 
     if (resources instanceof Array) {
