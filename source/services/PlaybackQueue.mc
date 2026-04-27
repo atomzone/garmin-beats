@@ -4,10 +4,10 @@ import Toybox.Lang;
 
 class PlaybackQueue extends Media.ContentIterator {
 
-    private var _tracks as Array<AudioFile>;
+    private var _tracks as Array<AudioAsset>;
     private var _playIndex as Number;
 
-    function initialize(tracks as Array<AudioFile>) {
+    function initialize(tracks as Array<AudioAsset>) {
         Media.ContentIterator.initialize();
 
         self._tracks = tracks;

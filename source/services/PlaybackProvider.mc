@@ -5,7 +5,7 @@ class PlaybackProvider extends Media.ContentDelegate {
 
     private var _mIterator as Media.ContentIterator;
 
-    function initialize(playlist as Array<AudioFile>) {
+    function initialize(playlist as Array<AudioAsset>) {
         Media.ContentDelegate.initialize();
 
         // mIterator = new pumpContentIterator(playlist);
@@ -46,11 +46,17 @@ class PlaybackProvider extends Media.ContentDelegate {
     // Respond to a thumbs-down action
     function onThumbsDown(contentRefId as Object) as Void {
         $.am.debugWithArgs("[onThumbsDown]", contentRefId);
+
+        var asset = new AudioAsset(contentRefId as Number);
+        asset.setThumbsUp(false);
     }
 
     // Respond to a thumbs-up action
     function onThumbsUp(contentRefId as Object) as Void {
         $.am.debugWithArgs("[onThumbsUp]", contentRefId);
+
+        var asset = new AudioAsset(contentRefId as Number);
+        asset.setThumbsUp(true);
     }
 
     // function resetContentIterator() as ContentIterator or Null {

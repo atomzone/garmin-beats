@@ -19,15 +19,8 @@ class AppEntry extends App.AudioContentProviderApp {
     }
 
     function getContentDelegate(audioRefs as App.PersistableType) as Media.ContentDelegate {
-        var tracks = [];
-
-        if (audioRefs instanceof Array) {
-            for (var index = 0, limit = audioRefs.size(); index < limit; index++) {
-                tracks.add(new AudioFile(audioRefs[index] as Object));
-            }
-        }
-
-        return new PlaybackProvider(tracks);
+        var assets = AudioAsset.fromRefIds(audioRefs as Array<Number>);
+        return new PlaybackProvider(assets);
     }
 
     function getSyncDelegate() as Comm.SyncDelegate? {

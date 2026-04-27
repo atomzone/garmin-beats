@@ -73,20 +73,16 @@ class SyncManager extends Comm.SyncDelegate {
         $.am.debug("[D]\t" + data);
         $.am.debug("[C]\t" + context);
 
-        var refId = (data as Media.ContentRef).getId();
+        var refId = (data as Media.ContentRef).getId() as Number;
         $.am.debug("[R]\t" + refId);
 
-        // build and store track
-        var track = new Track(
-            refId,
-            refId.toString(),
-            (context[:track] as AudioResource).getSourceUrl(),
-            "Unknown Title"
-        );
+        var asset = new AudioAsset(refId);
+        var meta = {
+            "title" => "Unknown",
+            "url"   => (context[:track] as AudioResource).getSourceUrl()
+        };
 
-        var stored = StorageManager.getOrDefault("TRACKS", []) as Array<TrackRecord>;
-        stored.add(track.serialize());
-        StorageManager.set("TRACKS", stored as App.Storage.ValueType);
+        asset.save(meta);
         
         // remove track from from queue; (on sucess, we need also on fail....)
         _mQueue.remove(context[:track]);
