@@ -13,6 +13,7 @@ class MainMenuView extends Ui.Menu2 {
 
         addItem(new Ui.MenuItem("Download Track", null, :download, {}));
         addItem(new Ui.MenuItem("Play", null, :play, {}));
+        addItem(new Ui.MenuItem("Select Tracks", null, :selectTracks, {}));
         addItem(new Ui.MenuItem("Resources", null, :resources, {}));
     }
 }

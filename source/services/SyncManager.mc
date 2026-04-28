@@ -11,7 +11,7 @@ class SyncManager extends Comm.SyncDelegate {
     function initialize() {
         Comm.SyncDelegate.initialize();
 
-        var resources = StorageManager.getArray("SYNC") as Array<AudioResourceType>;
+        var resources = StorageManager.getOrDefault("SYNC", []) as Array<AudioResourceType>;
         _mQueue = buildResources(resources);
     }
 
@@ -57,7 +57,7 @@ class SyncManager extends Comm.SyncDelegate {
     function onProgress(totalBytesTransferred as Number, filesize as Number?) as Void {
         var percentageComplete = 0;
 
-        if (filesize > 0) {
+        if (filesize != null && filesize > 0) {
             percentageComplete = ((totalBytesTransferred.toDouble() / filesize.toDouble()) * 100).toNumber();
         }
 
@@ -85,8 +85,7 @@ class SyncManager extends Comm.SyncDelegate {
         asset.save(meta);
         
         // remove track from from queue; (on sucess, we need also on fail....)
-        _mQueue.remove(context[:track]);
+        _mQueue.remove(context[:track] as AudioResource);
         downloadNext();
     }
-
 }

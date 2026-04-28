@@ -31,7 +31,7 @@ class MediaAsset {
         var iterator = Media.getContentRefIter({ :contentType => contentType });
         var ids = [];
 
-        if (iterator == null) {
+        if (iterator as Media.ContentRefIterator? == null) {
             return ids;
         }
 

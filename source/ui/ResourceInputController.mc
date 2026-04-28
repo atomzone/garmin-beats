@@ -13,13 +13,13 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
     }
 
     function onDone() as Void {
-        $.am.debug("Sync selection made" + self._enabled);
-        
-        Ui.popView(Ui.SLIDE_IMMEDIATE); // pop the active view
-
         if (self._enabled.size() == 0) {
+            Ui.popView(Ui.SLIDE_IMMEDIATE);
             return;
         }
+
+        // need a solve for UI races
+        // Ui.switchToView(new MainMenuView(), new MainMenuInputController(), Ui.SLIDE_IMMEDIATE);
 
         StorageManager.set("SYNC", serializeResources(self._enabled));
         Communications.startSync();

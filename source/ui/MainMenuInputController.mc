@@ -37,6 +37,14 @@ class MainMenuInputController extends Ui.Menu2InputDelegate {
         } else if (id == :resources) {
             var loader = new AudioResourceLoader("https://atomzone.github.io/static/tracks.json");
             loader.fetchResources(method(:displayResources));
+        } else if (id == :selectTracks) {
+            var refIds = AudioAsset.getCachedAssetRefIds();
+            var assets = AudioAsset.fromRefIds(refIds);
+            
+            var view = new AssetSelectionView(assets);
+            var controller = new AssetSelectionController(assets);
+
+            Ui.pushView(view, controller, Ui.SLIDE_IMMEDIATE);
         }
     }
 
