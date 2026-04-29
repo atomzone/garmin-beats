@@ -11,7 +11,9 @@ class MainMenuView extends Ui.Menu2 {
     function initialize() {
         Ui.Menu2.initialize({:title => "Test ACP"});
 
-        addItem(new Ui.MenuItem("Download Track", null, :download, {}));
+        addItem(new Ui.MenuItem("Navigation", null, :navigation, {}));
+
+        addItem(new Ui.MenuItem("Download Track", "description", :download, {}));
         addItem(new Ui.MenuItem("Play", null, :play, {}));
         addItem(new Ui.MenuItem("Select Tracks", null, :selectTracks, {}));
         addItem(new Ui.MenuItem("Resources", null, :resources, {}));

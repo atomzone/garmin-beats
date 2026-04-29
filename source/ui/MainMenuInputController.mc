@@ -45,6 +45,8 @@ class MainMenuInputController extends Ui.Menu2InputDelegate {
             var controller = new AssetSelectionController(assets);
 
             Ui.pushView(view, controller, Ui.SLIDE_IMMEDIATE);
+        } else if (id == :navigation) {
+            Ui.pushView(new $.Rez.Menus.MainMenu(), new $.MainMenuController(), Ui.SLIDE_IMMEDIATE);
         }
     }
 

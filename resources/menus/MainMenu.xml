@@ -1,0 +1,11 @@
+<menu2 id="MainMenu" title="@Strings.MainMenuTitle"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+
+    <menu-item id="NowPlaying" label="@Strings.NowPlayingLabel" subLabel="@Strings.NowPlayingDesc"/>
+    <menu-item id="ContinueListening" label="@Strings.ContinueListeningLabel" subLabel="@Strings.ContinueListeningDesc"/>
+    <menu-item id="Library" label="@Strings.LibraryLabel" subLabel="@Strings.LibraryDesc"/>
+    <menu-item id="GetTracks" label="@Strings.GetTracksLabel" subLabel="@Strings.GetTracksDesc"/>
+    <menu-item id="Settings" label="@Strings.SettingsLabel" subLabel="@Strings.SettingsDesc"/>
+
+</menu2>

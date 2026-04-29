@@ -1,0 +1,8 @@
+<menu2 id="StorageMenu" title="@Strings.StorageLabel"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+
+    <menu-item id="Delete" label="@Strings.DeleteLabel" subLabel="@Strings.DeleteDesc"/>
+    <menu-item id="Capacity" label="@Strings.CapacityLabel" subLabel="@Strings.CapacityDesc"/>
+
+</menu2>

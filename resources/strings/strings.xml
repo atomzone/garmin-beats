@@ -3,4 +3,49 @@
 
     <string id="configureSyncMessage">Configure\nSync</string>
     <string id="configurePlaybackMessage">Configure\nPlayback</string>
+
+    <!-- Main Menu -->
+    <string id="MainMenuTitle">Menu</string>
+
+    <string id="NowPlayingLabel">Now Playing</string>
+    <string id="NowPlayingDesc">Resume playback</string>
+
+    <string id="ContinueListeningLabel">Continue Listening</string>
+    <string id="ContinueListeningDesc">Unfinished tracks you started</string>
+
+    <string id="LibraryLabel">Library</string>
+    <string id="LibraryDesc">Select tracks for playback</string>
+
+    <string id="GetTracksLabel">Get Tracks</string>
+    <string id="GetTracksDesc">Add new content</string>
+
+    <string id="SettingsLabel">Settings</string>
+    <string id="SettingsDesc">Manage behaviour and storage</string>
+
+    <!-- Library -->
+    <string id="AllTracksLabel">All Tracks</string>
+    <string id="AllTracksDesc">Your downloaded collection</string>
+
+    <string id="ArtistsLabel">Artists</string>
+    <string id="ArtistsDesc">Grouped by artist</string>
+
+    <string id="LikedLabel">Liked</string>
+    <string id="LikedDesc">Saved tracks</string>
+
+    <!-- Settings -->
+    <string id="PlaybackLabel">Playback</string>
+    <string id="PlaybackDesc">Audio and playback options</string>
+
+    <string id="StorageLabel">Storage</string>
+    <string id="StorageDesc">Downloaded tracks and storage</string>
+
+    <string id="DonateLabel">Donate</string>
+    <string id="DonateDesc">Support development</string>
+
+    <!-- Storage -->
+    <string id="DeleteLabel">Delete</string>
+    <string id="DeleteDesc">Remove downloaded tracks</string>
+
+    <string id="CapacityLabel">Capacity</string>
+    <string id="CapacityDesc">Available space</string>
 </strings>
