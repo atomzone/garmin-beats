@@ -10,11 +10,11 @@ class SettingsMenuController extends Ui.Menu2InputDelegate {
         var id = item.getId();
 
         if (id == :Playback) {
-            
+            // (speed, quality, autoplay)
         } else if (id == :Storage) {
             Ui.pushView(new $.Rez.Menus.StorageMenu(), new Menu2InputDelegate(), Ui.SLIDE_IMMEDIATE);            
         } else if (id == :Donate) {
-
+            // triggers browser to open to donation page
         }
     }
 }

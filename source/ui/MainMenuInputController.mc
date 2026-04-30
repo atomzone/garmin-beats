@@ -46,7 +46,13 @@ class MainMenuInputController extends Ui.Menu2InputDelegate {
 
             Ui.pushView(view, controller, Ui.SLIDE_IMMEDIATE);
         } else if (id == :navigation) {
-            Ui.pushView(new $.Rez.Menus.MainMenu(), new $.MainMenuController(), Ui.SLIDE_IMMEDIATE);
+            var menu = new $.Rez.Menus.MainMenu();
+
+            // example of modifying a menu after it's been created but before it's been pushed
+            deleteMenuItem(menu, :NowPlaying);
+            deleteMenuItem(menu, :ContinueListening);
+
+            Ui.pushView(menu, new $.MainMenuController(), Ui.SLIDE_IMMEDIATE);
         }
     }
 
@@ -57,5 +63,12 @@ class MainMenuInputController extends Ui.Menu2InputDelegate {
         var delegate = new ResourceInputController(resources);
 
         Ui.pushView(view, delegate, Ui.SLIDE_BLINK);
+    }
+
+    private function deleteMenuItem(menu as Ui.Menu2, id as Symbol) as Void {
+        var index = menu.findItemById(id);
+        if (index > -1) {
+            menu.deleteItem(index);
+        }
     }
 }
