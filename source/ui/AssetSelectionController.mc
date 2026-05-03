@@ -20,12 +20,8 @@ class AssetSelectionController extends Ui.Menu2InputDelegate {
             return;
         }
 
-        var refs = [];
-        for (var i = 0; i < _selected.size(); i++) {
-            refs.add(_selected[i].getRefId());
-        }
-
-        Media.startPlayback(refs as App.PersistableType);
+        var payload = buildPayloadStateFromAssets(_selected, "selection", 0);
+        Media.startPlayback(payload as App.PersistableType);
     }
 
     function onSelect(item as Ui.MenuItem) as Void {

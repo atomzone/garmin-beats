@@ -31,8 +31,9 @@ class MainMenuInputController extends Ui.Menu2InputDelegate {
             Sys.println("PLAY");
 
             // launch it in playback mode
-            var refs = AudioAsset.getCachedAssetRefIds();
-            Media.startPlayback(refs as App.PersistableType);
+            var assets = AudioAsset.getCachedAssets();
+            var payload = buildPayloadStateFromAssets(assets, "library", 0);
+            Media.startPlayback(payload as App.PersistableType);
         
         } else if (id == :resources) {
             var loader = new AudioResourceLoader("https://atomzone.github.io/static/tracks.json");

@@ -8,8 +8,9 @@ class PlaybackProvider extends Media.ContentDelegate {
     function initialize(playlist as Array<AudioAsset>) {
         Media.ContentDelegate.initialize();
 
-        // mIterator = new pumpContentIterator(playlist);
-        self._mIterator = new PlaybackQueue(playlist);
+        var queue = new PlaybackQueue();
+        queue.setTracks(playlist);
+        self._mIterator = queue;
     }
 
     function getContentIterator() as Media.ContentIterator? {

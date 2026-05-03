@@ -19,7 +19,9 @@ class AppEntry extends App.AudioContentProviderApp {
     }
 
     function getContentDelegate(audioRefs as App.PersistableType) as Media.ContentDelegate {
-        var assets = AudioAsset.fromRefIds(audioRefs as Array<Number>);
+        var payload = audioRefs as PayloadStateType;
+        var assets = AudioAsset.fromRefIds(payloadStateOrderedRefIds(payload));
+
         return new PlaybackProvider(assets);
     }
 

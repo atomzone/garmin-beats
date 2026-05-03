@@ -6,10 +6,17 @@ class PlaybackQueue extends Media.ContentIterator {
 
     private var _tracks as Array<AudioAsset>;
     private var _playIndex as Number;
+    private var _shuffle as Boolean;
 
-    function initialize(tracks as Array<AudioAsset>) {
+    function initialize() {
         Media.ContentIterator.initialize();
 
+        self._tracks = [];
+        self._playIndex = 0;
+        self._shuffle = false;
+    }
+
+    function setTracks(tracks as Array<AudioAsset>) as Void {
         self._tracks = tracks;
         self._playIndex = 0;
     }
@@ -66,8 +73,7 @@ class PlaybackQueue extends Media.ContentIterator {
 
     // Determine if playback is currently set to shuffle.
     function shuffling() as Boolean {
-        $.am.debug("shuffling");
-        return false;
+        return self._shuffle;
     }
 
 }
