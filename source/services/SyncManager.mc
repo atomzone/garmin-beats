@@ -67,25 +67,57 @@ class SyncManager extends Comm.SyncDelegate {
     }
 
     function onResponse(
-        data as Dictionary or String or Null, 
+        data as Object, // Expected MP3 download will be Media.ContentRef
         context as { :track as AudioResource }
     ) as Void {
         $.am.debug("[D]\t" + data);
         $.am.debug("[C]\t" + context);
 
+        var track = context[:track] as AudioResource;
+
+        if (!(data instanceof Media.ContentRef)) {
+            $.am.debug("[sync.onResponse.fail]\tExpected Media.ContentRef");
+            _mQueue.remove(track);
+            downloadNext();
+            return;
+        }
+
         var refId = (data as Media.ContentRef).getId() as Number;
         $.am.debug("[R]\t" + refId);
 
         var asset = new AudioAsset(refId);
-        var meta = {
-            "title" => "Unknown",
-            "url"   => (context[:track] as AudioResource).getSourceUrl()
-        };
+        var content = asset.getContent();
 
-        asset.save(meta);
-        
-        // remove track from from queue; (on sucess, we need also on fail....)
-        _mQueue.remove(context[:track] as AudioResource);
+        var metadata = buildAssetMetadata(track, content);
+        asset.save(metadata);
+
+        _mQueue.remove(track);
         downloadNext();
+    }
+
+    private function buildAssetMetadata(track as AudioResource, content as Media.Content?) as AssetMeta {
+        var title = track.getTitle();
+        var artist = track.getArtist();
+        var album = track.getAlbum();
+
+        if (content != null) {
+            var mediaMetadata = content.getMetadata();
+
+            if (mediaMetadata != null) {
+                title = StringUtils.hasText(mediaMetadata.title) ? mediaMetadata.title : title;
+                artist = StringUtils.hasText(mediaMetadata.artist) ? mediaMetadata.artist : artist;
+                album = StringUtils.hasText(mediaMetadata.album) ? mediaMetadata.album : album;
+            }
+        }
+
+        return {
+            "title" => StringUtils.stringOrDefault(title, "Unknown"),
+            "artist" => StringUtils.stringOrDefault(artist, "Unknown"),
+            "album" => StringUtils.stringOrDefault(album, "Unknown"),
+            "sourceUrl" => track.getSourceUrl(),
+            "logicalId" => AudioAsset.logicalIdFromUrl(track.getSourceUrl()),
+            "syncedAt" => null,
+            "thumbsUp" => false
+        } as AssetMeta;
     }
 }

@@ -1,8 +1,16 @@
 import Toybox.Application;
 import Toybox.Lang;
 
-typedef AudioResourceType as { "source" as AudioResouceSourceType };
+typedef AudioResourceType as {
+    "source" as AudioResouceSourceType,
+    "meta" as AudioResourceMetaType?
+};
 typedef AudioResouceSourceType as { "url" as String };
+typedef AudioResourceMetaType as {
+    "title" as String?,
+    "artist" as String?,
+    "album" as String?
+};
 
 class AudioResource extends Object {   
     private var _resource as AudioResourceType;
@@ -19,10 +27,27 @@ class AudioResource extends Object {
         return (self._resource["source"] as AudioResouceSourceType)["url"] as String;
     }
 
+    public function getTitle() as String? {
+        return DictionaryUtils.getString(self._resource["meta"] as Dictionary?, "title");
+    }
+
+    public function getArtist() as String? {
+        return DictionaryUtils.getString(self._resource["meta"] as Dictionary?, "artist");
+    }
+
+    public function getAlbum() as String? {
+        return DictionaryUtils.getString(self._resource["meta"] as Dictionary?, "album");
+    }
+
     public function serialize() as AudioResourceType {
         return {
             "source" => {
                 "url" => getSourceUrl()
+            },
+            "meta" => {
+                "title" => getTitle(),
+                "artist" => getArtist(),
+                "album" => getAlbum()
             }
         };
     }

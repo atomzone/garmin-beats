@@ -18,12 +18,21 @@ class AudioResourceLoader {
     }
 
     function onResponseBuildResources(
-        data as Dictionary or String or Null, 
+        data as Object, // Expected JSON will be Dictionary
         context as { :callback as Method }
     ) as Void {
-        var json = (data as { "resources" as Array<AudioResourceType> });
-        var models = buildResources(json["resources"] as Array<AudioResourceType>);
+        if (!(data instanceof Dictionary)) {
+            (context[:callback] as Method).invoke([]);
+            return;
+        }
 
+        var json = data as Dictionary;
+        var resources = [] as Array<AudioResourceType>;
+        if (json.hasKey("resources") && json["resources"] instanceof Array) {
+            resources = json["resources"] as Array<AudioResourceType>;
+        }
+
+        var models = buildResources(resources);
         (context[:callback] as Method).invoke(models);
     }
 }

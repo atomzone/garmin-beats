@@ -5,7 +5,11 @@ import Toybox.Lang;
 
 typedef AssetMeta as {
     "title" as String?,
-    "url" as String?,
+    "artist" as String?,
+    "album" as String?,
+    "sourceUrl" as String?,
+    "logicalId" as String?,
+    "syncedAt" as Number?,
     "thumbsUp" as Boolean?
 };
 
@@ -27,13 +31,49 @@ class AudioAsset extends MediaAsset {
     }
 
     function save(meta as AssetMeta) as Void {
-        StorageManager.set(getStorageKey(), meta as Storage.ValueType);
+        StorageManager.set(getStorageKey(), normalize(meta) as Storage.ValueType);
     }
 
     function load() as AssetMeta {
-        var defaultValue = { } as AssetMeta;
+        var defaultValue = {
+            "title" => "Unknown",
+            "artist" => "Unknown",
+            "album" => "Unknown",
+            "sourceUrl" => null,
+            "logicalId" => null,
+            "syncedAt" => null,
+            "thumbsUp" => false
+        } as AssetMeta;
+
         var value = StorageManager.getOrDefault(getStorageKey(), defaultValue);
-        return value as AssetMeta;
+        return normalize(value);
+    }
+
+    private function normalize(meta as Object?) as AssetMeta {
+        var record = {} as Dictionary;
+
+        if (meta instanceof Dictionary) {
+            record = meta as Dictionary;
+        }
+
+        var sourceUrl = DictionaryUtils.getString(record, "sourceUrl");
+
+        var logicalId = DictionaryUtils.getString(record, "logicalId");
+        if (logicalId == null && sourceUrl != null) {
+            logicalId = AudioAsset.logicalIdFromUrl(sourceUrl);
+        }
+
+        var normalized = {
+            "title" => DictionaryUtils.getStringOrDefault(record, "title", "Unknown"),
+            "artist" => DictionaryUtils.getStringOrDefault(record, "artist", "Unknown"),
+            "album" => DictionaryUtils.getStringOrDefault(record, "album", "Unknown"),
+            "sourceUrl" => sourceUrl,
+            "logicalId" => logicalId,
+            "syncedAt" => DictionaryUtils.getNumber(record, "syncedAt"),
+            "thumbsUp" => DictionaryUtils.getBooleanOrDefault(record, "thumbsUp", false)
+        };
+
+        return normalized as AssetMeta;
     }
 
     static function fromRefIds(ids as Array<Number>?) as Array<AudioAsset> {
@@ -57,5 +97,11 @@ class AudioAsset extends MediaAsset {
         return AudioAsset.fromRefIds(
             AudioAsset.getCachedAssetRefIds()
         );
+    }
+
+    // Canonical derivation of a logicalId from a source URL.
+    // Use this wherever a stable identity is needed for a URL-keyed resource.
+    static function logicalIdFromUrl(sourceUrl as String) as String {
+        return "u:" + sourceUrl.hashCode().toString();
     }
 }

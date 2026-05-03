@@ -1,4 +1,5 @@
 using Toybox.Communications as Comm;
+using Toybox.Media as Media;
 import Toybox.Lang;
 
 class HttpRequest {
@@ -32,20 +33,14 @@ class HttpRequest {
     }
 
     function onResponse(responseCode as Number, data as Dictionary?, context as Object) as Void {
-        $.am.debug("[+]\tResponse " + (responseCode > 0 ? "SUCCESS" : "FAIL"));
-        $.am.debug("[+]\tResponse Code " + responseCode);
+        var ok = responseCode > 0;
+        $.am.debug("[http.response] " + (ok ? "ok" : "fail") + " code=" + responseCode);
 
-        // Media.notifySyncComplete("Fail");
-
-        // return response class
-        self._handler.invoke(data, context);
+        self._handler.invoke(data as Object, context); // Object widens type; handler narrows to Dictionary or Media.ContentRef
     }
 
-    function makeRequest(httpRequest as HttpRequestOptions) as Void {
-        $.am.debug("[+]\tHREF " + self._href);
-        $.am.debug("[+]\tHTTP params " + self._parameters);
-        $.am.debug("[+]\tHTTP options " + httpRequest.options);
-
+    private function makeRequest(httpRequest as HttpRequestOptions) as Void {
+        $.am.debug("[http.request] url=" + self._href);
         Comm.makeWebRequest(
             self._href, 
             self._parameters, 
@@ -60,4 +55,4 @@ typedef ResourceType as {
     :parameters as Lang.Dictionary<Lang.Object, Lang.Object>?
 };
 
-typedef HandlerType as Method(args as Dictionary or String or Null, Context as Object) as Void;
+typedef HandlerType as Method(args as Object, Context as Object) as Void;
