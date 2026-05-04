@@ -30,7 +30,7 @@ class AppEntry extends App.AudioContentProviderApp {
     }
 
     function getPlaybackConfigurationView() {
-        return [ new MainMenuView(), new MainMenuInputController() ];
+        return [ new MainMenuView(), new MainMenuController() ];
     }
 
     function getSyncConfigurationView() {

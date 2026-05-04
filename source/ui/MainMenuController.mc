@@ -1,3 +1,4 @@
+using Toybox.Application as App;
 using Toybox.WatchUi as Ui;
 
 import Toybox.Lang;
@@ -18,6 +19,13 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         } else if (id == :ContinueListening) {
             // resume unfinished tracks
             // hide if no unfinished tracks
+        } else if (id == :PlayAll) {
+
+            // launch playback of all tracks
+            var assets = AudioAsset.getCachedAssets();
+            var payload = buildPayloadStateFromAssets(assets, "library", 0);
+            Media.startPlayback(payload as App.PersistableType);
+
         } else if (id == :Library) {
             // fetch the cached media ids
             // and detirmine which menu items need removeing
@@ -42,4 +50,5 @@ class MainMenuController extends Ui.Menu2InputDelegate {
             self.transition
         );
     }
+    
 }

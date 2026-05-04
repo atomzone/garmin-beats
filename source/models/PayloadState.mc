@@ -49,7 +49,10 @@ function payloadStateRefIds(payload as PayloadStateType) as Array<Number> {
     return refs;
 }
 
-function payloadStateOrderedRefIds(payload as PayloadStateType) as Array<Number> {
+function payloadStateOrderedRefIds(payload as PayloadStateType?) as Array<Number>? {
+    if (payload == null) {
+        return null;
+    }
     var refs = payloadStateRefIds(payload);
     var startIndex = payload["playFromIndex"] as Number;
 

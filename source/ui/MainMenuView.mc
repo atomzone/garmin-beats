@@ -6,16 +6,22 @@ using Toybox.System as Sys;
 
 import Toybox.Lang;
 
-class MainMenuView extends Ui.Menu2 {
+class MainMenuView extends $.Rez.Menus.MainMenu {
 
+    // lets dynamically set the visibility
+    // lets extend the store to have an index for number of tracks
+    // also refactor to to create a delete all (for storage cleanup)
     function initialize() {
-        Ui.Menu2.initialize({:title => "Test ACP"});
+        $.Rez.Menus.MainMenu.initialize();
 
-        addItem(new Ui.MenuItem("Navigation", null, :navigation, {}));
+        deleteMenuItem(:NowPlaying);
+        deleteMenuItem(:ContinueListening);
+    }
 
-        addItem(new Ui.MenuItem("Download Track", "description", :download, {}));
-        addItem(new Ui.MenuItem("Play", null, :play, {}));
-        addItem(new Ui.MenuItem("Select Tracks", null, :selectTracks, {}));
-        addItem(new Ui.MenuItem("Resources", null, :resources, {}));
+    private function deleteMenuItem(id as Symbol) as Void {
+        var index = findItemById(id);
+        if (index > -1) {
+            deleteItem(index);
+        }
     }
 }

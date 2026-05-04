@@ -10,11 +10,10 @@ class AssetSelectionView extends Ui.CheckboxMenu {
         for (var index = 0, limit = assets.size(); index < limit; index++) {
             var asset = assets[index];
             var meta = asset.load();
-            var title = meta["title"] != null ? meta["title"] : "Unknown";
 
             addItem(new Ui.CheckboxMenuItem(
-                title as String,
-                null,
+                meta["title"] as String,
+                meta["artist"],
                 index,
                 false,
                 {}
