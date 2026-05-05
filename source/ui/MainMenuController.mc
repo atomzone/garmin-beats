@@ -13,33 +13,46 @@ class MainMenuController extends Ui.Menu2InputDelegate {
     function onSelect(item as Ui.MenuItem) as Void {
         var id = item.getId();
 
+        // launch now playing view
         if (id == :NowPlaying) {
-            // launch now playing view
-            // hide if no track is playing
+
+
+        // resume unfinished tracks
         } else if (id == :ContinueListening) {
-            // resume unfinished tracks
-            // hide if no unfinished tracks
+
+
+        // launch playback of all tracks
         } else if (id == :PlayAll) {
 
-            // launch playback of all tracks
             var assets = AudioAsset.getCachedAssets();
             var payload = buildPayloadStateFromAssets(assets, "library", 0);
+
             Media.startPlayback(payload as App.PersistableType);
 
+        // push library view
         } else if (id == :Library) {
-            // fetch the cached media ids
-            // and detirmine which menu items need removeing
-            // then pass this into the view & controller
 
-            var view = new $.Rez.Menus.LibraryMenu();
-            Ui.pushView(view, new LibraryController(), self.transition);
+            Ui.pushView(
+                new $.Rez.Menus.LibraryMenu(), 
+                new LibraryController(), 
+                self.transition
+            );
+
+        // async fetch then push reources view
         } else if (id == :GetTracks) {
-            // fetch from API and present options to download
-
+            
             var loader = new AudioResourceLoader("https://atomzone.github.io/static/tracks.json");
+
             loader.fetchResources(method(:displayResources));
+
+        // push settings view
         } else if (id == :Settings) {
-            Ui.pushView(new $.Rez.Menus.SettingsMenu(), new $.SettingsMenuController(), self.transition);
+
+            Ui.pushView(
+                new $.Rez.Menus.SettingsMenu(), 
+                new $.SettingsMenuController(), 
+                self.transition
+            );
         }
     }
     
@@ -50,5 +63,4 @@ class MainMenuController extends Ui.Menu2InputDelegate {
             self.transition
         );
     }
-    
 }

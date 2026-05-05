@@ -1,9 +1,3 @@
-using Toybox.Application as App;
-using Toybox.WatchUi as Ui;
-using Toybox.Media as Media;
-using Toybox.Communications as Comm;
-using Toybox.System as Sys;
-
 import Toybox.Lang;
 
 class MainMenuView extends $.Rez.Menus.MainMenu {
@@ -14,8 +8,17 @@ class MainMenuView extends $.Rez.Menus.MainMenu {
     function initialize() {
         $.Rez.Menus.MainMenu.initialize();
 
+        // Clarify the use of...
         deleteMenuItem(:NowPlaying);
         deleteMenuItem(:ContinueListening);
+
+        // Hide library if no cached assets
+        // Can we use application state to trigger these updates?
+        var cachedAssets = AudioAsset.getCachedAssets();
+        if (cachedAssets.size() == 0) {
+            deleteMenuItem(:PlayAll);
+            deleteMenuItem(:Library);
+        }
     }
 
     private function deleteMenuItem(id as Symbol) as Void {

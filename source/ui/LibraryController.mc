@@ -24,7 +24,7 @@ class LibraryController extends Ui.Menu2InputDelegate {
         } else if (id == :Artists) {
             //
         } else if (id == :Liked) {
-            //
+            // hide this and/or update title to reflect number of liked tracks Liked(101)
         }
     }
 }
