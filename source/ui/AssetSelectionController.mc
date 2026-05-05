@@ -20,8 +20,8 @@ class AssetSelectionController extends Ui.Menu2InputDelegate {
             return;
         }
 
-        var payload = buildPayloadStateFromAssets(_selected, "selection", 0);
-        Media.startPlayback(payload as App.PersistableType);
+        var playlist = new Playlist(_selected, 0);
+        Media.startPlayback(playlist.serialize() as App.PersistableType);
     }
 
     function onSelect(item as Ui.MenuItem) as Void {

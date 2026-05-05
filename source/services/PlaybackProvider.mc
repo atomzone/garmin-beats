@@ -3,13 +3,17 @@ import Toybox.Lang;
 
 class PlaybackProvider extends Media.ContentDelegate {
 
+    private var _trackEventHandler as TrackEventHandler;
     private var _mIterator as Media.ContentIterator;
 
-    function initialize(playlist as Array<AudioAsset>) {
+    function initialize(playlist as Playlist) {
         Media.ContentDelegate.initialize();
 
-        var queue = new PlaybackQueue();
-        queue.setTracks(playlist);
+        var queue = new PlaybackQueue(playlist.getAssets(), playlist.getPlayFromIndex());
+        // TODO(revisit): Handler/store wiring is created inline per provider instance.
+        // If we later coordinate multiple providers/handlers, move this to a factory/owner
+        // so lifecycle and storage ownership are explicit and not accidentally coupled.
+        self._trackEventHandler = new TrackEventHandler(playlist, queue, new PlaylistStore("active"));
         self._mIterator = queue;
     }
 
@@ -38,10 +42,7 @@ class PlaybackProvider extends Media.ContentDelegate {
     // Handles a notification from the system that an event has
     // been triggered for the given song
     function onSong(contentRefId as Object, songEvent as Media.SongEvent, playbackPosition as Number or Media.PlaybackPosition) as Void {
-        // self.songEventHandler.notify(contentRefId, songEvent, playbackPosition);
-        $.am.debug("[onSong] contentRefId " + contentRefId);
-        $.am.debug("[onSong] songEvent " + songEvent);
-        $.am.debug("[onSong] playbackPosition " + playbackPosition);
+        self._trackEventHandler.notify(contentRefId, songEvent, playbackPosition);
     }
 
     // Respond to a thumbs-down action

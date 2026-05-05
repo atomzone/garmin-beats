@@ -1,14 +1,8 @@
 using Toybox.Application as App;
-using Toybox.WatchUi as Ui;
 using Toybox.Media as Media;
 using Toybox.Communications as Comm;
-using Toybox.System as Sys;
+
 import Toybox.Lang;
-
-
-// =====================================================
-// APP
-// =====================================================
 
 var am as ApplicationManager = new ApplicationManager();
 
@@ -19,10 +13,24 @@ class AppEntry extends App.AudioContentProviderApp {
     }
 
     function getContentDelegate(audioRefs as App.PersistableType) as Media.ContentDelegate {
-        var payload = audioRefs as PayloadStateType;
-        var assets = AudioAsset.fromRefIds(payloadStateOrderedRefIds(payload));
+        var store = new PlaylistStore("active");
+        var playlist;
 
-        return new PlaybackProvider(assets);
+        // 1. load current playlist from storage
+        if (audioRefs == null) {
+            playlist = store.getPlaylist();
+
+            if (playlist == null) {
+                playlist = new Playlist([], 0);
+            }
+            return new PlaybackProvider(playlist);
+        }
+
+        // 2. otherwise, build playlist from payload and cache it
+        playlist = playlistFromPayload(audioRefs as PlaylistType);
+        store.setPlaylist(playlist);
+        
+        return new PlaybackProvider(playlist);
     }
 
     function getSyncDelegate() as Comm.SyncDelegate? {

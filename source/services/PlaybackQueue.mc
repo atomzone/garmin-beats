@@ -8,17 +8,16 @@ class PlaybackQueue extends Media.ContentIterator {
     private var _playIndex as Number;
     private var _shuffle as Boolean;
 
-    function initialize() {
+    function initialize(tracks as Array<AudioAsset>, playIndex as Number) {
         Media.ContentIterator.initialize();
 
-        self._tracks = [];
-        self._playIndex = 0;
+        self._tracks = tracks;
+        self._playIndex = (playIndex >= 0 && playIndex < tracks.size()) ? playIndex : 0;
         self._shuffle = false;
     }
 
-    function setTracks(tracks as Array<AudioAsset>) as Void {
-        self._tracks = tracks;
-        self._playIndex = 0;
+    function getPlayIndex() as Number {
+        return self._playIndex;
     }
 
     function get() as Media.Content? {

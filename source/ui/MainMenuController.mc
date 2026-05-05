@@ -25,9 +25,9 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         } else if (id == :PlayAll) {
 
             var assets = AudioAsset.getCachedAssets();
-            var payload = buildPayloadStateFromAssets(assets, "library", 0);
+            var playlist = new Playlist(assets, 0);
 
-            Media.startPlayback(payload as App.PersistableType);
+            Media.startPlayback(playlist.serialize() as App.PersistableType);
 
         // push library view
         } else if (id == :Library) {
