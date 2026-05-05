@@ -6,13 +6,17 @@ class PlaybackQueue extends Media.ContentIterator {
 
     private var _tracks as Array<AudioAsset>;
     private var _playIndex as Number;
+    private var _initialPlayIndex as Number;
+    private var _resumePositionSeconds as Number;
     private var _shuffle as Boolean;
 
-    function initialize(tracks as Array<AudioAsset>, playIndex as Number) {
+    function initialize(tracks as Array<AudioAsset>, playIndex as Number, resumePositionSeconds as Number) {
         Media.ContentIterator.initialize();
 
         self._tracks = tracks;
         self._playIndex = (playIndex >= 0 && playIndex < tracks.size()) ? playIndex : 0;
+        self._initialPlayIndex = self._playIndex;
+        self._resumePositionSeconds = resumePositionSeconds > 0 ? resumePositionSeconds : 0;
         self._shuffle = false;
     }
 
@@ -26,6 +30,11 @@ class PlaybackQueue extends Media.ContentIterator {
         }
 
         var file = self._tracks[self._playIndex];
+
+        if (self._playIndex == self._initialPlayIndex && self._resumePositionSeconds > 0) {
+            return file.getActiveContent(self._resumePositionSeconds);
+        }
+
         return file.getContent();
     }
 

@@ -9,7 +9,7 @@ class PlaybackProvider extends Media.ContentDelegate {
     function initialize(playlist as Playlist) {
         Media.ContentDelegate.initialize();
 
-        var queue = new PlaybackQueue(playlist.getAssets(), playlist.getPlayFromIndex());
+        var queue = new PlaybackQueue(playlist.getAssets(), playlist.getPlayFromIndex(), playlist.getLastTrackPositionSeconds());
         // TODO(revisit): Handler/store wiring is created inline per provider instance.
         // If we later coordinate multiple providers/handlers, move this to a factory/owner
         // so lifecycle and storage ownership are explicit and not accidentally coupled.

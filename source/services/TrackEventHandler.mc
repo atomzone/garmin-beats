@@ -29,23 +29,29 @@ class TrackEventHandler {
     function notify(contentRefId as Object, songEvent as Media.SongEvent, playbackPosition as Number or Media.PlaybackPosition) as Void {
         $.am.debug("[TrackEventHandler] event=" + eventName(songEvent) + " contentRefId=" + contentRefId + " playbackPosition=" + playbackPosition);
 
-        if (!shouldStoreIndex(songEvent)) {
+        // On new track start: update index, reset mid-track position
+        if (songEvent == Media.SONG_EVENT_START) {
+            var playFromIndex = _queue.getPlayIndex();
+            if (playFromIndex != _playlist.getPlayFromIndex()) {
+                _playlist.setPlayFromIndex(playFromIndex);
+                _playlist.setLastTrackPositionSeconds(0);
+                _store.setPlaylist(_playlist);
+                $.am.debug("[TrackEventHandler] stored startIndex=" + playFromIndex);
+            }
             return;
         }
 
-        var playFromIndex = _queue.getPlayIndex();
-        if (playFromIndex == _playlist.getPlayFromIndex()) {
-            return;
+        // On pause or stop: capture position in seconds for mid-track resume
+        if (songEvent == Media.SONG_EVENT_PAUSE || songEvent == Media.SONG_EVENT_STOP) {
+            var seconds = playbackPosition as Number;
+            if (seconds <= 0) {
+                return;
+            }
+
+            _playlist.setLastTrackPositionSeconds(seconds);
+            _store.setPlaylist(_playlist);
+            $.am.debug("[TrackEventHandler] stored lastTrackPosition=" + seconds);
         }
-
-        _playlist.setPlayFromIndex(playFromIndex);
-        _store.setPlaylist(_playlist);
-
-        $.am.debug("[TrackEventHandler] stored startIndex=" + playFromIndex + " event=" + eventName(songEvent));
-    }
-
-    private function shouldStoreIndex(songEvent as Media.SongEvent) as Boolean {
-        return songEvent == Media.SONG_EVENT_START;
     }
 
     private function eventName(songEvent as Media.SongEvent) as String {

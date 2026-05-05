@@ -19,6 +19,17 @@ class AudioAsset extends MediaAsset {
         MediaAsset.initialize(id, Media.CONTENT_TYPE_AUDIO);
     }
 
+    function getActiveContent(startPositionSeconds as Number) as Media.Content {
+        var ref = getContentRef();
+        var content = Media.getCachedContentObj(ref);
+        var metadata = content.getMetadata();
+        var stored = load();
+        metadata.title = DictionaryUtils.getStringOrDefault(stored as Dictionary, "title", "");
+        metadata.artist = DictionaryUtils.getStringOrDefault(stored as Dictionary, "artist", "");
+        metadata.album = DictionaryUtils.getStringOrDefault(stored as Dictionary, "album", "");
+        return new Media.ActiveContent(ref, metadata, startPositionSeconds);
+    }
+
     function getStorageKey() as String {
         return "track:" + getRefId().toString();
     }
