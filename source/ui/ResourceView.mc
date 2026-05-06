@@ -10,8 +10,8 @@ class ResourceView extends Ui.CheckboxMenu {
             var resource = resources[index];
 
             addItem(new Ui.CheckboxMenuItem(
-                resource.getId(),
-                resource.getSourceUrl(),
+                resource.getTitle() as String,
+                resource.getArtist(),
                 index,
                 false,
                 {}

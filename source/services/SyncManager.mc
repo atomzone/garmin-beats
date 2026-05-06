@@ -1,7 +1,5 @@
-using Toybox.Application as App;
 using Toybox.Media as Media;
 using Toybox.Communications as Comm;
-using Toybox.System as Sys;
 import Toybox.Lang;
 
 class SyncManager extends Comm.SyncDelegate {
@@ -21,20 +19,29 @@ class SyncManager extends Comm.SyncDelegate {
 
     function onStartSync() {
         $.am.debug("[!] SYNC START");
+        Comm.checkWifiConnection(method(:onWifiCheckComplete));
+    }
+
+    function onWifiCheckComplete(result as {
+        :wifiAvailable as Boolean,
+        :errorCode as Comm.WifiConnectionStatus
+    }) as Void {
+        if (result[:wifiAvailable] != true) {
+            stopSync("WiFi unavailable: " + result[:errorCode]);
+            return;
+        }
+
         downloadNext();
     }
 
     function onStopSync() as Void {
-        $.am.debug("[!] SYNC STOP");
-        StorageManager.delete("SYNC");
-        Comm.notifySyncComplete(null);
-        $.am.debug("[!] SYNC DONE");
+        stopSync(null);
     }
 
     function downloadNext() as Void {
 
         if (_mQueue.size() == 0) {
-            onStopSync();
+            stopSync(null);
             return;
         }
 
@@ -93,6 +100,13 @@ class SyncManager extends Comm.SyncDelegate {
 
         _mQueue.remove(track);
         downloadNext();
+    }
+
+    private function stopSync(errorMessage as String?) as Void {
+        $.am.debug("[!] SYNC STOP");
+        StorageManager.delete("SYNC");
+        Comm.notifySyncComplete(errorMessage);
+        $.am.debug("[!] SYNC DONE");
     }
 
     private function buildAssetMetadata(track as AudioResource, content as Media.Content?) as AssetMeta {

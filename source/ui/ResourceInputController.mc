@@ -22,7 +22,9 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
         // Ui.switchToView(new MainMenuView(), new MainMenuInputController(), Ui.SLIDE_IMMEDIATE);
 
         StorageManager.set("SYNC", serializeResources(self._enabled));
-        Communications.startSync();
+        Communications.startSync2({
+            :message => "Start the fans, please!",
+        });
     }
 
     function onSelect(item as Ui.MenuItem) as Void {

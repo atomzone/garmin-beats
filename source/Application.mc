@@ -14,20 +14,14 @@ class AppEntry extends App.AudioContentProviderApp {
 
     function getContentDelegate(audioRefs as App.PersistableType) as Media.ContentDelegate {
         var store = new PlaylistStore("active");
-        var playlist;
 
-        // 1. load current playlist from storage
+        // Load playlist from storage
         if (audioRefs == null) {
-            playlist = store.getPlaylist();
-
-            if (playlist == null) {
-                playlist = new Playlist([], 0);
-            }
-            return new PlaybackProvider(playlist, store);
+            return new PlaybackProvider(store.getPlaylist(), store);
         }
 
-        // 2. otherwise, build playlist from payload and cache it
-        playlist = playlistFromPayload(audioRefs as PlaylistType);
+        // Build playlist from payload and persist to storage
+        var playlist = playlistFromPayload(audioRefs as PlaylistType);
         store.setPlaylist(playlist);
 
         return new PlaybackProvider(playlist, store);

@@ -9,16 +9,15 @@ class PlaylistStore {
     }
 
     function setPlaylist(playlist as Playlist) as Void {
-        var serialized = playlist.serialize();
-        StorageManager.set(_key, serialized);
+        StorageManager.set(_key, playlist.serialize());
     }
 
-    function getPlaylist() as Playlist? {
+    function getPlaylist() as Playlist {
         var value = StorageManager.get(_key);
-        if (!(value instanceof Dictionary)) {
-            return null;
+        if (value instanceof Dictionary) {
+            return playlistFromPayload(value as PlaylistType);
         }
 
-        return playlistFromPayload(value as PlaylistType);
+        return new Playlist([], 0);
     }
 }
