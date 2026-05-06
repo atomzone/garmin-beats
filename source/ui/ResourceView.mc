@@ -1,9 +1,4 @@
-using Toybox.Application as App;
 using Toybox.WatchUi as Ui;
-using Toybox.Media as Media;
-using Toybox.Communications as Comm;
-using Toybox.System as Sys;
-
 import Toybox.Lang;
 
 class ResourceView extends Ui.CheckboxMenu {

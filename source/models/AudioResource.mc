@@ -2,10 +2,10 @@ import Toybox.Application;
 import Toybox.Lang;
 
 typedef AudioResourceType as {
-    "source" as AudioResouceSourceType,
+    "source" as AudioResourceSourceType,
     "meta" as AudioResourceMetaType?
 };
-typedef AudioResouceSourceType as { "url" as String };
+typedef AudioResourceSourceType as { "url" as String };
 typedef AudioResourceMetaType as {
     "title" as String?,
     "artist" as String?,
@@ -24,7 +24,7 @@ class AudioResource extends Object {
     }
 
     public function getSourceUrl() as String {
-        return (self._resource["source"] as AudioResouceSourceType)["url"] as String;
+        return (self._resource["source"] as AudioResourceSourceType)["url"] as String;
     }
 
     public function getTitle() as String? {

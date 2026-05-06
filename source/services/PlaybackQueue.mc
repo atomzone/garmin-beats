@@ -1,5 +1,4 @@
 using Toybox.Media as Media;
-using Toybox.System as Sys;
 import Toybox.Lang;
 
 class PlaybackQueue extends Media.ContentIterator {
@@ -14,9 +13,9 @@ class PlaybackQueue extends Media.ContentIterator {
         Media.ContentIterator.initialize();
 
         self._tracks = tracks;
-        self._playIndex = (playIndex >= 0 && playIndex < tracks.size()) ? playIndex : 0;
+        self._playIndex = playIndex;
         self._initialPlayIndex = self._playIndex;
-        self._resumePositionSeconds = resumePositionSeconds > 0 ? resumePositionSeconds : 0;
+        self._resumePositionSeconds = resumePositionSeconds;
         self._shuffle = false;
     }
 
@@ -50,7 +49,7 @@ class PlaybackQueue extends Media.ContentIterator {
         return get();
     }
 
-    // Determine if the th[]e current track can be skipped.
+    // Determine if the current track can be skipped.
     function canSkip() as Boolean {
         $.am.debug("canSkip");
         return false;

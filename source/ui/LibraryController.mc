@@ -1,9 +1,7 @@
 using Toybox.WatchUi as Ui;
 
-import Toybox.Lang;
-
 class LibraryController extends Ui.Menu2InputDelegate {
-    private var transition as Ui.SlideType = Ui.SLIDE_IMMEDIATE;
+    private var _transition as Ui.SlideType = Ui.SLIDE_IMMEDIATE;
 
     function initialize() {
         Ui.Menu2InputDelegate.initialize();
@@ -19,7 +17,7 @@ class LibraryController extends Ui.Menu2InputDelegate {
             Ui.pushView(
                 new AssetSelectionView(assets),
                 new AssetSelectionController(assets),
-                self.transition
+                self._transition
             );
         } else if (id == :Artists) {
             //

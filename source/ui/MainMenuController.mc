@@ -1,10 +1,10 @@
 using Toybox.Application as App;
+using Toybox.Media as Media;
 using Toybox.WatchUi as Ui;
-
 import Toybox.Lang;
 
 class MainMenuController extends Ui.Menu2InputDelegate {
-    private var transition as Ui.SlideType = Ui.SLIDE_IMMEDIATE;
+    private var _transition as Ui.SlideType = Ui.SLIDE_IMMEDIATE;
 
     function initialize() {
         Ui.Menu2InputDelegate.initialize();
@@ -35,7 +35,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
             Ui.pushView(
                 new $.Rez.Menus.LibraryMenu(), 
                 new LibraryController(), 
-                self.transition
+                self._transition
             );
 
         // async fetch then push reources view
@@ -51,7 +51,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
             Ui.pushView(
                 new $.Rez.Menus.SettingsMenu(), 
                 new $.SettingsMenuController(), 
-                self.transition
+                self._transition
             );
         }
     }
@@ -60,7 +60,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         Ui.pushView(
             new ResourceView(resources),
             new ResourceInputController(resources),
-            self.transition
+            self._transition
         );
     }
 }

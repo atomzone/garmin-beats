@@ -12,7 +12,7 @@ class SettingsMenuController extends Ui.Menu2InputDelegate {
         if (id == :Playback) {
             // (speed, quality, autoplay)
         } else if (id == :Storage) {
-            Ui.pushView(new $.Rez.Menus.StorageMenu(), new Menu2InputDelegate(), Ui.SLIDE_IMMEDIATE);            
+            Ui.pushView(new $.Rez.Menus.StorageMenu(), new Ui.Menu2InputDelegate(), Ui.SLIDE_IMMEDIATE);
         } else if (id == :Donate) {
             // triggers browser to open to donation page
         }
