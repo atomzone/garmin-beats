@@ -23,14 +23,14 @@ class AppEntry extends App.AudioContentProviderApp {
             if (playlist == null) {
                 playlist = new Playlist([], 0);
             }
-            return new PlaybackProvider(playlist);
+            return new PlaybackProvider(playlist, store);
         }
 
         // 2. otherwise, build playlist from payload and cache it
         playlist = playlistFromPayload(audioRefs as PlaylistType);
         store.setPlaylist(playlist);
-        
-        return new PlaybackProvider(playlist);
+
+        return new PlaybackProvider(playlist, store);
     }
 
     function getSyncDelegate() as Comm.SyncDelegate? {

@@ -32,11 +32,9 @@ class TrackEventHandler {
         // On new track start: update index, reset mid-track position
         if (songEvent == Media.SONG_EVENT_START) {
             var playFromIndex = _queue.getPlayIndex();
-            if (playFromIndex != _playlist.getPlayFromIndex()) {
-                _playlist.setPlayFromIndex(playFromIndex);
-                _playlist.setLastTrackPositionSeconds(0);
+            if (_playlist.updateOnTrackStart(playFromIndex)) {
                 _store.setPlaylist(_playlist);
-                $.am.debug("[TrackEventHandler] stored startIndex=" + playFromIndex);
+                $.am.debug("[TrackEventHandler] stored trackStartIndex=" + playFromIndex + " lastTrackPosition=0");
             }
             return;
         }
@@ -44,13 +42,10 @@ class TrackEventHandler {
         // On pause or stop: capture position in seconds for mid-track resume
         if (songEvent == Media.SONG_EVENT_PAUSE || songEvent == Media.SONG_EVENT_STOP) {
             var seconds = playbackPosition as Number;
-            if (seconds <= 0) {
-                return;
+            if (_playlist.updateResumePosition(seconds)) {
+                _store.setPlaylist(_playlist);
+                $.am.debug("[TrackEventHandler] stored lastTrackPosition=" + seconds);
             }
-
-            _playlist.setLastTrackPositionSeconds(seconds);
-            _store.setPlaylist(_playlist);
-            $.am.debug("[TrackEventHandler] stored lastTrackPosition=" + seconds);
         }
     }
 

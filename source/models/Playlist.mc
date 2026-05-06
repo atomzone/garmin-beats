@@ -19,7 +19,7 @@ class Playlist {
 
     function initialize(assets as Array<AudioAsset>, playFromIndex as Number) {
         _assets = assets;
-        _playFromIndex = playFromIndex < 0 ? 0 : playFromIndex;
+        _playFromIndex = clampIndex(playFromIndex);
         _lastTrackPositionSeconds = 0;
     }
 
@@ -27,20 +27,54 @@ class Playlist {
         return _assets;
     }
 
-    function getPlayFromIndex() as Number {
+    function getCurrentTrackIndex() as Number {
         return _playFromIndex;
     }
 
-    function setPlayFromIndex(playFromIndex as Number) as Void {
-        _playFromIndex = playFromIndex < 0 ? 0 : playFromIndex;
-    }
-
-    function getLastTrackPositionSeconds() as Number {
+    function getResumePositionSeconds() as Number {
         return _lastTrackPositionSeconds;
     }
 
-    function setLastTrackPositionSeconds(seconds as Number) as Void {
-        _lastTrackPositionSeconds = seconds < 0 ? 0 : seconds;
+    // Track start defines the active cursor and invalidates any old resume offset.
+    function updateOnTrackStart(playFromIndex as Number) as Boolean {
+        var normalizedIndex = clampIndex(playFromIndex);
+        var changed = (_playFromIndex != normalizedIndex) || (_lastTrackPositionSeconds != 0);
+
+        _playFromIndex = normalizedIndex;
+        _lastTrackPositionSeconds = 0;
+
+        return changed;
+    }
+
+    function updateResumePosition(seconds as Number) as Boolean {
+        var normalizedSeconds = clampSeconds(seconds);
+        if (normalizedSeconds <= 0) {
+            return false;
+        }
+
+        _lastTrackPositionSeconds = normalizedSeconds;
+        return true;
+    }
+
+    function restoreResumePosition(seconds as Number) as Void {
+        _lastTrackPositionSeconds = clampSeconds(seconds);
+    }
+
+    private function clampIndex(playFromIndex as Number) as Number {
+        if (playFromIndex < 0) {
+            return 0;
+        }
+
+        var maxIndex = _assets.size() - 1;
+        if (maxIndex >= 0 && playFromIndex > maxIndex) {
+            return maxIndex;
+        }
+
+        return playFromIndex;
+    }
+
+    private function clampSeconds(seconds as Number) as Number {
+        return seconds < 0 ? 0 : seconds;
     }
 
     function serialize() as PlaylistType {
@@ -75,7 +109,7 @@ function playlistFromPayload(payload as PlaylistType) as Playlist {
 
     var lastTrackPos = DictionaryUtils.getNumber(payload as Dictionary, "lastTrackPosition");
     if (lastTrackPos != null && lastTrackPos > 0) {
-        playlist.setLastTrackPositionSeconds(lastTrackPos);
+        playlist.restoreResumePosition(lastTrackPos);
     }
 
     return playlist;

@@ -6,14 +6,16 @@ class PlaybackProvider extends Media.ContentDelegate {
     private var _trackEventHandler as TrackEventHandler;
     private var _mIterator as Media.ContentIterator;
 
-    function initialize(playlist as Playlist) {
+    function initialize(playlist as Playlist, store as PlaylistStore) {
         Media.ContentDelegate.initialize();
 
-        var queue = new PlaybackQueue(playlist.getAssets(), playlist.getPlayFromIndex(), playlist.getLastTrackPositionSeconds());
-        // TODO(revisit): Handler/store wiring is created inline per provider instance.
-        // If we later coordinate multiple providers/handlers, move this to a factory/owner
-        // so lifecycle and storage ownership are explicit and not accidentally coupled.
-        self._trackEventHandler = new TrackEventHandler(playlist, queue, new PlaylistStore("active"));
+        var queue = new PlaybackQueue(
+            playlist.getAssets(),
+            playlist.getCurrentTrackIndex(),
+            playlist.getResumePositionSeconds()
+        );
+
+        self._trackEventHandler = new TrackEventHandler(playlist, queue, store);
         self._mIterator = queue;
     }
 
