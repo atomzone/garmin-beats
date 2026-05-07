@@ -22,12 +22,20 @@ class AudioAsset extends MediaAsset {
     function getActiveContent(startPositionSeconds as Number) as Media.Content {
         var ref = getContentRef();
         var content = Media.getCachedContentObj(ref);
+        return new Media.ActiveContent(ref, content.getMetadata(), startPositionSeconds);
+    }
+
+    // TODO: shoudl we passs content?
+    function saveAndApplyMetadata(content as Media.Content, meta as AssetMeta) as Void {
+        save(meta);
+        
         var metadata = content.getMetadata();
-        var stored = load();
-        metadata.title = DictionaryUtils.getStringOrDefault(stored as Dictionary, "title", "");
-        metadata.artist = DictionaryUtils.getStringOrDefault(stored as Dictionary, "artist", "");
-        metadata.album = DictionaryUtils.getStringOrDefault(stored as Dictionary, "album", "");
-        return new Media.ActiveContent(ref, metadata, startPositionSeconds);
+        if (metadata != null) {
+            metadata.title = meta["title"] as String;
+            metadata.artist = meta["artist"] as String;
+            metadata.album = meta["album"] as String;
+        }
+        content.setMetadata(metadata);
     }
 
     function getStorageKey() as String {

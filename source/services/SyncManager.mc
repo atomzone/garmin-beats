@@ -4,17 +4,17 @@ import Toybox.Lang;
 
 class SyncManager extends Comm.SyncDelegate {
 
-    private var _mQueue as Array<AudioResource>;
+    private var _queue as Array<AudioResource>;
 
     function initialize() {
         Comm.SyncDelegate.initialize();
 
         var resources = StorageManager.getOrDefault("SYNC", []) as Array<AudioResourceType>;
-        _mQueue = buildResources(resources);
+        _queue = buildResources(resources);
     }
 
     function isSyncNeeded() as Boolean {
-        return _mQueue.size() > 0;
+        return _queue.size() > 0;
     }
 
     function onStartSync() {
@@ -40,12 +40,12 @@ class SyncManager extends Comm.SyncDelegate {
 
     function downloadNext() as Void {
 
-        if (_mQueue.size() == 0) {
+        if (_queue.size() == 0) {
             stopSync(null);
             return;
         }
 
-        var track = _mQueue[0];
+        var track = _queue[0];
         var context = { :track => track };
         var request = new HttpRequest({ 
             :href => track.getSourceUrl(),
@@ -55,10 +55,6 @@ class SyncManager extends Comm.SyncDelegate {
         $.am.debug("[!] Begin (async) request.download()");
         request.downloadMp3(context, method(:onProgress));
         $.am.debug("[!] End (call) request.download()");
-    
-        $.am.debug(
-            Lang.format("[+]\tTask $1$", [self.hashCode()])
-        );
     }
 
     function onProgress(totalBytesTransferred as Number, filesize as Number?) as Void {
@@ -77,14 +73,11 @@ class SyncManager extends Comm.SyncDelegate {
         data as Object, // Expected MP3 download will be Media.ContentRef
         context as { :track as AudioResource }
     ) as Void {
-        $.am.debug("[D]\t" + data);
-        $.am.debug("[C]\t" + context);
-
         var track = context[:track] as AudioResource;
 
         if (!(data instanceof Media.ContentRef)) {
             $.am.debug("[sync.onResponse.fail]\tExpected Media.ContentRef");
-            _mQueue.remove(track);
+            _queue.remove(track);
             downloadNext();
             return;
         }
@@ -94,11 +87,10 @@ class SyncManager extends Comm.SyncDelegate {
 
         var asset = new AudioAsset(refId);
         var content = asset.getContent();
-
         var metadata = buildAssetMetadata(track, content);
-        asset.save(metadata);
+        asset.saveAndApplyMetadata(content, metadata);
 
-        _mQueue.remove(track);
+        _queue.remove(track);
         downloadNext();
     }
 
