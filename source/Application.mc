@@ -17,11 +17,14 @@ class AppEntry extends App.AudioContentProviderApp {
 
         // Load playlist from storage
         if (audioRefs == null) {
-            return new PlaybackProvider(store.getPlaylist(), store);
+            var stored = store.getPlaylist();
+            $.am.debug("[AppEntry.getContentDelegate] source=store assets=" + stored.getAssets().size() + " index=" + stored.getCurrentTrackIndex() + " resume=" + stored.getResumePositionSeconds());
+            return new PlaybackProvider(stored, store);
         }
 
         // Build playlist from payload and persist to storage
         var playlist = playlistFromPayload(audioRefs as PlaylistType);
+        $.am.debug("[AppEntry.getContentDelegate] source=payload assets=" + playlist.getAssets().size() + " index=" + playlist.getCurrentTrackIndex() + " resume=" + playlist.getResumePositionSeconds());
         store.setPlaylist(playlist);
 
         return new PlaybackProvider(playlist, store);
