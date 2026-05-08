@@ -27,7 +27,7 @@ class TrackEventHandler {
     }
 
     function notify(contentRefId as Object, songEvent as Media.SongEvent, playbackPosition as Number or Media.PlaybackPosition) as Void {
-        $.am.debug("[TrackEventHandler] event=" + eventName(songEvent) + " contentRefId=" + contentRefId + " playbackPosition=" + playbackPosition);
+        // $.am.debug("[TrackEventHandler] event=" + eventName(songEvent) + " contentRefId=" + contentRefId + " playbackPosition=" + playbackPosition);
 
         // On new track start: update index, reset mid-track position
         if (songEvent == Media.SONG_EVENT_START) {

@@ -18,7 +18,7 @@ class SyncManager extends Comm.SyncDelegate {
     }
 
     function onStartSync() {
-        $.am.debug("[!] SYNC START");
+        // $.am.debug("[!] SYNC START");
         Comm.checkWifiConnection(method(:onWifiCheckComplete));
     }
 
@@ -52,9 +52,9 @@ class SyncManager extends Comm.SyncDelegate {
             :parameters => {}
         }, method(:onResponse));
       
-        $.am.debug("[!] Begin (async) request.download()");
+        // $.am.debug("[!] Begin (async) request.download()");
         request.downloadMp3(context, method(:onProgress));
-        $.am.debug("[!] End (call) request.download()");
+        // $.am.debug("[!] End (call) request.download()");
     }
 
     function onProgress(totalBytesTransferred as Number, filesize as Number?) as Void {
@@ -64,7 +64,7 @@ class SyncManager extends Comm.SyncDelegate {
             percentageComplete = ((totalBytesTransferred.toDouble() / filesize.toDouble()) * 100).toNumber();
         }
 
-        $.am.debug("[+]\tTransferred: " + totalBytesTransferred + " / " + filesize + " (" + percentageComplete + "%)");
+        // $.am.debug("[+]\tTransferred: " + totalBytesTransferred + " / " + filesize + " (" + percentageComplete + "%)");
 
         notifySyncProgress(percentageComplete);
     }
@@ -95,10 +95,10 @@ class SyncManager extends Comm.SyncDelegate {
     }
 
     private function stopSync(errorMessage as String?) as Void {
-        $.am.debug("[!] SYNC STOP");
+        // $.am.debug("[!] SYNC STOP");
         StorageManager.delete("SYNC");
         Comm.notifySyncComplete(errorMessage);
-        $.am.debug("[!] SYNC DONE");
+        // $.am.debug("[!] SYNC DONE");
     }
 
     private function buildAssetMetadata(track as AudioResource, content as Media.Content?) as AssetMeta {

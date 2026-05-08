@@ -1,16 +1,13 @@
-import Toybox.Application;
-
-import Toybox.Lang;
-
-import Toybox.System;
-
 using Toybox.Time;
 using Toybox.Time.Gregorian;
+import Toybox.Lang;
+import Toybox.System;
 
 class ApplicationManager {
     public function debug(message as String) as Void {
-        var timestamp = getTimestamp();
-        System.println("[" + timestamp + "] " + message);
+        // var timestamp = getTimestamp();
+        // System.println("[" + timestamp + "] " + message);
+        System.println(message);
     }
 
     public function debugWithArgs(message as String, args as Object) as Void {

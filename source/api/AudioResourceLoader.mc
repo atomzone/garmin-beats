@@ -1,4 +1,3 @@
-using Toybox.System as Sys;
 import Toybox.Lang;
 
 class AudioResourceLoader {

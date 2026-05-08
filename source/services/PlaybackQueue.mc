@@ -76,15 +76,18 @@ class PlaybackQueue extends Media.ContentIterator {
         var profile = new PlaybackProfile();
         profile.attemptSkipAfterThumbsDown = false;
         profile.playbackControls = [
-            PLAYBACK_CONTROL_SKIP_BACKWARD,
-            PLAYBACK_CONTROL_NEXT,
-            PLAYBACK_CONTROL_PLAYBACK,
-            PLAYBACK_CONTROL_PREVIOUS,
-            PLAYBACK_CONTROL_SKIP_FORWARD,
-            PLAYBACK_CONTROL_RATING,
-            PLAYBACK_CONTROL_VOLUME,
-            PLAYBACK_CONTROL_SOURCE,
-            PLAYBACK_CONTROL_LIBRARY
+            // first linked to hotkey (if supported)
+            Media.PLAYBACK_CONTROL_PLAYBACK,      // Allow Play/Pause control
+            // Media.PLAYBACK_CONTROL_SHUFFLE,       // Allow Shuffle control
+            Media.PLAYBACK_CONTROL_PREVIOUS,      // Allow Previous control
+            Media.PLAYBACK_CONTROL_NEXT,          // Allow Next control
+            // Media.PLAYBACK_CONTROL_SKIP_FORWARD,  // Allow Skip-Forward control
+            // Media.PLAYBACK_CONTROL_SKIP_BACKWARD, // Allow Skip-Backward control
+            // Media.PLAYBACK_CONTROL_REPEAT,        // Allow Repeat control
+            // Media.PLAYBACK_CONTROL_RATING         // Allow Ratings control
+            // PLAYBACK_CONTROL_VOLUME, CustomButton, and SystemButton??
+            // PLAYBACK_CONTROL_SOURCE, ||
+            // PLAYBACK_CONTROL_LIBRARY ||
         ];
         profile.playbackNotificationThreshold = 1;
         profile.requirePlaybackNotification = false;
