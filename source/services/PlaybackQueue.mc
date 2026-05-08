@@ -24,42 +24,43 @@ class PlaybackQueue extends Media.ContentIterator {
     }
 
     function get() as Media.Content? {
-        var size = self._tracks.size();
-        if (size == 0 || self._playIndex > size - 1) {
-            $.am.debug("[Queue.get] null - index=" + self._playIndex + " size=" + size);
-            return null;
-        }
-
-        var file = self._tracks[self._playIndex];
-        $.am.debug("[Queue.get] index=" + self._playIndex + "/" + (size - 1) + " refId=" + file.getRefId());
-
-        if (self._playIndex == self._initialPlayIndex && self._resumePositionSeconds > 0) {
-            $.am.debug("[Queue.get] resuming at " + self._resumePositionSeconds + "s");
-            return file.getActiveContent(self._resumePositionSeconds);
-        }
-
-        return file.getContent();
+        return getAt(self._playIndex, true);
     }
 
     function next() as Media.Content? {
-        self._playIndex += 1;
+        var nextIndex = self._playIndex + 1;
+        var content = getAt(nextIndex, false);
+
+        if (content == null) {
+            $.am.debug("[Queue.next] null - index=" + nextIndex + " size=" + self._tracks.size());
+            return null;
+        }
+
+        self._playIndex = nextIndex;
         $.am.debug("[Queue.next] advancing to index=" + self._playIndex);
-        return get();
+        return content;
     }
 
     function previous() as Media.Content? {
-        if (self._playIndex > 0) {
-            self._playIndex -= 1;
+        var previousIndex = self._playIndex - 1;
+        var content = getAt(previousIndex, false);
+
+        if (content == null) {
+            $.am.debug("[Queue.previous] null - index=" + previousIndex + " size=" + self._tracks.size());
+            return null;
         }
+
+        self._playIndex = previousIndex;
         $.am.debug("[Queue.previous] back to index=" + self._playIndex);
-        return get();
+        return content;
     }
 
-    function reset() as Void {
-        $.am.debug("[Queue.reset] resetting to index=0 from " + self._playIndex);
-        self._playIndex = 0;
-        self._initialPlayIndex = 0;
-        self._resumePositionSeconds = 0;
+    function peekNext() as Media.Content? {
+        return getAt(self._playIndex + 1, false);
+    }
+
+    function peekPrevious() as Media.Content? {
+        return getAt(self._playIndex - 1, false);
     }
 
     // Determine if the current track can be skipped forward.
@@ -99,6 +100,24 @@ class PlaybackQueue extends Media.ContentIterator {
     // Determine if playback is currently set to shuffle.
     function shuffling() as Boolean {
         return self._shuffle;
+    }
+
+    private function getAt(index as Number, useResumePosition as Boolean) as Media.Content? {
+        var size = self._tracks.size();
+        if (size == 0 || index < 0 || index > size - 1) {
+            $.am.debug("[Queue.get] null - index=" + index + " size=" + size);
+            return null;
+        }
+
+        var file = self._tracks[index];
+        $.am.debug("[Queue.get] index=" + index + "/" + (size - 1) + " refId=" + file.getRefId());
+
+        if (useResumePosition && index == self._initialPlayIndex && self._resumePositionSeconds > 0) {
+            $.am.debug("[Queue.get] resuming at " + self._resumePositionSeconds + "s");
+            return file.getActiveContent(self._resumePositionSeconds);
+        }
+
+        return file.getContent();
     }
 
 }

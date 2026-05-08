@@ -34,7 +34,6 @@ class PlaybackProvider extends Media.ContentDelegate {
     // Must return a valid iterator; returning null is undefined behavior on physical devices.
     function resetContentIterator() as Media.ContentIterator? {
         $.am.debug("[PlaybackProvider.reset] assets=" + self._playlist.getAssets().size() + " playlistIndex=" + self._playlist.getCurrentTrackIndex() + " queueIndex=" + (self._mIterator as PlaybackQueue).getPlayIndex() + " resume=" + self._playlist.getResumePositionSeconds());
-        (self._mIterator as PlaybackQueue).reset();
         return self._mIterator;
     }
     function onAdAction(adContext as Object) as Void {
