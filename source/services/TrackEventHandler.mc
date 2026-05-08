@@ -7,13 +7,11 @@ class TrackEventHandler {
     private var _queue as PlaybackQueue;
     private var _store as PlaylistStore;
     private var _eventNames as Dictionary;
-    private var _lastRefId as Object?;
 
     function initialize(playlist as Playlist, queue as PlaybackQueue, store as PlaylistStore) {
         _playlist = playlist;
         _queue = queue;
         _store = store;
-        _lastRefId = null;
         _eventNames = {
             Media.SONG_EVENT_START => "Start",
             Media.SONG_EVENT_SKIP_NEXT => "Skip Next",
@@ -31,19 +29,26 @@ class TrackEventHandler {
     function notify(contentRefId as Object, songEvent as Media.SongEvent, playbackPosition as Number or Media.PlaybackPosition) as Void {
         $.am.debug("[TrackEventHandler] event=" + eventName(songEvent) + " contentRefId=" + contentRefId + " playbackPosition=" + playbackPosition);
 
-        // On new track start: only update index if track has genuinely changed (different refId)
+        // On new track start: only update index if track has genuinely changed
         if (songEvent == Media.SONG_EVENT_START) {
-            if (_lastRefId != contentRefId) {
-                // Genuine track change: update cursor position
-                var playFromIndex = _queue.getPlayIndex();
-                if (_playlist.updateOnTrackStart(playFromIndex)) {
-                    _store.setPlaylist(_playlist);
-                    $.am.debug("[TrackEventHandler] stored trackStartIndex=" + playFromIndex + " lastTrackPosition=0");
+            var currentIndex = _queue.getPlayIndex();
+            var currentAssets = _playlist.getAssets();
+            
+            // Check if the started track is the same as what's at the current index
+            if (currentIndex >= 0 && currentIndex < currentAssets.size()) {
+                var currentTrackRefId = currentAssets[currentIndex].getRefId();
+                if (currentTrackRefId == contentRefId) {
+                    // Same track restarted: don't update cursor
+                    $.am.debug("[TrackEventHandler] same track restarted, not updating cursor");
+                    return;
                 }
-                _lastRefId = contentRefId;
-            } else {
-                // Same track restarted (e.g., skip at boundary): don't update cursor
-                $.am.debug("[TrackEventHandler] same track restarted, not updating cursor");
+            }
+            
+            // Genuine track change: update cursor position
+            var playFromIndex = _queue.getPlayIndex();
+            if (_playlist.updateOnTrackStart(playFromIndex)) {
+                _store.setPlaylist(_playlist);
+                $.am.debug("[TrackEventHandler] stored trackStartIndex=" + playFromIndex + " lastTrackPosition=0");
             }
             return;
         }

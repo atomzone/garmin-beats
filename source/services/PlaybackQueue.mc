@@ -32,8 +32,8 @@ class PlaybackQueue extends Media.ContentIterator {
         var content = getAt(nextIndex, false);
 
         if (content == null) {
-            $.am.debug("[Queue.next] null - index=" + nextIndex + " size=" + self._tracks.size());
-            return null;
+            $.am.debug("[Queue.next] null - boundary reached (index=" + self._playIndex + " size=" + self._tracks.size() + ")");
+            return null;  // Don't advance index; keep iterator valid at boundary
         }
 
         self._playIndex = nextIndex;
@@ -46,8 +46,8 @@ class PlaybackQueue extends Media.ContentIterator {
         var content = getAt(previousIndex, false);
 
         if (content == null) {
-            $.am.debug("[Queue.previous] null - index=" + previousIndex + " size=" + self._tracks.size());
-            return null;
+            $.am.debug("[Queue.previous] null - boundary reached (index=" + self._playIndex + " size=" + self._tracks.size() + ")");
+            return null;  // Don't advance index; keep iterator valid at boundary
         }
 
         self._playIndex = previousIndex;
