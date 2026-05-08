@@ -23,7 +23,13 @@ class PlaybackProvider extends Media.ContentDelegate {
         return self._mIterator;
     }
 
-    // Respond to a user ad click
+    // Called by the system when the queue needs to restart (e.g. repeat-all, re-entry).
+    // Must return a valid iterator; returning null is undefined behavior on physical devices.
+    function resetContentIterator() as Media.ContentIterator? {
+        $.am.debug("[PlaybackProvider] resetContentIterator");
+        (self._mIterator as PlaybackQueue).reset();
+        return self._mIterator;
+    }
     function onAdAction(adContext as Object) as Void {
         $.am.debugWithArgs("[onAdAction]", adContext);
     }
@@ -62,8 +68,4 @@ class PlaybackProvider extends Media.ContentDelegate {
         var asset = new AudioAsset(contentRefId as Number);
         asset.setThumbsUp(true);
     }
-
-    // function resetContentIterator() as ContentIterator or Null {
-    //     return new pumpContentIterator(self.playlist);
-    // }
 }

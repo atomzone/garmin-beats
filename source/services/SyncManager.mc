@@ -84,6 +84,7 @@ class SyncManager extends Comm.SyncDelegate {
         }
 
         var refId = data.getId() as Number;
+        $.am.debug("[sync.onResponse] stored refId=" + refId + " url=" + track.getSourceUrl());
         var asset = new AudioAsset(refId);
         var content = asset.getContent();
         var metadata = buildAssetMetadata(track, content);

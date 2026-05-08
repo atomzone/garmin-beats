@@ -26,16 +26,19 @@ class AudioAsset extends MediaAsset {
     }
 
     // TODO: shoudl we passs content?
-    function saveAndApplyMetadata(content as Media.Content, meta as AssetMeta) as Void {
+    function saveAndApplyMetadata(content as Media.Content?, meta as AssetMeta) as Void {
         save(meta);
+        $.am.debug("[AudioAsset] saveAndApplyMetadata refId=" + getRefId() + " title=" + meta["title"]);
         
-        var metadata = content.getMetadata();
-        if (metadata != null) {
-            metadata.title = meta["title"] as String;
-            metadata.artist = meta["artist"] as String;
-            metadata.album = meta["album"] as String;
+        if (content != null) {
+            var metadata = content.getMetadata();
+            if (metadata != null) {
+                metadata.title = meta["title"] as String;
+                metadata.artist = meta["artist"] as String;
+                metadata.album = meta["album"] as String;
+                content.setMetadata(metadata);
+            }
         }
-        content.setMetadata(metadata);
     }
 
     function getStorageKey() as String {
