@@ -47,7 +47,7 @@ class SyncManager extends Comm.SyncDelegate {
 
         var track = _queue[0];
         var context = { :track => track };
-        var request = new HttpRequest({ 
+        var request = new HttpRequest({
             :href => track.getSourceUrl(),
             :parameters => {}
         }, method(:onResponse));
@@ -70,21 +70,20 @@ class SyncManager extends Comm.SyncDelegate {
     }
 
     function onResponse(
-        data as Object, // Expected MP3 download will be Media.ContentRef
+        response as ResponseType,
         context as { :track as AudioResource }
     ) as Void {
+        var data = response[:data];
         var track = context[:track] as AudioResource;
 
-        if (!(data instanceof Media.ContentRef)) {
-            $.am.debug("[sync.onResponse.fail]\tExpected Media.ContentRef");
+        if (response[:ok] != true || !(data instanceof Media.ContentRef)) {
+            $.am.debug("[sync.onResponse.fail]\tcode=" + response[:code] + " Expected Media.ContentRef");
             _queue.remove(track);
             downloadNext();
             return;
         }
 
-        var refId = (data as Media.ContentRef).getId() as Number;
-        $.am.debug("[R]\t" + refId);
-
+        var refId = data.getId() as Number;
         var asset = new AudioAsset(refId);
         var content = asset.getContent();
         var metadata = buildAssetMetadata(track, content);

@@ -1,29 +1,41 @@
 using Toybox.Communications as Comm;
 using Toybox.Media as Media;
+using Toybox.PersistedContent as PersistedContent;
 import Toybox.Lang;
+
+typedef ResourceType as { 
+    :href as String, 
+    :parameters as Dictionary<Object, Object>?
+};
+
+typedef ResponseType as {
+    :ok as Boolean,
+    :code as Number,
+    :data as Object?,
+    :error as String?
+};
+
+typedef HandlerType as Method(response as ResponseType, context as Object) as Void;
 
 class HttpRequest {
     private var _handler as HandlerType;
     private var _href as String;
-    private var _parameters as Lang.Dictionary<Lang.Object, Lang.Object>?;
+    private var _parameters as Dictionary<Object, Object>?;
 
-    function initialize(
-        resource as ResourceType,
-        handler as HandlerType
-    ) {
+    function initialize(resource as ResourceType, handler as HandlerType) {
         self._href = resource[:href] as String;
         self._parameters = resource[:parameters];
         self._handler = handler;
     }
 
-    function getJson(context as Lang.Object) as Void {
+    function getJson(context as Object) as Void {
         self.makeRequest(
             new HttpRequestOptions(context).get().json()
         );
     }
 
     function downloadMp3(
-        context as Lang.Object, 
+        context as Object,
         onProgressCallback as Method(totalBytesTransferred as Number, filesize as Number?) as Void
     ) as Void {
         var settings = new HttpRequestOptions(context).get().mp3();
@@ -32,11 +44,24 @@ class HttpRequest {
         self.makeRequest(settings);
     }
 
-    function onResponse(responseCode as Number, data as Dictionary?, context as Object) as Void {
-        var ok = responseCode > 0;
+    function onResponse(responseCode as Number, data as Dictionary or String or PersistedContent.Iterator or Null, context as Object) as Void {
+        var ok = isSuccessResponse(responseCode);
+        var payload = data as Object?;
+        var errorMessage = ok ? null : "HTTP request failed";
         $.am.debug("[http.response] " + (ok ? "ok" : "fail") + " code=" + responseCode);
 
-        self._handler.invoke(data as Object, context); // Object widens type; handler narrows to Dictionary or Media.ContentRef
+        var response = {
+            :ok => ok,
+            :code => responseCode,
+            :data => payload,
+            :error => errorMessage
+        } as ResponseType;
+
+        self._handler.invoke(response, context);
+    }
+
+    private function isSuccessResponse(responseCode as Number) as Boolean {
+        return responseCode >= 200 && responseCode < 300;
     }
 
     private function makeRequest(httpRequest as HttpRequestOptions) as Void {
@@ -49,10 +74,3 @@ class HttpRequest {
         ); 
     }
 }
-
-typedef ResourceType as { 
-    :href as String, 
-    :parameters as Lang.Dictionary<Lang.Object, Lang.Object>?
-};
-
-typedef HandlerType as Method(args as Object, Context as Object) as Void;

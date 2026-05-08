@@ -9,7 +9,7 @@ class AudioResourceLoader {
     }
 
     function fetchResources(callback as Method) as Void {
-        var request = new HttpRequest({ 
+        var request = new HttpRequest({
             :href => self._href,
             :parameters => {}
         }, method(:onResponseBuildResources));
@@ -18,15 +18,16 @@ class AudioResourceLoader {
     }
 
     function onResponseBuildResources(
-        data as Object, // Expected JSON will be Dictionary
+        response as ResponseType,
         context as { :callback as Method }
     ) as Void {
-        if (!(data instanceof Dictionary)) {
+        if (response[:ok] != true || !(response[:data] instanceof Dictionary)) {
+            $.am.debug("[loader.onResponse.fail] code=" + response[:code]);
             (context[:callback] as Method).invoke([]);
             return;
         }
 
-        var json = data as Dictionary;
+        var json = response[:data] as Dictionary;
         var resources = [] as Array<AudioResourceType>;
         if (json.hasKey("resources") && json["resources"] instanceof Array) {
             resources = json["resources"] as Array<AudioResourceType>;
