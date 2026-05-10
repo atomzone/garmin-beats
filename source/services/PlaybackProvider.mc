@@ -4,7 +4,7 @@ import Toybox.Lang;
 class PlaybackProvider extends Media.ContentDelegate {
 
     private var _playlist as Playlist;
-    private var _store as PlaylistStore;
+    // private var _store as PlaylistStore;
     private var _trackEventHandler as TrackEventHandler?;
     private var _mIterator as Media.ContentIterator?;
 
@@ -12,20 +12,20 @@ class PlaybackProvider extends Media.ContentDelegate {
         Media.ContentDelegate.initialize();
 
         self._playlist = playlist;
-        self._store = store;
+        // self._store = store;
 
         rebuildIterator(self._playlist, "init");
     }
 
     function getContentIterator() as Media.ContentIterator? {
+        $.am.debug("[PlaybackProvider.getContentIterator] assets=" + self._playlist.getAssets().size() + " index=" + self._playlist.getCurrentTrackIndex() + " resume=" + self._playlist.getResumePositionSeconds());
         return self._mIterator;
     }
 
     // Called by the system when the queue needs to restart (e.g. repeat-all, re-entry).
     // Must return a valid iterator; returning null is undefined behavior on physical devices.
     function resetContentIterator() as Media.ContentIterator? {
-        // Source-of-truth is persisted playlist state; rebuild iterator from store on reset.
-        self._playlist = self._store.getPlaylist();
+        // Rebuild from in-memory state to avoid rehydrating stale storage snapshots mid-session.
         rebuildIterator(self._playlist, "reset");
         return self._mIterator;
     }
@@ -79,7 +79,7 @@ class PlaybackProvider extends Media.ContentDelegate {
 
         $.am.debug("[PlaybackProvider." + reason + "] assets=" + playlist.getAssets().size() + " startIndex=" + playlist.getCurrentTrackIndex() + " resume=" + playlist.getResumePositionSeconds());
 
-        self._trackEventHandler = new TrackEventHandler(playlist, queue, self._store);
+        // self._trackEventHandler = new TrackEventHandler(playlist, queue, self._store);
         self._mIterator = queue;
     }
 }
