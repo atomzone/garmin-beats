@@ -9,14 +9,45 @@ class PlaybackQueue extends Media.ContentIterator {
     private var _resumePositionSeconds as Number;
     private var _shuffle as Boolean;
 
-    function initialize(tracks as Array<AudioAsset>, playIndex as Number, resumePositionSeconds as Number) {
+    function initialize() {
+        // LOAD FROM STORAGE ON INIT
+        // No parameters. All data comes from persistent storage via PlaylistStore.
+        // This ensures fresh data on each playback session and prevents state leakage.
         Media.ContentIterator.initialize();
 
-        self._tracks = tracks;
-        self._playIndex = playIndex;
-        self._initialPlayIndex = self._playIndex;
-        self._resumePositionSeconds = resumePositionSeconds;
+        self._tracks = [];
+        self._playIndex = 0;
+        self._initialPlayIndex = 0;
+        self._resumePositionSeconds = 0;
         self._shuffle = false;
+
+        // Load playlist from persistent storage
+        loadPlaylistFromStorage();
+    }
+
+    private function loadPlaylistFromStorage() as Void {
+        // FETCH FRESH STATE FROM PERSISTENT STORAGE
+        // This is called once per iterator instance.
+        // Ensures we have current playlist and playback position.
+        var store = new PlaylistStore("active");
+        var playlist = store.getPlaylist();
+
+        self._tracks = playlist.getAssets();
+        self._playIndex = playlist.getCurrentTrackIndex();
+        self._initialPlayIndex = self._playIndex;
+        self._resumePositionSeconds = playlist.getResumePositionSeconds();
+
+        $.am.debug("[Queue.init] loaded from storage: assets=" + self._tracks.size() + " index=" + self._playIndex + " resume=" + self._resumePositionSeconds);
+    }
+
+    function setPlayIndex(index as Number) as Void {
+        if (index < 0 || index > self._tracks.size() - 1) {
+            $.am.debug("[Queue.setPlayIndex] invalid index=" + index + " size=" + self._tracks.size());
+            return;
+        }
+
+        self._playIndex = index;
+        $.am.debug("[Queue.setPlayIndex] index set to " + self._playIndex);
     }
 
     function getPlayIndex() as Number {
@@ -72,23 +103,14 @@ class PlaybackQueue extends Media.ContentIterator {
     }
 
     // Get the current media content playback profile
-    // this is function is needed
+    // Defines available controls and notification thresholds
     function getPlaybackProfile() as Media.PlaybackProfile? {
         var profile = new PlaybackProfile();
         profile.attemptSkipAfterThumbsDown = false;
         profile.playbackControls = [
-            // first linked to hotkey (if supported)
             Media.PLAYBACK_CONTROL_PLAYBACK,      // Allow Play/Pause control
-            // Media.PLAYBACK_CONTROL_SHUFFLE,       // Allow Shuffle control
             Media.PLAYBACK_CONTROL_PREVIOUS,      // Allow Previous control
             Media.PLAYBACK_CONTROL_NEXT,          // Allow Next control
-            // Media.PLAYBACK_CONTROL_SKIP_FORWARD,  // Allow Skip-Forward control
-            // Media.PLAYBACK_CONTROL_SKIP_BACKWARD, // Allow Skip-Backward control
-            // Media.PLAYBACK_CONTROL_REPEAT,        // Allow Repeat control
-            // Media.PLAYBACK_CONTROL_RATING         // Allow Ratings control
-            // PLAYBACK_CONTROL_VOLUME, CustomButton, and SystemButton??
-            // PLAYBACK_CONTROL_SOURCE, ||
-            // PLAYBACK_CONTROL_LIBRARY ||
         ];
         profile.playbackNotificationThreshold = 1;
         profile.requirePlaybackNotification = false;
@@ -112,6 +134,7 @@ class PlaybackQueue extends Media.ContentIterator {
         var file = self._tracks[index];
         $.am.debug("[Queue.get] index=" + index + "/" + (size - 1) + " refId=" + file.getRefId());
 
+        // Resume playback from saved position on first track of session
         if (useResumePosition && index == self._initialPlayIndex && self._resumePositionSeconds > 0) {
             $.am.debug("[Queue.get] resuming at " + self._resumePositionSeconds + "s");
             return file.getActiveContent(self._resumePositionSeconds);

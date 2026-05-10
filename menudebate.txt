@@ -1,0 +1,296 @@
+Listen
+  - Now Playing
+  - Recent
+  - Downloads (what is this? a list of everyting downloaded?)
+
+Get
+  - Available Tracks (API)
+  - Sync Status (what is the status? - sync will happen when tracks are downloaded)
+
+Library
+  - Tracks (everything in the library)
+  - Playlists (how do play list come to be?)
+  - Albums
+  - Artist
+  - delete (options to remove content)
+
+Settings
+  - Storage
+  - Sync (sync will be actioned when content is download)
+  - About
+  - Donate
+
+
+Now Playing
+  Control current audio and queue
+
+Library
+  Your downloaded tracks and collections, ready to play
+
+Get Music
+  Browse and download tracks to your watch
+
+Settings
+  Manage storage, downloads, and app preferences
+
+--- 
+
+Now Playing
+  Resume your last track
+
+Library
+  - Continue Listening
+  Resume previouslt incomplete tracks
+
+  - All tracks
+  Pick tracks to play
+
+  - Artists
+  Tracks collected by artist
+
+  - Liked Mixes
+  List of tracks you have liked
+
+Get Tracks
+  Browse and download new mixes'
+
+Settings
+  Preferences and settings
+
+  - Playback
+  Preferences
+
+  - Storage
+  Capacity and memory
+
+  - Donate
+  Show some love
+
+---
+
+Now Playing
+  Resume and control your current track
+
+Library
+  Your downloaded tracks, organised for playback
+
+  - Continue Listening
+    Resume tracks you haven’t finished
+
+  - All Tracks
+    Browse and play all downloaded tracks
+
+  - Artists
+    Browse tracks grouped by artist
+
+  - Liked Tracks
+    Tracks you’ve saved for quick access
+
+  - Delete
+    Remove tracks you've completed
+
+Get Tracks
+  Browse and download tracks to your watch
+
+Settings
+  Manage playback, storage, and app preferences
+
+  - Playback
+    Adjust playback behaviour
+
+  - Storage
+    View and manage downloaded content
+
+  - Donate
+    Support the app
+
+---
+
+Now Playing (plays list)
+  Resume playback
+
+Continue Listening (plays list)
+  Resume unfinished tracks
+
+Library
+  Select tracks to build a playback queue
+
+  - All Tracks
+    Browse and play all downloaded tracks
+
+  - Artists
+    Browse tracks grouped by artist
+
+  - Liked Tracks
+    Tracks you’ve saved for quick access
+
+  - Delete
+    Remove tracks you've completed
+
+Get Tracks
+  Browse and download tracks
+
+Settings
+  Manage playback, storage, and app preferences
+
+  - Playback
+    Adjust playback behaviour
+
+  - Storage
+    View and manage downloaded content
+
+  - Donate
+    Support the app
+
+---
+
+Now Playing
+  Resume what’s playing
+
+Continue Listening
+  Resume unfinished tracks
+
+Library
+  Pick tracks to play
+
+  - All Tracks
+    Browse and pick tracks
+
+  - Artists
+    Browse by artist
+
+  - Liked Tracks
+    Your saved tracks
+
+  - Delete
+    Remove finished tracks
+
+Get Tracks
+  Find and add new tracks
+
+Settings
+  Manage app settings
+
+  - Playback
+    Playback settings
+
+  - Storage
+    Manage storage
+
+  - Donate
+    Support the app
+
+---
+
+Now Playing
+  Resume playback
+
+Continue Listening
+  Resume unfinished tracks
+
+Library
+  Choose tracks to play
+
+  - All Tracks
+    Browse tracks
+
+  - Artists
+    Browse by artist
+
+  - Liked
+    Saved tracks
+
+Get Tracks
+  Add new tracks
+
+Settings
+Manage playback, storage & preferences
+
+  - Playback
+    Adjust playback behaviour
+
+  - Storage
+    manage downloaded content
+    
+    - Delete
+      Remove tracks
+
+    - Capacity
+      Storage usage
+
+  - Donate
+    Support the app
+
+
+--
+
+Now Playing
+  Resume playback
+
+Continue Listening
+  Unfinished tracks
+
+Library
+  All Tracks
+  Artists
+  Liked
+
+Get Tracks
+  Add tracks
+
+Settings
+  Playback
+  Storage
+  Donate
+
+---
+
+The rule we should follow is:
+
+Title = what it is
+Description = what it lets you do (only once, no echoing)
+
+No duplication, no “browse/choose/select” repetition.
+
+---
+
+Now Playing
+  Resume playback
+
+Continue Listening
+  Unfinished tracks you started
+
+Library
+  Select tracks for playback
+
+  All Tracks
+    Your downloaded collection
+
+  Artists
+    Grouped by performer
+
+  Liked
+    Tracks you’ve saved
+
+Get Tracks
+  Add new content
+
+Settings
+  Manage behaviour and storage
+
+  Playback
+    Audio and control options
+
+  Storage
+    Downloaded tracks and capacity
+
+    Delete
+        Remove downloaded tracks
+
+    Capacity
+        Available storage
+
+  Donate
+    Support development
+
+---
