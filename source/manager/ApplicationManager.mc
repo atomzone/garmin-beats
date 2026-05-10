@@ -4,6 +4,13 @@ import Toybox.Lang;
 import Toybox.System;
 
 class ApplicationManager {
+    private var _version as String;
+
+    public function initialize() {
+        self._version = getTimestamp();
+        debug("Initializing ApplicationManager (Build | " + self._version + ")");
+    }
+
     public function debug(message as String) as Void {
         // var timestamp = getTimestamp();
         // System.println("[" + timestamp + "] " + message);

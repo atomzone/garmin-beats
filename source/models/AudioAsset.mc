@@ -71,6 +71,11 @@ class AudioAsset extends MediaAsset {
         return normalize(value);
     }
 
+    public function delete() as Void {
+        StorageManager.delete(getStorageKey());
+        MediaAsset.delete();
+    }
+
     private function normalize(meta as Object?) as AssetMeta {
         var record = {} as Dictionary;
 
