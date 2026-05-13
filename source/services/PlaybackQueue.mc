@@ -101,7 +101,8 @@ class PlaybackQueue extends Media.ContentIterator {
         if (profile has :playbackCapabilities) {
             profile.playbackCapabilities = 1;
         }
-        profile.playbackNotificationThreshold = 1;
+        // The number of seconds a song must play to trigger a "played" notification.
+        profile.playbackNotificationThreshold = 10;
         profile.requirePlaybackNotification = false;
         profile.skipPreviousThreshold = null;
         

@@ -12,22 +12,24 @@ class AppEntry extends App.AudioContentProviderApp {
         App.AudioContentProviderApp.initialize();
     }
 
-    function getContentDelegate(audioRefs as App.PersistableType) as Media.ContentDelegate {
+    function getContentDelegate(playlistRaw as App.PersistableType) as Media.ContentDelegate {
         var store = new PlaylistStore("active");
+        var playlist;
 
-        // Load playlist from storage
-        if (audioRefs == null) {
-            var stored = store.getPlaylist();
-            $.am.debug("[AppEntry.getContentDelegate] source=store assets=" + stored.getAssets().size() + " index=" + stored.getCurrentTrackIndex() + " resume=" + stored.getResumePositionSeconds());
-            return new PlaybackProvider(stored, store);
+        if (playlistRaw == null) {
+            playlist = store.getPlaylist();
+        } else {
+            playlist = playlistFromPayload(playlistRaw as PlaylistType);
+            store.setPlaylist(playlist);
         }
 
-        // Build playlist from payload and persist to storage
-        var playlist = playlistFromPayload(audioRefs as PlaylistType);
-        $.am.debug("[AppEntry.getContentDelegate] source=payload assets=" + playlist.getAssets().size() + " index=" + playlist.getCurrentTrackIndex() + " resume=" + playlist.getResumePositionSeconds());
-        store.setPlaylist(playlist);
+        $.am.debug("[AppEntry.getContentDelegate]"
+            + " assets=" + playlist.getAssets().size() 
+            + " index=" + playlist.getCurrentTrackIndex() 
+            + " resume=" + playlist.getResumePositionSeconds());
 
-        return new PlaybackProvider(playlist, store);
+        var session = new PlaybackSession(playlist, store);
+        return new PlaybackProvider(playlist, session);
     }
 
     function getSyncDelegate() as Comm.SyncDelegate? {
@@ -42,9 +44,3 @@ class AppEntry extends App.AudioContentProviderApp {
         return getPlaybackConfigurationView();
     }
 }
-
-
-
-
-
-

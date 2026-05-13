@@ -13,12 +13,17 @@ typedef PlaylistType as {
 
 class Playlist {
 
+    private var _refIds as Array<Object> = [];
     private var _assets as Array<AudioAsset>;
     private var _playFromIndex as Number;
     private var _lastTrackPositionSeconds as Number;
 
     function initialize(assets as Array<AudioAsset>, playFromIndex as Number) {
         _assets = assets;
+        for (var a = 0, limit = assets.size(); a < limit; a++) {
+            _refIds.add(assets[a].getRefId());
+        }
+
         _playFromIndex = clampIndex(playFromIndex);
         _lastTrackPositionSeconds = 0;
     }
@@ -27,8 +32,16 @@ class Playlist {
         return _assets;
     }
 
+    function getRefIds() as Array<Object>   {
+        return _refIds;
+    }
+
     function getCurrentTrackIndex() as Number {
         return _playFromIndex;
+    }
+
+    function setTrackIndex(index as Number) as Void {
+        _playFromIndex = index;
     }
 
     function getResumePositionSeconds() as Number {
