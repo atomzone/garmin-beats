@@ -56,13 +56,28 @@ class PlaybackProvider extends Media.ContentDelegate {
         $.am.debug("[onShuffle]");
     }
 
-    // Handles a notification from the system that an event has
-    // been triggered for the given song
-    function onSong(contentRefId as Object, songEvent as Media.SongEvent, playbackPosition as Number or Media.PlaybackPosition) as Void {
+    // Handles a notification from the system that an event has been triggered for the given song
+    function onSong(
+        contentRefId as Object, 
+        songEvent as Media.SongEvent, 
+        playbackPosition as Number or Media.PlaybackPosition
+    ) as Void {
         $.am.debug("[PlaybackProvider.onSong] event=" + eventName(songEvent) + " contentRefId=" + contentRefId + " playbackPosition=" + playbackPosition);
 
+        // onTrackStarted
         if (songEvent == Media.SONG_EVENT_START || songEvent == Media.SONG_EVENT_SKIP_NEXT || songEvent == Media.SONG_EVENT_SKIP_PREVIOUS) {
             _session.onTrackStarted(contentRefId);
+        }
+
+        // onPlaybackPosition
+        if (
+            songEvent == Media.SONG_EVENT_START ||
+            songEvent == Media.SONG_EVENT_SKIP_FORWARD ||
+            songEvent == Media.SONG_EVENT_SKIP_BACKWARD ||
+            songEvent == Media.SONG_EVENT_PAUSE ||
+            songEvent == Media.SONG_EVENT_STOP
+        ) {
+            _session.onPlaybackPosition(contentRefId, playbackPosition);
         }
     }
 

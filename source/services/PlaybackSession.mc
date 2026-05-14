@@ -11,6 +11,19 @@ class PlaybackSession {
         _store = store;
     }
 
+    function onPlaybackPosition(contentRefId as Object, position as Number) as Void {
+        var index = _playlist.getRefIds().indexOf(contentRefId);
+
+        $.am.debug("[onPlaybackPosition] index=" + index + " Position=" + position);
+
+        if (index < 0) {
+            return;
+        }
+
+        _playlist.restoreResumePosition(position);
+        save();
+    }
+
     function onTrackStarted(contentRefId as Object) as Void {
         var index = _playlist.getRefIds().indexOf(contentRefId);
 
@@ -21,6 +34,10 @@ class PlaybackSession {
         }
 
         _playlist.setTrackIndex(index);
+        save();
+    }
+
+    private function save() as Void {
         _store.setPlaylist(_playlist);
     }
 }
