@@ -1,74 +1,63 @@
 using Toybox.Media as Media;
 import Toybox.Lang;
 
+// Owns where playback goes next
 class PlaybackQueue extends Media.ContentIterator {
 
-    private var _tracks as Array<AudioAsset>;
-    private var _playIndex as Number;
-    private var _initialPlayIndex as Number;
-    private var _resumePositionSeconds as Number;
-    private var _shuffle as Boolean;
+    private var _playlist as Playlist;
+    private var _shuffle as Boolean = false;
 
-    function initialize(tracks as Array<AudioAsset>, playIndex as Number, resumePositionSeconds as Number) {
+    function initialize(playlist as Playlist) {
         Media.ContentIterator.initialize();
 
-        self._tracks = tracks;
-        self._playIndex = playIndex;
-        self._initialPlayIndex = self._playIndex;
-        self._resumePositionSeconds = resumePositionSeconds;
-        self._shuffle = false;
-    }
-
-    function getPlayIndex() as Number {
-        return self._playIndex;
+        _playlist = playlist;
     }
 
     function get() as Media.Content? {
-        return getAt(self._playIndex, true);
+        return getMediaContent(_playlist.getCurrentTrackIndex());
     }
 
     function next() as Media.Content? {
-        var nextIndex = self._playIndex + 1;
-        var content = getAt(nextIndex, false);
+        var nextIndex = _playlist.getCurrentTrackIndex() + 1;
+        var content = getMediaContent(nextIndex);
 
-        if (content == null) {
-            $.am.debug("[Queue.next] null - boundary reached (index=" + self._playIndex + " size=" + self._tracks.size() + ")");
-            return null;  // Don't advance index; keep iterator valid at boundary
+        if (content != null) {
+            $.am.debug("[Queue.next] index " + _playlist.getCurrentTrackIndex() + " > " + nextIndex);
+            _playlist.setTrackIndex(nextIndex);
+            _playlist.setCurrentTrackPosition(0);
         }
 
-        self._playIndex = nextIndex;
-        $.am.debug("[Queue.next] advancing to index=" + self._playIndex);
         return content;
     }
 
     function previous() as Media.Content? {
-        var previousIndex = self._playIndex - 1;
-        var content = getAt(previousIndex, false);
+        var previousIndex = _playlist.getCurrentTrackIndex() - 1;
+        var content = getMediaContent(previousIndex);
 
-        if (content == null) {
-            $.am.debug("[Queue.previous] null - boundary reached (index=" + self._playIndex + " size=" + self._tracks.size() + ")");
-            return null;  // Don't advance index; keep iterator valid at boundary
+        if (content != null) {
+            $.am.debug("[Queue.previous] index " + _playlist.getCurrentTrackIndex() + " > " + previousIndex);
+            _playlist.setTrackIndex(previousIndex);
+            _playlist.setCurrentTrackPosition(0);
         }
 
-        self._playIndex = previousIndex;
-        $.am.debug("[Queue.previous] back to index=" + self._playIndex);
         return content;
     }
 
     function peekNext() as Media.Content? {
-        return getAt(self._playIndex + 1, false);
+        return getMediaContent(_playlist.getCurrentTrackIndex() + 1);
     }
 
     function peekPrevious() as Media.Content? {
-        return getAt(self._playIndex - 1, false);
+        return getMediaContent(_playlist.getCurrentTrackIndex() - 1);
     }
 
     // Determine if the current track can be skipped forward.
     // Returning false on a physical device prevents both user-skip AND auto-advance after completion.
     function canSkip() as Boolean {
-        var canAdvance = self._playIndex < self._tracks.size() - 1;
-        $.am.debug("[Queue.canSkip] " + canAdvance + " (index=" + self._playIndex + " size=" + self._tracks.size() + ")");
-        return canAdvance;
+        var isValid = _playlist.isValidIndex(_playlist.getCurrentTrackIndex() + 1);
+        $.am.debug("[Queue.canSkip] " + isValid + " (index=" + _playlist.getCurrentTrackIndex() + " size=" + _playlist.getAssetCount() + ")");
+
+        return isValid;
     }
 
     // Get the current media content playback profile
@@ -97,6 +86,7 @@ class PlaybackQueue extends Media.ContentIterator {
             PLAYBACK_CONTROL_PREVIOUS,
             PLAYBACK_CONTROL_NEXT,
             PLAYBACK_CONTROL_VOLUME,
+            PLAYBACK_CONTROL_REPEAT
         ];
         if (profile has :playbackCapabilities) {
             profile.playbackCapabilities = 1;
@@ -104,7 +94,7 @@ class PlaybackQueue extends Media.ContentIterator {
         // The number of seconds a song must play to trigger a "played" notification.
         profile.playbackNotificationThreshold = 10;
         profile.requirePlaybackNotification = false;
-        profile.skipPreviousThreshold = null;
+        profile.skipPreviousThreshold = 1;
         
         return profile;
     }
@@ -114,22 +104,22 @@ class PlaybackQueue extends Media.ContentIterator {
         return self._shuffle;
     }
 
-    private function getAt(index as Number, useResumePosition as Boolean) as Media.Content? {
-        var size = self._tracks.size();
-        if (size == 0 || index < 0 || index > size - 1) {
-            $.am.debug("[Queue.get] null - index=" + index + " size=" + size);
+    private function getMediaContent(index as Number) as Media.Content? {
+        if (!_playlist.isValidIndex(index)) {
+            $.am.debug("[Queue.getMediaContent] null - index=" + index + "/" + (_playlist.getAssetCount() - 1));
             return null;
         }
 
-        var file = self._tracks[index];
-        $.am.debug("[Queue.get] index=" + index + "/" + (size - 1) + " refId=" + file.getRefId());
+        var asset = _playlist.getAssetByIndex(index);
+        var position = _playlist.getCurrentTrackPosition();
 
-        if (useResumePosition && index == self._initialPlayIndex && self._resumePositionSeconds > 0) {
-            $.am.debug("[Queue.get] resuming at " + self._resumePositionSeconds + "s");
-            return file.getActiveContent(self._resumePositionSeconds);
+        if (position > 0) {
+            $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playlist.getAssetCount() - 1) + " position=" + position);
+            return asset.getActiveContent(position);
         }
 
-        return file.getContent();
+        $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playlist.getAssetCount() - 1));
+        return asset.getContent();
     }
 
 }

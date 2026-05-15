@@ -24,9 +24,9 @@ class AppEntry extends App.AudioContentProviderApp {
         }
 
         $.am.debug("[AppEntry.getContentDelegate]"
-            + " assets=" + playlist.getAssets().size() 
+            + " assets=" + playlist.getAssetCount()
             + " index=" + playlist.getCurrentTrackIndex() 
-            + " resume=" + playlist.getResumePositionSeconds());
+            + " position=" + playlist.getCurrentTrackPosition());
 
         var session = new PlaybackSession(playlist, store);
         return new PlaybackProvider(playlist, session);

@@ -12,12 +12,7 @@ class PlaybackProvider extends Media.ContentDelegate {
 
         _playlist = playlist;
         _session = session;
-
-        _iterator = new PlaybackQueue(
-            playlist.getAssets(),
-            playlist.getCurrentTrackIndex(),
-            playlist.getResumePositionSeconds()
-        );
+        _iterator = new PlaybackQueue(playlist);
     }
 
     function getContentIterator() as Media.ContentIterator? {
@@ -32,9 +27,7 @@ class PlaybackProvider extends Media.ContentDelegate {
         $.am.debug("[PlaybackProvider.resetContentIterator]");
 
         // reset iterator to the beginning of the playlist
-        self._iterator = new PlaybackQueue(
-            _playlist.getAssets(), 0, 0
-        );
+        self._iterator = new PlaybackQueue(_playlist);
 
         return self._iterator;
     }
@@ -47,11 +40,22 @@ class PlaybackProvider extends Media.ContentDelegate {
         $.am.debugWithArgs("[onCustomButton]", button);
     }
 
+    // repeatMode() is always null... 
+    // do we need to make our own verion of intertor.repeatMode()?
     function onRepeat() as Void {
-        $.am.debug("[onRepeat]");
+        var repeatModes = {
+            REPEAT_MODE_OFF => "Repeat is off",
+            REPEAT_MODE_ONE => "Repeat the current track",
+            REPEAT_MODE_ALL => "Repeat all tracks"
+        };
+        var mode = _iterator.repeatMode();
+        var message = (mode == null) ? "(missing repeat mode)" : repeatModes[mode] as String;
+
+        $.am.debug("[onRepeat] " +  message);
     }
     
     // Respond to a command to turn shuffle on or off
+    // this /seems/ to force a queue.get
     function onShuffle() as Void {
         $.am.debug("[onShuffle]");
     }
@@ -62,22 +66,30 @@ class PlaybackProvider extends Media.ContentDelegate {
         songEvent as Media.SongEvent, 
         playbackPosition as Number or Media.PlaybackPosition
     ) as Void {
-        $.am.debug("[PlaybackProvider.onSong] event=" + eventName(songEvent) + " contentRefId=" + contentRefId + " playbackPosition=" + playbackPosition);
+        $.am.debug("[PlaybackProvider.onSong] event=" + eventName(songEvent) + " playbackPosition=" + playbackPosition);
 
-        // onTrackStarted
-        if (songEvent == Media.SONG_EVENT_START || songEvent == Media.SONG_EVENT_SKIP_NEXT || songEvent == Media.SONG_EVENT_SKIP_PREVIOUS) {
-            _session.onTrackStarted(contentRefId);
+        // $.am.debug("[BUG] playlist index=" + _playlist.getCurrentTrackIndex());
+        // $.am.debug("[BUG] playlist position=" + _playlist.getCurrentTrackPosition());
+
+        // Active track changed
+        if (
+            songEvent == Media.SONG_EVENT_START || 
+            songEvent == Media.SONG_EVENT_SKIP_NEXT ||  // this is handled by next/prev
+            songEvent == Media.SONG_EVENT_SKIP_PREVIOUS // this is handled by next/prev
+        ) {
+            // can we know the change is not needed here
+            // or do we test before save within the playlistOerfect
+            _session.onTrackChanged();
         }
 
         // onPlaybackPosition
         if (
-            songEvent == Media.SONG_EVENT_START ||
             songEvent == Media.SONG_EVENT_SKIP_FORWARD ||
             songEvent == Media.SONG_EVENT_SKIP_BACKWARD ||
             songEvent == Media.SONG_EVENT_PAUSE ||
             songEvent == Media.SONG_EVENT_STOP
         ) {
-            _session.onPlaybackPosition(contentRefId, playbackPosition);
+            _session.onResumeCheckpoint(playbackPosition);
         }
     }
 
