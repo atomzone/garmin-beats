@@ -13,36 +13,12 @@ class StorageMenuView extends $.Rez.Menus.StorageMenu {
 
     function onShow() as Void {
         if (_assetManager.size() == 0) {
-            deleteMenuItem(:Delete);
+            MenuUtils.deleteMenuItem(self, :Delete);
             return;
         }
         
-        formatMenuItemLabel(:Delete, method(:DeleteLabelFormatter));
-    }
-
-    function DeleteLabelFormatter(label as String) as String {
-        return format(label, [_assetManager.size()]);
-    }
-
-    private function deleteMenuItem(id as Symbol) as Void {
-        var index = findItemById(id);
-
-        if (index > -1) {
-            deleteItem(index);
-        }
-    }
-
-    private function formatMenuItemLabel(id as Symbol, formatter as Method(label) as String) as Void {
-        var index = findItemById(id);
-
-        if (index < 0) {
-            return;
-        }
-
-        var item = getItem(index) as Ui.MenuItem;
-        var message = formatter.invoke(item.getLabel());
-
-        item.setLabel(message);
-        updateItem(item, index);
+        MenuUtils.setMenuItemLabel(
+            self, :Delete, format($.Rez.Strings.DeleteLabel.toString(), [_assetManager.size()])
+        );
     }
 }
