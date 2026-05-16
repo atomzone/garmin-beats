@@ -2,12 +2,12 @@ using Toybox.WatchUi as Ui;
 
 class SettingsMenuController extends Ui.Menu2InputDelegate {
 
-    private var _assetManager as AssetManager;
+    private var _assetRepo as AssetRepository;
 
     function initialize() {
         Ui.Menu2InputDelegate.initialize();
 
-        _assetManager = new AssetManager();
+        _assetRepo = new AssetRepository();
     }
 
     function onSelect(item as Ui.MenuItem) as Void {
@@ -17,8 +17,8 @@ class SettingsMenuController extends Ui.Menu2InputDelegate {
             // (speed, quality, autoplay)
         } else if (id == :Storage) {
             Ui.pushView(
-                new StorageMenuView(_assetManager), 
-                new StorageMenuController(_assetManager), 
+                new StorageMenuView(_assetRepo),
+                new StorageMenuController(_assetRepo),
                 Ui.SLIDE_IMMEDIATE
             );
         } else if (id == :Donate) {

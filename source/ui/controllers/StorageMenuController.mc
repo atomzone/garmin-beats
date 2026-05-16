@@ -2,23 +2,23 @@ using Toybox.WatchUi as Ui;
 
 class StorageMenuController extends Ui.Menu2InputDelegate {
 
-    private var _assetManager as AssetManager;
+    private var _assetRepo as AssetRepository;
 
-    function initialize(assetManager as AssetManager) {
+    function initialize(assetRepo as AssetRepository) {
         Ui.Menu2InputDelegate.initialize();
 
-        _assetManager = assetManager;
+        _assetRepo = assetRepo;
     }
 
     function onSelect(item as Ui.MenuItem) as Void {
         var id = item.getId();
 
         if (id == :Delete) {
-            var message = Lang.format("Delete Assets? ($1$)", [_assetManager.size()]);
+            var message = Lang.format("Delete Assets? ($1$)", [_assetRepo.size()]);
 
             Ui.pushView(
                 new Ui.Confirmation(message),
-                new DeleteAssetConfirmation(_assetManager),
+                new DeleteAssetConfirmation(_assetRepo),
                 Ui.SLIDE_IMMEDIATE
             );
 
