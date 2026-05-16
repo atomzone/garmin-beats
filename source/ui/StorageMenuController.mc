@@ -2,25 +2,29 @@ using Toybox.WatchUi as Ui;
 
 class StorageMenuController extends Ui.Menu2InputDelegate {
 
-    function initialize() {
+    private var _assetManager as AssetManager;
+
+    function initialize(assetManager as AssetManager) {
         Ui.Menu2InputDelegate.initialize();
+
+        _assetManager = assetManager;
     }
 
     function onSelect(item as Ui.MenuItem) as Void {
         var id = item.getId();
 
         if (id == :Delete) {
-            var assets = AudioAsset.getCachedAssets();
-            var message = Lang.format("Delete Assets? ($1$)", [assets.size()]);
+            var message = Lang.format("Delete Assets? ($1$)", [_assetManager.size()]);
 
             Ui.pushView(
                 new Ui.Confirmation(message),
-                new DeleteAssetConfirmation(assets),
-                WatchUi.SLIDE_IMMEDIATE
+                new DeleteAssetConfirmation(_assetManager),
+                Ui.SLIDE_IMMEDIATE
             );
 
         } else if (id == :Capacity) {
-
+            // show memory
+            // show cached sizes
         } 
     }
 }

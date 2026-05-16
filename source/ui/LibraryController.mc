@@ -11,6 +11,8 @@ class LibraryController extends Ui.Menu2InputDelegate {
         var id = item.getId();
 
         if (id == :AllTracks) {
+            // maybe we pass around refIds() small footprint
+            // or maybe we just use AudioAsset.getCachedAssets()
             var refIds = AudioAsset.getCachedAssetRefIds();
             var assets = AudioAsset.fromRefIds(refIds);
             

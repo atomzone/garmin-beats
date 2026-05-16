@@ -43,7 +43,7 @@
     <string id="DonateDesc">Support development</string>
 
     <!-- Storage -->
-    <string id="DeleteLabel">Delete</string>
+    <string id="DeleteLabel">Delete ($1$)</string>
     <string id="DeleteDesc">Remove downloaded tracks</string>
 
     <string id="CapacityLabel">Capacity</string>
