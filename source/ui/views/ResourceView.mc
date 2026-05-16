@@ -4,7 +4,7 @@ import Toybox.Lang;
 
 class ResourceView extends Ui.CheckboxMenu {
 
-    private var _lifecycle as MenuLifecycleController = new MenuLifecycleController();
+    private var _lifecycle as MenuLifecycleBehavior = new MenuLifecycleBehavior();
 
     function initialize(resources as Array<AudioResource>) {
         Ui.CheckboxMenu.initialize({:title => "ResourceView"});

@@ -1,7 +1,7 @@
 using Toybox.WatchUi as Ui;
 import Toybox.Lang;
 
-class MenuLifecycleController {
+class MenuLifecycleBehavior {
 
     // null  -> never shown
     // false -> currently active
@@ -9,7 +9,7 @@ class MenuLifecycleController {
     private var _isClosed as Boolean? = null;
 
     function handleAutoCloseOnShow() as Void {
-        $.am.debug("[MenuLifecycleController.onShow] isClosed=" + _isClosed);
+        $.am.debug("[MenuLifecycleBehavior.onShow] isClosed=" + _isClosed);
         
         if (_isClosed == true) {
             Ui.popView(Ui.SLIDE_IMMEDIATE);
@@ -20,7 +20,7 @@ class MenuLifecycleController {
     }
 
     function markClosedOnHide() as Void {
-        $.am.debug("[MenuLifecycleController.onHide] isClosed=" + _isClosed);
+        $.am.debug("[MenuLifecycleBehavior.onHide] isClosed=" + _isClosed);
         _isClosed = true;
     }
 }

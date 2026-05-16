@@ -3,7 +3,7 @@ import Toybox.Lang;
 
 class AssetSelectionView extends Ui.CheckboxMenu {
 
-    private var _lifecycle as MenuLifecycleController = new MenuLifecycleController();
+    private var _lifecycle as MenuLifecycleBehavior = new MenuLifecycleBehavior();
 
     function initialize(assets as Array<AudioAsset>) {
         Ui.CheckboxMenu.initialize({ :title => "Select Tracks" });
