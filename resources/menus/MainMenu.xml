@@ -6,6 +6,7 @@
     <menu-item id="ContinueListening" label="@Strings.ContinueListeningLabel" subLabel="@Strings.ContinueListeningDesc"/>
     <menu-item id="PlayAll" label="Play" subLabel="Play all tracks"/>
     <menu-item id="Library" label="@Strings.LibraryLabel" subLabel="@Strings.LibraryDesc"/>
+    <menu-item id="GetPlaylists" label="Get Playlists" subLabel="Browse and fetch playlists"/>
     <menu-item id="GetTracks" label="@Strings.GetTracksLabel" subLabel="@Strings.GetTracksDesc"/>
     <menu-item id="Settings" label="@Strings.SettingsLabel" subLabel="@Strings.SettingsDesc"/>
 

@@ -7,6 +7,35 @@ class AudioResourceLoader {
         self._href = href;
     }
 
+    function fetchPlaylists(callback as Method) as Void {
+        var request = new HttpRequest({
+            :href => self._href,
+            :parameters => {}
+        }, method(:onResponseBuildPlaylists));
+
+        request.getJson({ :callback => callback });
+    }
+
+    function onResponseBuildPlaylists(
+        response as ResponseType,
+        context as { :callback as Method }
+    ) as Void {
+        if (response[:ok] != true || !(response[:data] instanceof Dictionary)) {
+            $.am.debug("[loader.onResponseBuildPlaylists.fail] code=" + response[:code]);
+            (context[:callback] as Method).invoke([]);
+            return;
+        }
+
+        var json = response[:data] as Dictionary;
+        var playlists = [] as Array<PlaylistResourceType>;
+        if (json.hasKey("playlists") && json["playlists"] instanceof Array) {
+            playlists = json["playlists"] as Array<PlaylistResourceType>;
+        }
+
+        var model = PlaylistResource.fromArray(playlists);
+        (context[:callback] as Method).invoke(model);
+    }
+
     function fetchResources(callback as Method) as Void {
         var request = new HttpRequest({
             :href => self._href,
@@ -21,7 +50,7 @@ class AudioResourceLoader {
         context as { :callback as Method }
     ) as Void {
         if (response[:ok] != true || !(response[:data] instanceof Dictionary)) {
-            $.am.debug("[loader.onResponse.fail] code=" + response[:code]);
+            $.am.debug("[loader.onResponseBuildResources.fail] code=" + response[:code]);
             (context[:callback] as Method).invoke([]);
             return;
         }
@@ -32,7 +61,7 @@ class AudioResourceLoader {
             resources = json["resources"] as Array<AudioResourceType>;
         }
 
-        var models = buildResources(resources);
+        var models = AudioResource.fromArray(resources);
         (context[:callback] as Method).invoke(models);
     }
 }

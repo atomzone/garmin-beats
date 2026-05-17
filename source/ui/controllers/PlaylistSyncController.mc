@@ -3,13 +3,13 @@ using Toybox.WatchUi as Ui;
 using Toybox.Communications as Comm;
 import Toybox.Lang;
 
-class ResourceInputController extends Ui.Menu2InputDelegate {
-    private var _enabled as Array<AudioResource> = [];
-    private var _resources as Array<AudioResource>;
+class PlaylistSyncController extends Ui.Menu2InputDelegate {
+    private var _enabled as Array<PlaylistResource> = [];
+    private var _playlists as Array<PlaylistResource>;
 
-    function initialize(resources as Array<AudioResource>) {
+    function initialize(playlists as Array<PlaylistResource>) {
         Ui.Menu2InputDelegate.initialize();
-        self._resources = resources;
+        _playlists = playlists;
     }
 
     function onDone() as Void {
@@ -20,7 +20,11 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
 
         var serialized = [];
         for (var i = 0, limit = _enabled.size(); i < limit; i++) {
-            serialized.add(_enabled[i].serialize());
+            var tracks = _enabled[i].getTracks();
+            
+            for (var ii = 0, max = tracks.size(); ii < max; ii++) {
+                serialized.add(tracks[ii].serialize());
+            }
         }
 
         StorageManager.set("SYNC", serialized);
@@ -33,9 +37,9 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
         var id = item.getId() as Number;
 
         if ((item as Ui.CheckboxMenuItem).isChecked()) {
-            self._enabled.add(self._resources[id]);
+            _enabled.add(_playlists[id]);
         } else {
-            self._enabled.remove(self._resources[id]);
+            _enabled.remove(_playlists[id]);
         }
     }
 }

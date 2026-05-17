@@ -38,6 +38,15 @@ class MainMenuController extends Ui.Menu2InputDelegate {
                 self._transition
             );
 
+        } 
+        // fetch playlist.json and build navigation
+        else if (id == :GetPlaylists) {
+
+            var loader = new AudioResourceLoader("https://atomzone.github.io/static/playlists.json");
+
+            loader.fetchPlaylists(method(:demo));
+
+
         // async fetch then push reources view
         } else if (id == :GetTracks) {
             
@@ -60,6 +69,14 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         Ui.pushView(
             new ResourceView(resources),
             new ResourceInputController(resources),
+            self._transition
+        );
+    }
+
+    function demo(playlists as Array<PlaylistResource>) as Void {
+        Ui.pushView(
+            new PlaylistSyncView(playlists),
+            new PlaylistSyncController(playlists),
             self._transition
         );
     }

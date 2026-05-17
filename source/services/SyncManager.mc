@@ -10,7 +10,7 @@ class SyncManager extends Comm.SyncDelegate {
         Comm.SyncDelegate.initialize();
 
         var resources = StorageManager.getOrDefault("SYNC", []) as Array<AudioResourceType>;
-        _queue = buildResources(resources);
+        _queue = AudioResource.fromArray(resources);
     }
 
     function isSyncNeeded() as Boolean {
