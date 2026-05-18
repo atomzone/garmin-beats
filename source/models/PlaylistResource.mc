@@ -6,9 +6,11 @@ typedef PlaylistResourceType as {
     "tracks" as Array<AudioResourceType>
 };
 
-class PlaylistResource extends Object {   
+class PlaylistResource extends Object {
+
+    private var _checksum as String?;
     private var _title as String;
-    private var _desc as String?;
+    private var _desc as String?;   
     private var _tracks as Array<AudioResource>;
 
     function initialize(raw as PlaylistResourceType) {
@@ -36,6 +38,25 @@ class PlaylistResource extends Object {
 
     public function getTracks() as Array<AudioResource> {
         return _tracks;
+    }
+
+    public function getChecksum() as String {
+        if (_checksum != null) {
+            return _checksum;
+        }
+
+        var canonical =
+            getTitle() + "|" +
+            StringUtils.stringOrDefault(getDesc(), "");
+
+        var tracks = getTracks();
+        for (var i = 0, limit = tracks.size(); i < limit; i++) {
+            canonical += "|" + tracks[i].getChecksum();
+        }
+
+        _checksum = StringUtils.checksum(canonical);
+
+        return _checksum;
     }
 
     public function serialize() as PlaylistResourceType {

@@ -2,66 +2,59 @@ import Toybox.Application;
 import Toybox.Lang;
 
 typedef AudioResourceType as {
-    "source" as AudioResourceSourceType,
-    "meta" as AudioResourceMetaType?
-};
-typedef AudioResourceSourceType as { "url" as String };
-typedef AudioResourceMetaType as {
-    "title" as String?,
-    "artist" as String?,
-    "album" as String?
+    "source" as AudioSourceType,
+    "meta" as AudioMetadataType?
 };
 
-class AudioResource extends Object {   
+class AudioResource {   
 
-    private var _url as String;
-    private var _title as String?;
-    private var _artist as String?;
-    private var _album as String?;
+    private var _checksum as String?;
+    private var _source as AudioSource;
+    private var _metadata as AudioMetadata;
 
     function initialize(raw as AudioResourceType) {
-        var source = raw["source"] as AudioResourceSourceType;
-        var meta = raw["meta"] as AudioResourceMetaType?;
+        var source = raw["source"] as AudioSourceType;
+        var metadata = raw["meta"] as AudioMetadataType?;
 
-        _url = source["url"] as String;
-        
-        if (meta != null) {
-            _title = meta["title"];
-            _artist = meta["artist"];
-            _album = meta["album"];
-        }
+        _source = new AudioSource(source);
+        _metadata = new AudioMetadata(metadata);
     }
 
-    public function getId() as String {
-        return hashCode().toString();
+    public function getLogicalId() as String {
+        return StringUtils.checksum(getSourceUrl());
     }
 
     public function getSourceUrl() as String {
-        return _url;
+        return _source.getUrl();
     }
 
     public function getTitle() as String? {
-        return _title;
+        return _metadata._title;
     }
 
     public function getArtist() as String? {
-        return _artist;
+        return _metadata._artist;
     }
 
     public function getAlbum() as String? {
-        return _album;
+        return _metadata._album;
+    }
+
+    public function getChecksum() as String {
+        if (_checksum != null) {
+            return _checksum;
+        }
+
+        var canonical = _source.canonicalize() + "|" + _metadata.canonicalize();
+        _checksum = StringUtils.checksum(canonical);
+
+        return _checksum;
     }
 
     public function serialize() as AudioResourceType {
         return {
-            "source" => {
-                "url" => _url
-            },
-            "meta" => {
-                "title" => _title,
-                "artist" => _artist,
-                "album" => _album
-            }
+            "source" => _source.serialize(),
+            "meta" => _metadata.serialize()
         };
     }
 
