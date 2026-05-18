@@ -74,6 +74,22 @@ class MainMenuController extends Ui.Menu2InputDelegate {
     }
 
     function demo(playlists as Array<PlaylistResource>) as Void {
+        
+        for (var index = 0, limit = playlists.size(); index < limit; index++) {
+            var playlist = playlists[index];
+
+            $.am.debug("[playlist]canonicalize " + playlist.canonicalize());
+            $.am.debug("[playlist]getChecksum " + playlist.getChecksum());
+
+            var tracks = playlist.getTracks();
+            for (var index2 = 0, limit2 = tracks.size(); index2 < limit2; index2++) {
+                var track = tracks[index2];
+
+                $.am.debug("[track]canonicalize " + track.canonicalize());
+                $.am.debug("[track]getChecksum " + track.getChecksum());
+            }
+        }
+
         Ui.pushView(
             new PlaylistSyncView(playlists),
             new PlaylistSyncController(playlists),

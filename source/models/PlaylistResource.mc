@@ -45,18 +45,18 @@ class PlaylistResource extends Object {
             return _checksum;
         }
 
-        var canonical =
-            getTitle() + "|" +
-            StringUtils.stringOrDefault(getDesc(), "");
-
-        var tracks = getTracks();
-        for (var i = 0, limit = tracks.size(); i < limit; i++) {
-            canonical += "|" + tracks[i].getChecksum();
-        }
-
-        _checksum = StringUtils.checksum(canonical);
-
+        _checksum = StringUtils.checksum(canonicalize());
         return _checksum;
+    }
+
+    public function canonicalize() as String {
+        var canonical = _title + "|" + StringUtils.stringOrDefault(_desc, "");
+
+        for (var i = 0, limit = _tracks.size(); i < limit; i++) {
+            canonical += "|" + _tracks[i].canonicalize();
+        }
+        
+        return canonical;
     }
 
     public function serialize() as PlaylistResourceType {

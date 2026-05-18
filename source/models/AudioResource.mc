@@ -45,10 +45,12 @@ class AudioResource {
             return _checksum;
         }
 
-        var canonical = _source.canonicalize() + "|" + _metadata.canonicalize();
-        _checksum = StringUtils.checksum(canonical);
-
+        _checksum = StringUtils.checksum(canonicalize());
         return _checksum;
+    }
+
+    public function canonicalize() as String {
+        return _source.canonicalize() + "|" + _metadata.canonicalize();
     }
 
     public function serialize() as AudioResourceType {
