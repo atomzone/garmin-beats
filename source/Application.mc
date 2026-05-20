@@ -46,4 +46,10 @@ class AppEntry extends App.AudioContentProviderApp {
     function getSyncConfigurationView() {
         return getPlaybackConfigurationView();
     }
+
+    function getProviderIconInfo() as Media.ProviderIconInfo? {
+        return new Media.ProviderIconInfo(
+            $.Rez.Drawables.ProviderIcon, Toybox.Graphics.COLOR_ORANGE
+        );
+    }
 }
