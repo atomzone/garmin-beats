@@ -13,6 +13,8 @@ typedef AssetMeta as {
     "thumbsUp" as Boolean?
 };
 
+// AudioAsset - "Track exists locally"
+// AudioAssetState - "User/device state for local track"
 class AudioAsset extends MediaAsset {
 
     function initialize(id as Number) {

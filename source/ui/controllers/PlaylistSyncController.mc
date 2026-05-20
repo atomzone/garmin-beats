@@ -20,11 +20,7 @@ class PlaylistSyncController extends Ui.Menu2InputDelegate {
 
         var serialized = [];
         for (var i = 0, limit = _enabled.size(); i < limit; i++) {
-            var tracks = _enabled[i].getTracks();
-            
-            for (var ii = 0, max = tracks.size(); ii < max; ii++) {
-                serialized.add(tracks[ii].serialize());
-            }
+            serialized.add(_enabled[i].serialize());
         }
 
         StorageManager.set("SYNC", serialized);

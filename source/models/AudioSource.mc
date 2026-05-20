@@ -4,6 +4,7 @@ typedef AudioSourceType as {
     "url" as String 
 };
 
+// Track exists remotely
 class AudioSource {
 
     private var _url as String;

@@ -23,7 +23,12 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
             serialized.add(_enabled[i].serialize());
         }
 
-        StorageManager.set("SYNC", serialized);
+        var playlist = new PlaylistResource({
+            "title" => "Dynamic playlist from resources",
+            "tracks" => serialized
+        });
+
+        StorageManager.set("SYNC", [playlist.serialize()]);
         Communications.startSync2({
             :message => "Start the fans, please!",
         });

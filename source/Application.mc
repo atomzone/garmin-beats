@@ -33,7 +33,10 @@ class AppEntry extends App.AudioContentProviderApp {
     }
 
     function getSyncDelegate() as Comm.SyncDelegate? {
-        return new SyncManager();
+        var raw = StorageManager.getOrDefault("SYNC", []) as Array<PlaylistResourceType>;
+        var playlists = PlaylistResource.fromArray(raw);
+
+        return new SyncManager(playlists);
     }
 
     function getPlaybackConfigurationView() {

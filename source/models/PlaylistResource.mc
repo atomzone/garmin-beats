@@ -6,7 +6,7 @@ typedef PlaylistResourceType as {
     "tracks" as Array<AudioResourceType>
 };
 
-class PlaylistResource extends Object {
+class PlaylistResource {
 
     private var _checksum as String?;
     private var _title as String;
@@ -24,8 +24,8 @@ class PlaylistResource extends Object {
         }
     }
 
-    public function getId() as String {
-        return hashCode().toString();
+    public function getKey() as String {
+        return _title; //StringUtils.checksum(_title);
     }
 
     public function getTitle() as String {
