@@ -2,15 +2,44 @@ using Toybox.Media as Media;
 using Toybox.Communications as Comm;
 import Toybox.Lang;
 
+// move to manager folder?
 class SyncManager extends Comm.SyncDelegate {
 
+    private var _playlist as Array<PlaylistResource>;
+    // queue = required mutations
     private var _queue as Array<AudioResource>;
 
-    function initialize() {
+    function initialize(playlist as Array<PlaylistResource>) {
         Comm.SyncDelegate.initialize();
 
-        var resources = StorageManager.getOrDefault("SYNC", []) as Array<AudioResourceType>;
-        _queue = AudioResource.fromArray(resources);
+        _playlist = playlist;
+
+        _queue = [];
+        // for (var i = 0, limit = _playlist.size(); i < limit; i++) {
+        //     _queue.addAll(_playlist[i].getTracks());
+        // }
+
+        var playlistLocal = {"thetechmonkey" => "0C217DEA", "Default Playlist" => "FFCDF976"};
+        var tracklistLocal = {};
+        var manifest = new SyncManifest(_playlist, playlistLocal, tracklistLocal);
+        manifest.build();
+
+        var ops = manifest.getOperations();
+        for (var i = 0, limit = ops.size(); i < limit; i++) {
+            var operation = ops[i];
+
+            $.am.debug("[manifest.getOperations] " + operation);
+            $.am.debug("[manifest.getOperations.type] " + operation["type"]);    
+            $.am.debug("[manifest.getOperations.track] " + operation["track"]);
+
+            if (operation["type"] != null && (operation["type"] as String).equals("DOWNLOAD_TRACK")) {
+                if (operation["track"] != null) {
+                    _queue.add(operation["track"] as AudioResource);
+                }
+            }
+        }
+
+        // var syncOperation as Array<SyncOperation>
     }
 
     function isSyncNeeded() as Boolean {
