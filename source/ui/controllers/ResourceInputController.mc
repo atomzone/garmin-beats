@@ -28,7 +28,9 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
             "tracks" => serialized
         });
 
-        StorageManager.set("SYNC", [playlist.serialize()]);
+        // Single chokepoint: SyncStateStore owns the SYNC key and
+        // invalidates the planner cache for us.
+        SyncStateStore.setRemote([playlist.serialize()]);
         Communications.startSync2({
             :message => "Start the fans, please!",
         });

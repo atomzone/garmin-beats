@@ -20,8 +20,11 @@ class AudioResource {
         _metadata = new AudioMetadata(metadata);
     }
 
+    // LogicalId now includes both source URL and metadata for per-playlist uniqueness.
+    // This ensures that the same file with different titles/artists/albums in different playlists
+    // will be treated as distinct tracks by the sync system.
     public function getLogicalId() as String {
-        return StringUtils.checksum(getSourceUrl());
+        return StringUtils.checksum(canonicalize());
     }
 
     public function getSourceUrl() as String {

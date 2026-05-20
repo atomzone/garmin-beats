@@ -23,7 +23,9 @@ class PlaylistSyncController extends Ui.Menu2InputDelegate {
             serialized.add(_enabled[i].serialize());
         }
 
-        StorageManager.set("SYNC", serialized);
+        // Single chokepoint: SyncStateStore owns the SYNC key and
+        // invalidates the planner cache for us.
+        SyncStateStore.setRemote(serialized);
         Communications.startSync2({
             :message => "Start the fans, please!",
         });
