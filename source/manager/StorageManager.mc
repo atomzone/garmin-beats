@@ -1,7 +1,5 @@
-import Toybox.Application.Storage;
+using Toybox.Application.Storage as Storage;
 import Toybox.Lang;
-
-typedef StorageDict as Dictionary<String, StorageDict>;
 
 class StorageManager {
 

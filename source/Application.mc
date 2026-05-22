@@ -33,10 +33,12 @@ class AppEntry extends App.AudioContentProviderApp {
     }
 
     function getSyncDelegate() as Comm.SyncDelegate? {
-        var raw = StorageManager.getOrDefault("SYNC", []) as Array<PlaylistResourceType>;
-        var playlists = PlaylistResource.fromArray(raw);
+        // Cheap on cache hit (probe + exec within same wake share one build).
+        // Cache-miss only on cold start or after a real input change.
+        // SyncPlanner.ensureFresh();
+        // return new SyncManager();
 
-        return new SyncManager(playlists);
+        return new SyncBoss();
     }
 
     function getPlaybackConfigurationView() {
