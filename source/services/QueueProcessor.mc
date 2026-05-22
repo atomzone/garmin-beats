@@ -1,5 +1,11 @@
 import Toybox.Lang;
 
+typedef QueueTransactionType as {
+    "op" as String,
+    "entity" as String,
+    "payload" as Dictionary
+};
+
 class QueueProcessor {
 
     private var _queue as Array<QueueTransactionType>;
@@ -24,130 +30,73 @@ class QueueProcessor {
     }
 
     function start() as Void {
-        _processNext();
+
+        while (_queue.size() > 0) {
+
+            // inturpted
+            if (_cancelled) {
+                return;
+            }
+
+            var transaction = _queue[0];
+            var handler = transactionRouter(
+                transaction,
+                method(:onTransactionComplete)
+            );
+
+            if (handler == null) {
+                fail("No handler");
+                return;
+            }
+
+            var result = handler.execute(transaction);
+
+            // sync complete
+            // continue loop
+            if (result.equals("COMPLETE")) {
+                completeCurrent();
+                continue; // next please
+            }
+
+            // async "pending"
+            // stop loop & wait for callback
+            if (result.equals("PENDING")) {
+                return;
+            }
+
+            // result = "FAILED"
+            fail("Transaction execution failed");
+            return;
+        }
+
+        // done
+        _onComplete.invoke(null);
     }
 
     function stop() as Void {
         _cancelled = true;
     }
 
-    function _processNext() as Void {
-        if (_cancelled) {
+    function onTransactionComplete(success as Boolean) as Void {
+
+        if (!success) {
+            fail("Transaction failed");
             return;
         }
 
-        if (_queue.size() == 0) {
-            _onComplete.invoke(null);
-            return;
-        }
-
-        var task = _queue[0];
-        var op = task["op"];
-        var entity = task["entity"];
-        var payload = task["payload"];
-
-        $.am.debug("task " + task);
-        $.am.debug("op " + op);
-        $.am.debug("entity " + entity);
-        $.am.debug("payload " + payload);
-
+        // update queue
         completeCurrent();
 
-/*
-        //
-        // TRACK DOWNLOAD
-        //
-
-        if (
-            entity == "TRACK"
-            && op == "DOWNLOAD"
-        ) {
-
-            var track =
-                new AudioResource(payload);
-
-            _downloadTrack(track);
-
-            return;
-        }
-
-        //
-        // PLAYLIST SAVE
-        //
-
-        if (
-            entity == "PLAYLIST"
-            && op == "SAVE"
-        ) {
-
-            var playlist =
-                new PlaylistResource(payload);
-
-            PlaylistStore.save(playlist);
-
-            _completeCurrent();
-            return;
-        }
-
-        //
-        // UNKNOWN
-        //
-
-        _fail("Unknown operation");
-
-        */
+        // resume loop
+        start();
     }
-
-/*
-    //
-    // ASYNC DOWNLOAD
-    //
-
-    function _downloadTrack(
-        track as AudioResource
-    ) {
-
-        TrackDownloader.download(
-            track,
-            method(:_onTrackDownloaded)
-        );
-    }
-
-    //
-    // DOWNLOAD CALLBACK
-    //
-
-    function _onTrackDownloaded(result) {
-
-        if (_cancelled) {
-            return;
-        }
-
-        if (result == null) {
-            _fail("Download failed");
-            return;
-        }
-
-        var tx = _queue[0];
-        var payload = tx["payload"];
-
-        var track =
-            new AudioResource(payload);
-
-        AssetIndex.markDownloaded(
-            track.getLogicalId()
-        );
-
-        _completeCurrent();
-    }
-*/
 
     function completeCurrent() as Void {
 
         // remove task from queue
         _queue.remove(_queue[0]);
 
-        // persist change
+        // persist new queue
         QueueStore.save(_queue);
 
         _processed++;
@@ -155,12 +104,30 @@ class QueueProcessor {
         // notify progress
         var percentageComplete = (_processed * 100 + _total / 2) / _total;
         _onProgress.invoke(percentageComplete);
-
-        // next please
-        _processNext();
     }
 
     function fail(error as String) as Void {
         _onComplete.invoke(error);
+    }
+
+    static function transactionRouter(
+        transaction as QueueTransactionType,
+        onTransactionComplete as Method(Boolean) as Void
+    ) as TransactionHandler? {
+
+        var op = transaction["op"] as String;
+        var entity = transaction["entity"] as String;
+
+        // TRACK DOWNLOAD
+        if (entity.equals("TRACK") && op.equals("DOWNLOAD")) {
+            return new TransactionAsyncHandler(onTransactionComplete);
+        }
+
+        // PLAYLIST SAVE
+        if (entity.equals("PLAYLIST") && op.equals("SAVE")) {
+            return new TransactionHandler();
+        }
+
+        return null;
     }
 }

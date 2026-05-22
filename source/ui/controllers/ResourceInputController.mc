@@ -44,7 +44,7 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
                 queue.add({
                     "op" => "DOWNLOAD",
                     "entity" => "TRACK",
-                    "payload" => _enabled[i].serialize()
+                    "payload" => tracks[t].serialize()
                 });
             }
         }
