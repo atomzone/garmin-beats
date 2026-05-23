@@ -84,20 +84,20 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         _overlay.end(:GetPlaylists);
         
-        for (var index = 0, limit = playlists.size(); index < limit; index++) {
-            var playlist = playlists[index];
+        // for (var index = 0, limit = playlists.size(); index < limit; index++) {
+        //     var playlist = playlists[index];
 
-            // $.am.debug("[playlist]canonicalize " + playlist.canonicalize());
-            $.am.debug("[playlist]getChecksum " + playlist.getKey() + " -  " + playlist.getChecksum());
+        //     // $.am.debug("[playlist]canonicalize " + playlist.canonicalize());
+        //     $.am.debug("[playlist]getChecksum " + playlist.getKey() + " -  " + playlist.getChecksum());
 
-            var tracks = playlist.getTracks();
-            for (var index2 = 0, limit2 = tracks.size(); index2 < limit2; index2++) {
-                var track = tracks[index2];
+        //     var tracks = playlist.getTracks();
+        //     for (var index2 = 0, limit2 = tracks.size(); index2 < limit2; index2++) {
+        //         var track = tracks[index2];
 
-                // $.am.debug("[track]canonicalize " + track.canonicalize());
-                $.am.debug("[track]getChecksum " + track.getChecksum());
-            }
-        }
+        //         // $.am.debug("[track]canonicalize " + track.canonicalize());
+        //         $.am.debug("[track]getChecksum " + track.getChecksum());
+        //     }
+        // }
 
         Ui.pushView(
             new PlaylistSyncView(playlists),

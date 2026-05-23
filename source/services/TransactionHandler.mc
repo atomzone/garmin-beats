@@ -30,7 +30,7 @@ class TransactionHandler {
 
 class TransactionAsyncHandler extends TransactionHandler {
 
-    protected var _onComplete as Method(Boolean) as Void;
+    private var _onComplete as Method(Boolean) as Void;
 
     function initialize(onComplete as Method(Boolean) as Void) {
         TransactionHandler.initialize();
@@ -48,7 +48,7 @@ class TransactionAsyncHandler extends TransactionHandler {
 
         // dummy async
         var cbTimer = new Timer.Timer();
-        cbTimer.start(method(:success), 1000, false);
+        cbTimer.start(method(:success), 100, false);
 
         return "PENDING";
     }

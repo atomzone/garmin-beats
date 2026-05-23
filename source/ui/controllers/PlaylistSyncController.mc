@@ -1,4 +1,3 @@
-using Toybox.Application as App;
 using Toybox.WatchUi as Ui;
 using Toybox.Communications as Comm;
 import Toybox.Lang;
@@ -18,40 +17,18 @@ class PlaylistSyncController extends Ui.Menu2InputDelegate {
             return;
         }
 
-        var serialized = [];
-        for (var i = 0, limit = _enabled.size(); i < limit; i++) {
-            serialized.add(_enabled[i].serialize());
-        }
-
-        // SyncStateStore.setRemote(serialized);
-
         // make queue tasks
-        // future - this builder will
-        // - check the playlist/track against local stored assets
-        // - by comparing checksums
-        // - todo/descide if tracks are unique or shared across pl
-        var queue = [];
-        for (var i = 0, limit = _enabled.size(); i < limit; i++) {
-            queue.add({
-                "op" => "SAVE",
-                "entity" => "PLAYLIST",
-                "payload" => _enabled[i].serialize()
-            });
-
-            var tracks = _enabled[i].getTracks();
-            for (var t = 0; t < tracks.size(); t++) {
-                queue.add({
-                    "op" => "DOWNLOAD",
-                    "entity" => "TRACK",
-                    "payload" => tracks[t].serialize()
-                });
-            }
-        }
+        var builder = new QueueBuilder({
+            :PLAYLIST => SyncStateStore.getPlaylistChecksums(),
+            :TRACK => SyncStateStore.getTrackChecksums()
+        });
+        var queue = builder.buildQueue(_enabled);
 
         // and store
         QueueStore.save(queue);
         
-        Communications.startSync2({
+        // now fans
+        Comm.startSync2({
             :message => "Start the fans, please!",
         });
     }

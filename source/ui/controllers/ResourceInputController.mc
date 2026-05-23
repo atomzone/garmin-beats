@@ -27,27 +27,13 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
             "title" => "Dynamic playlist from resources",
             "tracks" => serialized
         })];
-
-        // SyncStateStore.setRemote([playlist.serialize()]);
-
+        
         // make queue tasks
-        var queue = [];
-        for (var i = 0, limit = playlist.size(); i < limit; i++) {
-            queue.add({
-                "op" => "SAVE",
-                "entity" => "PLAYLIST",
-                "payload" => _enabled[i].serialize()
-            });
-
-            var tracks = playlist[i].getTracks();
-            for (var t = 0; t < tracks.size(); t++) {
-                queue.add({
-                    "op" => "DOWNLOAD",
-                    "entity" => "TRACK",
-                    "payload" => tracks[t].serialize()
-                });
-            }
-        }
+        var builder = new QueueBuilder({
+            :PLAYLIST => SyncStateStore.getPlaylistChecksums(),
+            :TRACK => {}
+        });
+        var queue = builder.buildQueue(playlist);
 
         // and store
         QueueStore.save(queue);

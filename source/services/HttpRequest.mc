@@ -44,7 +44,11 @@ class HttpRequest {
         self.makeRequest(settings);
     }
 
-    function onResponse(responseCode as Number, data as Dictionary or String or PersistedContent.Iterator or Null, context as Object) as Void {
+    function onResponse(
+        responseCode as Number, 
+        data as Dictionary or String or PersistedContent.Iterator or Null, 
+        context as Object
+    ) as Void {
         var ok = isSuccessResponse(responseCode);
         var payload = data as Object?;
         var errorMessage = ok ? null : "HTTP request failed";

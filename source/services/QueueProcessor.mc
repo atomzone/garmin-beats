@@ -10,8 +10,8 @@ class QueueProcessor {
 
     private var _queue as Array<QueueTransactionType>;
 
-    private var _onProgress as Method(Number) as Void;
-    private var _onComplete as Method(String) as Void;
+    private var _onProgress as Method(percentComplete as Number) as Void;
+    private var _onComplete as Method(errorMessage as String?) as Void;
 
     private var _cancelled as Boolean = false;
     private var _processed as Number = 0;
@@ -19,8 +19,8 @@ class QueueProcessor {
 
     function initialize(
         queue as Array<QueueTransactionType>,
-        onProgress as Method(Number) as Void,
-        onComplete as Method(String) as Void
+        onProgress as Method(percentComplete as Number) as Void,
+        onComplete as Method(errorMessage as String?) as Void
     ) {
         _queue = queue;
         _onProgress = onProgress;
@@ -39,10 +39,7 @@ class QueueProcessor {
             }
 
             var transaction = _queue[0];
-            var handler = transactionRouter(
-                transaction,
-                method(:onTransactionComplete)
-            );
+            var handler = transactionRouter(transaction);
 
             if (handler == null) {
                 fail("No handler");
@@ -102,29 +99,38 @@ class QueueProcessor {
         _processed++;
 
         // notify progress
-        var percentageComplete = (_processed * 100 + _total / 2) / _total;
-        _onProgress.invoke(percentageComplete);
+        notifyProgressChange(null);
+    }
+
+    function notifyProgressChange(downloadPercent as Number?) as Void {
+        if (downloadPercent == null) {
+            downloadPercent = 0;
+        }
+
+        var overallProgress = (_processed * 100 + downloadPercent + _total / 2) / _total;
+
+        _onProgress.invoke(overallProgress);
     }
 
     function fail(error as String) as Void {
         _onComplete.invoke(error);
     }
 
-    static function transactionRouter(
-        transaction as QueueTransactionType,
-        onTransactionComplete as Method(Boolean) as Void
-    ) as TransactionHandler? {
+    private function transactionRouter(transaction as QueueTransactionType) as TransactionHandler? {
 
         var op = transaction["op"] as String;
         var entity = transaction["entity"] as String;
 
         // TRACK DOWNLOAD
-        if (entity.equals("TRACK") && op.equals("DOWNLOAD")) {
-            return new TransactionAsyncHandler(onTransactionComplete);
+        if (op.equals("DOWNLOAD")) {
+            // return new TransactionAsyncHandler(method(:onTransactionComplete));
+            return new DownloadAudioResourceHandler(
+                method(:onTransactionComplete), method(:notifyProgressChange)
+            );
         }
 
-        // PLAYLIST SAVE
-        if (entity.equals("PLAYLIST") && op.equals("SAVE")) {
+        // SAVE/UPDATE
+        if (entity.equals("PLAYLIST") || entity.equals("TRACK")) {
             return new TransactionHandler();
         }
 

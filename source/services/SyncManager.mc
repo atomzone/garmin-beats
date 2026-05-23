@@ -30,15 +30,15 @@ class SyncManager extends Comm.SyncDelegate {
             _processor.stop();
         }
 
-        Communications.cancelAllRequests();
-        notifySyncComplete(null);
+        Comm.notifySyncComplete(null);
+        Comm.cancelAllRequests();
     }
 
     function onProgress(progress as Number) as Void {
-        notifySyncProgress(progress);
+        Comm.notifySyncProgress(progress);
     }
 
     function onComplete(error as String?) as Void {
-        notifySyncComplete(error);
+        Comm.notifySyncComplete(error);
     }
 }
