@@ -1,0 +1,31 @@
+using Toybox.WatchUi as Ui;
+import Toybox.Lang;
+
+class PlaylistBrowserView extends Ui.CheckboxMenu {
+
+    private var _lifecycle as MenuLifecycleBehavior = new MenuLifecycleBehavior();
+
+    function initialize(assets as Array<PlaylistResource>) {
+        Ui.CheckboxMenu.initialize({ :title => "Select Tracks" });
+
+        for (var index = 0, limit = assets.size(); index < limit; index++) {
+            var asset = assets[index];
+
+            addItem(new Ui.CheckboxMenuItem(
+                asset.getTitle(),
+                asset.getDesc(),
+                index,
+                false,
+                {}
+            ));
+        }
+    }
+
+    function onShow() as Void {
+        _lifecycle.handleAutoCloseOnShow();
+    }
+
+    function onHide() as Void {
+        _lifecycle.markClosedOnHide();
+    }
+}

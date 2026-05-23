@@ -7,6 +7,7 @@ import Toybox.Lang;
 // }
 
 typedef QueueTransactionType as {
+    "id" as String,
     "op" as String,
     "entity" as String,
     "payload" as Dictionary
@@ -18,11 +19,12 @@ class SyncTransactionHandler {
     // PENDING  -> async completion later
     // FAILED   -> immediate failure
     function execute(transaction as QueueTransactionType) as String {
+        var id = transaction["id"];
         var op = transaction["op"];
         var entity = transaction["entity"];
         var payload = transaction["payload"];
 
-        $.am.debug("[SYNC] op " + op);
+        $.am.debug("[SYNC] op " + op + " ID " + id);
         $.am.debug("entity " + entity);
         $.am.debug("payload " + payload);
 

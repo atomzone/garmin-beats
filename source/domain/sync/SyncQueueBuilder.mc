@@ -34,6 +34,7 @@ class SyncQueueBuilder {
             // New playlist
             if (localChecksum == null) {
                 queue.add({
+                    "id" => playlist.getKey(),
                     "op" => "SAVE",
                     "entity" => "PLAYLIST",
                     "payload" => playlist.serialize()
@@ -43,6 +44,7 @@ class SyncQueueBuilder {
             // Updated playlist
             else if (!localChecksum.equals(playlist.getChecksum())) {
                 queue.add({
+                    "id" => playlist.getKey(),
                     "op" => "UPDATE",
                     "entity" => "PLAYLIST",
                     "payload" => playlist.serialize()
@@ -66,6 +68,7 @@ class SyncQueueBuilder {
                 // New track
                 if (trackCheck == null) {
                     queue.add({
+                        "id" => track.getLogicalId(),
                         "op" => "DOWNLOAD",
                         "entity" => "TRACK",
                         "payload" => track.serialize()
@@ -74,6 +77,7 @@ class SyncQueueBuilder {
                 // Updated track
                 else if (!trackCheck.equals(track.getChecksum())) {
                     queue.add({
+                        "id" => track.getLogicalId(),
                         "op" => "UPDATE",
                         "entity" => "TRACK",
                         "payload" => track.serialize()
@@ -81,6 +85,14 @@ class SyncQueueBuilder {
                 }
                 // Unchanged track 
             }
+
+            // consider delete, no payload
+            // queue.add({
+            //     "id" => track.getLogicalId(),
+            //     "op" => "DELETE",
+            //     "entity" => "TRACK",
+            //     "payload" => null
+            // });
         }
 
         return queue;

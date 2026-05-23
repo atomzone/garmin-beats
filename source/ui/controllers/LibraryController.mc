@@ -10,7 +10,19 @@ class LibraryController extends Ui.Menu2InputDelegate {
     function onSelect(item as Ui.MenuItem) as Void {
         var id = item.getId();
 
-        if (id == :AllTracks) {
+        if (id == :Playlists) {
+            // [TODO] this would not render if empty
+            var playlistResourceIds = PlaylistManager.getActiveIds();
+            var playlistResources = PlaylistManager.fromArray(playlistResourceIds);
+
+            Ui.pushView(
+                new PlaylistBrowserView(playlistResources),
+                new PlaylistMenuController(playlistResources),
+                _transition
+            );
+
+        } else if (id == :AllTracks) {
+            
             // maybe we pass around refIds() small footprint
             // or maybe we just use AudioAsset.getCachedAssets()
             var refIds = AudioAsset.getCachedAssetRefIds();

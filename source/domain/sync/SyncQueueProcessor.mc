@@ -118,13 +118,16 @@ class SyncQueueProcessor {
         // TRACK DOWNLOAD
         if (op.equals("DOWNLOAD")) {
             // return new TransactionAsyncHandler(method(:onTransactionComplete));
-            return new AudioResourceDownloadHandler(
+            return new AudioResourceSyncHandler(
                 method(:onTransactionComplete), method(:notifyProgressChange)
             );
         }
 
         // SAVE/UPDATE
-        if (entity.equals("PLAYLIST") || entity.equals("TRACK")) {
+        if (entity.equals("PLAYLIST")) {
+            return new PlaylistResourceSyncHandler();
+        }
+        if (entity.equals("TRACK")) {
             return new SyncTransactionHandler();
         }
 
