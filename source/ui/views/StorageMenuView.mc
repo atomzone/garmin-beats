@@ -3,10 +3,10 @@ import Toybox.Lang;
 
 class StorageMenuView extends $.Rez.Menus.StorageMenu {
 
-    private var _assetRepo as AssetRepository;
+    private var _assetRepo as AudioAssetRepository;
     private var _deleteLabel as String;
 
-    function initialize(assetRepo as AssetRepository) {
+    function initialize(assetRepo as AudioAssetRepository) {
         $.Rez.Menus.StorageMenu.initialize();
 
         _assetRepo = assetRepo;

@@ -1,6 +1,6 @@
 import Toybox.Lang;
 
-class AssetRepository {
+class AudioAssetRepository {
 
     private var _refIds as Array<Number>;
     private var _cache as Dictionary<Number, AudioAsset>;

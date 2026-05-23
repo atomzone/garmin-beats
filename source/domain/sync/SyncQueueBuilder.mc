@@ -1,6 +1,6 @@
 import Toybox.Lang;
 
-class QueueBuilder {
+class SyncQueueBuilder {
 
     private var _entityChecksums as Dictionary<Symbol, Dictionary<String, String>>;
 

@@ -1,7 +1,7 @@
 using Toybox.Media as Media;
 import Toybox.Lang;
 
-class DownloadAudioResourceHandler extends TransactionAsyncHandler {
+class AudioResourceDownloadHandler extends TransactionAsyncHandler {
 
     private var _onProgress as Method(Number) as Void;
 

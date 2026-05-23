@@ -29,14 +29,14 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
         })];
         
         // make queue tasks
-        var builder = new QueueBuilder({
+        var builder = new SyncQueueBuilder({
             :PLAYLIST => SyncStateStore.getPlaylistChecksums(),
             :TRACK => {}
         });
         var queue = builder.buildQueue(playlist);
 
         // and store
-        QueueStore.save(queue);
+        SyncQueueStore.save(queue);
 
         Communications.startSync2({
             :message => "Start the fans, please!",

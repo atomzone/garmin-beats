@@ -18,14 +18,14 @@ class PlaylistSyncController extends Ui.Menu2InputDelegate {
         }
 
         // make queue tasks
-        var builder = new QueueBuilder({
+        var builder = new SyncQueueBuilder({
             :PLAYLIST => SyncStateStore.getPlaylistChecksums(),
             :TRACK => SyncStateStore.getTrackChecksums()
         });
         var queue = builder.buildQueue(_enabled);
 
         // and store
-        QueueStore.save(queue);
+        SyncQueueStore.save(queue);
         
         // now fans
         Comm.startSync2({

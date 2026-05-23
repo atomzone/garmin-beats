@@ -2,9 +2,9 @@ using Toybox.WatchUi as Ui;
 
 class StorageMenuController extends Ui.Menu2InputDelegate {
 
-    private var _assetRepo as AssetRepository;
+    private var _assetRepo as AudioAssetRepository;
 
-    function initialize(assetRepo as AssetRepository) {
+    function initialize(assetRepo as AudioAssetRepository) {
         Ui.Menu2InputDelegate.initialize();
 
         _assetRepo = assetRepo;

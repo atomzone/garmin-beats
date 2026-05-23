@@ -3,20 +3,20 @@ import Toybox.Lang;
 
 class SyncManager extends Comm.SyncDelegate {
 
-    private var _processor as QueueProcessor?;
+    private var _processor as SyncQueueProcessor?;
 
     function initialize() {
         Comm.SyncDelegate.initialize();
     }
 
     function isSyncNeeded() as Boolean {
-        return QueueStore.getSize() > 0;
+        return SyncQueueStore.getSize() > 0;
     }
 
     function onStartSync() as Void {
-        var queue = QueueStore.load();
+        var queue = SyncQueueStore.load();
 
-        _processor = new QueueProcessor(
+        _processor = new SyncQueueProcessor(
             queue,
             method(:onProgress),
             method(:onComplete)

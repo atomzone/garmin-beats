@@ -1,12 +1,6 @@
 import Toybox.Lang;
 
-typedef QueueTransactionType as {
-    "op" as String,
-    "entity" as String,
-    "payload" as Dictionary
-};
-
-class QueueProcessor {
+class SyncQueueProcessor {
 
     private var _queue as Array<QueueTransactionType>;
 
@@ -94,7 +88,7 @@ class QueueProcessor {
         _queue.remove(_queue[0]);
 
         // persist new queue
-        QueueStore.save(_queue);
+        SyncQueueStore.save(_queue);
 
         _processed++;
 
@@ -116,7 +110,7 @@ class QueueProcessor {
         _onComplete.invoke(error);
     }
 
-    private function transactionRouter(transaction as QueueTransactionType) as TransactionHandler? {
+    private function transactionRouter(transaction as QueueTransactionType) as SyncTransactionHandler? {
 
         var op = transaction["op"] as String;
         var entity = transaction["entity"] as String;
@@ -124,14 +118,14 @@ class QueueProcessor {
         // TRACK DOWNLOAD
         if (op.equals("DOWNLOAD")) {
             // return new TransactionAsyncHandler(method(:onTransactionComplete));
-            return new DownloadAudioResourceHandler(
+            return new AudioResourceDownloadHandler(
                 method(:onTransactionComplete), method(:notifyProgressChange)
             );
         }
 
         // SAVE/UPDATE
         if (entity.equals("PLAYLIST") || entity.equals("TRACK")) {
-            return new TransactionHandler();
+            return new SyncTransactionHandler();
         }
 
         return null;

@@ -1,7 +1,7 @@
 using Toybox.Application.Storage as Storage;
 import Toybox.Lang;
 
-class QueueStore {
+class SyncQueueStore {
 
     static function load() as Array<QueueTransactionType> {
         return StorageManager.getOrDefault("QUEUE", []) as Array<QueueTransactionType>;

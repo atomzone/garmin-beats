@@ -6,15 +6,17 @@ import Toybox.Lang;
 //     FAILED
 // }
 
-class TransactionHandler {
+typedef QueueTransactionType as {
+    "op" as String,
+    "entity" as String,
+    "payload" as Dictionary
+};
 
-    //
-    // RETURN:
-    //
+class SyncTransactionHandler {
+
     // COMPLETE -> sync completion
     // PENDING  -> async completion later
     // FAILED   -> immediate failure
-    //
     function execute(transaction as QueueTransactionType) as String {
         var op = transaction["op"];
         var entity = transaction["entity"];
@@ -28,12 +30,12 @@ class TransactionHandler {
     }
 }
 
-class TransactionAsyncHandler extends TransactionHandler {
+class TransactionAsyncHandler extends SyncTransactionHandler {
 
     private var _onComplete as Method(Boolean) as Void;
 
     function initialize(onComplete as Method(Boolean) as Void) {
-        TransactionHandler.initialize();
+        SyncTransactionHandler.initialize();
         _onComplete = onComplete;
     }
 
