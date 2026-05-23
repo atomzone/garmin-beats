@@ -31,7 +31,7 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
         // make queue tasks
         var builder = new SyncQueueBuilder({
             :PLAYLIST => SyncStateStore.getPlaylistChecksums(),
-            :TRACK => {}
+            :TRACK => SyncStateStore.getTrackChecksums()
         });
         var queue = builder.buildQueue(playlist);
 

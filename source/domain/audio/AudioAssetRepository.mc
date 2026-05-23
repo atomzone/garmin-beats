@@ -39,5 +39,9 @@ class AudioAssetRepository {
 
         _refIds = [];
         _cache = {};
+
+        // TODO: move this 
+        // who is the owner of assets and syncstates and coordinates the realtionship?
+        SyncStateStore.removalAll();
     }
 }

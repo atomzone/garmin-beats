@@ -58,6 +58,7 @@ class AudioResourceDownloadHandler extends TransactionAsyncHandler {
         var data = response[:data];
         var track = context[:track] as AudioResource;
 
+        // TODO: can we remove instanceOd check?
         if (response[:ok] != true || !(data instanceof Media.ContentRef)) {
             fail();
             return;
@@ -69,6 +70,11 @@ class AudioResourceDownloadHandler extends TransactionAsyncHandler {
         var content = asset.getContent();
         var metadata = buildAssetMetadata(track, content);
         asset.saveAndApplyMetadata(content, metadata);
+
+        // persist track checksum 
+        // for compare on future syncs
+        // TODO: migrate from getLogicalId -> getId or getUniqueId
+        SyncStateStore.setTrack(track.getLogicalId(), track.getChecksum());
 
         success();
     }

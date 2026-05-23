@@ -69,4 +69,9 @@ class SyncStateStore {
         map.remove(key);
         StorageManager.set(TR_KEY, map as Storage.ValueType);
     }
+
+    static function removalAll() as Void {
+        StorageManager.delete(PL_KEY);
+        StorageManager.delete(TR_KEY);
+    }
 }
