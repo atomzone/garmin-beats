@@ -16,9 +16,9 @@ class MediaResourceSyncHandler extends TransactionAsyncHandler {
     function execute(transaction as QueueTransactionType) as String {
         var tid = transaction["tid"];
         var payload = transaction["payload"] as AudioSourceType;
+        
         var audioSource = new AudioSource(payload);
-
-        var context = { :tid => tid, :class => audioSource };
+        var context = { :id => tid, };
         var request = new HttpRequest({
             :href => audioSource.getUrl(),
             :parameters => {}
@@ -42,7 +42,7 @@ class MediaResourceSyncHandler extends TransactionAsyncHandler {
 
     function onResponse(
         response as ResponseType,
-        context as { :tid as String, :class as AudioSource }
+        context as { :id as String } 
     ) as Void {
         var data = response[:data];
 
@@ -52,12 +52,12 @@ class MediaResourceSyncHandler extends TransactionAsyncHandler {
             return;
         }
 
-        var tid = context[:tid];
-        var audioSource = context[:class] as AudioSource;
-        var refId = data.getId() as Number;
+        var asset = new MediaAssetNew({
+            "id" => context[:id] as String,
+            "refId" => data.getId()
+        });
 
-        // LETS MAKE THIS A RECORD OF ID => mediaResource()
-        $.am.debug("[TRANS] CREATE MediaAsset :: targetId=" + tid + ", refId=" + refId + ", audioSource=" + audioSource.serialize());
+        $.am.debug("[TRANS][BUILT][MediaAssetNew] " + asset.serialize());
 
         success();
     }

@@ -8,7 +8,7 @@ class AudioResourceSyncHandler extends SyncTransactionHandler {
 
     // LOOSE SKETCH
     function execute(transaction as QueueTransactionType) as String {
-        var tid = transaction["tid"];
+        var tid = transaction["tid"] as String;
         var operation = transaction["op"];
 
         if (operation == null) {
@@ -16,9 +16,14 @@ class AudioResourceSyncHandler extends SyncTransactionHandler {
         }
 
         if (operation.equals("SAVE") || operation.equals("UPDATE")) {
-            var metadata = new AudioMetadata(transaction["payload"] as AudioMetadataType);
 
-            $.am.debug("[TRANS] " + operation + " AudioAsset :: targetId=" + tid + ", metadata=" + metadata.serialize());
+            var metadata = transaction["payload"] as AudioMetadataType;
+            var asset = new TrackAsset({
+                "id" => tid,
+                "metadata" => metadata
+            });
+
+            $.am.debug("[TRANS][BUILT][TrackAsset] " + asset.serialize());
 
             // persist model + persist checksum
             // PlaylistManager.save(playlist);
