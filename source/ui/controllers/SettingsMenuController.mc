@@ -2,12 +2,12 @@ using Toybox.WatchUi as Ui;
 
 class SettingsMenuController extends Ui.Menu2InputDelegate {
 
-    private var _assetRepo as AudioAssetRepository;
+    private var _assetRepo as AudioAssetRepositoryOld;
 
     function initialize() {
         Ui.Menu2InputDelegate.initialize();
 
-        _assetRepo = new AudioAssetRepository();
+        _assetRepo = new AudioAssetRepositoryOld();
     }
 
     function onSelect(item as Ui.MenuItem) as Void {

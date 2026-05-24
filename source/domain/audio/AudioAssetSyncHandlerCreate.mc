@@ -1,7 +1,7 @@
 using Toybox.Media as Media;
 import Toybox.Lang;
 
-class MediaAsset2SyncHandlerCreate extends TransactionAsyncHandler {
+class AudioAssetSyncHandlerCreate extends TransactionAsyncHandler {
 
     private var _onProgress as Method(Number) as Void;
 
@@ -65,12 +65,12 @@ class MediaAsset2SyncHandlerCreate extends TransactionAsyncHandler {
             return;
         }
 
-        var asset = new MediaAssetNew({
+        var asset = new AudioAsset({
             "id" => id,
             "refId" => data.getId(),
             "metadata" => context[:metadata],
             "source" => context[:source]
-        } as MediaAssetNewType);
+        } as AudioAssetType);
 
         $.am.debug("[TRANS][BUILT][MediaAsset2] " + asset.serialize());
 

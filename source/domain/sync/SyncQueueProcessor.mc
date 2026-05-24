@@ -140,13 +140,13 @@ class SyncQueueProcessor {
             // Create
             if (op.equals("CREATE")) {
 
-                return new MediaAsset2SyncHandlerCreate(
+                return new AudioAssetSyncHandlerCreate(
                     method(:onTransactionComplete), method(:notifyProgressChange)
                 );
             }
 
             // Update/delete 
-            return new MediaAsset2SyncHandler();
+            return new AudioAssetSyncHandler();
         }
 
         return null;

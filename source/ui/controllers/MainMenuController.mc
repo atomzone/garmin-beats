@@ -29,7 +29,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         // launch playback of all tracks
         } else if (id == :PlayAll) {
 
-            var assets = AudioAsset.getCachedAssets();
+            var assets = AudioAssetOld.getCachedAssets();
             var playlist = new Playlist(assets, 0);
 
             Media.startPlayback(playlist.serialize() as App.PersistableType);
@@ -84,21 +84,6 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         _overlay.end(:GetPlaylists);
         
-        // for (var index = 0, limit = playlists.size(); index < limit; index++) {
-        //     var playlist = playlists[index];
-
-        //     // $.am.debug("[playlist]canonicalize " + playlist.canonicalize());
-        //     $.am.debug("[playlist]getChecksum " + playlist.getId() + " -  " + playlist.getChecksum());
-
-        //     var tracks = playlist.getTracks();
-        //     for (var index2 = 0, limit2 = tracks.size(); index2 < limit2; index2++) {
-        //         var track = tracks[index2];
-
-        //         // $.am.debug("[track]canonicalize " + track.canonicalize());
-        //         $.am.debug("[track]getChecksum " + track.getChecksum());
-        //     }
-        // }
-
         Ui.pushView(
             new PlaylistSyncView(playlists),
             new PlaylistSyncController(playlists),

@@ -2,9 +2,10 @@ using Toybox.WatchUi as Ui;
 import Toybox.Lang;
 
 class DeleteAssetConfirmation extends Ui.ConfirmationDelegate {
-    private var _assetRepo as AudioAssetRepository;
 
-    function initialize(assetRepo as AudioAssetRepository) {
+    private var _assetRepo as AudioAssetRepositoryOld;
+
+    function initialize(assetRepo as AudioAssetRepositoryOld) {
         ConfirmationDelegate.initialize();
 
         _assetRepo = assetRepo;

@@ -118,7 +118,7 @@ class PlaybackProvider extends Media.ContentDelegate {
     function onThumbsDown(contentRefId as Object) as Void {
         $.am.debugWithArgs("[onThumbsDown]", contentRefId);
 
-        var asset = new AudioAsset(contentRefId as Number);
+        var asset = new AudioAssetOld(contentRefId as Number);
         asset.setThumbsUp(false);
     }
 
@@ -126,7 +126,7 @@ class PlaybackProvider extends Media.ContentDelegate {
     function onThumbsUp(contentRefId as Object) as Void {
         $.am.debugWithArgs("[onThumbsUp]", contentRefId);
 
-        var asset = new AudioAsset(contentRefId as Number);
+        var asset = new AudioAssetOld(contentRefId as Number);
         asset.setThumbsUp(true);
     }
 }

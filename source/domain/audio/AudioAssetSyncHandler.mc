@@ -1,6 +1,6 @@
 import Toybox.Lang;
 
-class MediaAsset2SyncHandler extends SyncTransactionHandler {
+class AudioAssetSyncHandler extends SyncTransactionHandler {
 
     function initialize() {
         SyncTransactionHandler.initialize();
