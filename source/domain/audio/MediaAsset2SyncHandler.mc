@@ -8,7 +8,7 @@ class MediaAsset2SyncHandler extends SyncTransactionHandler {
 
     // LOOSE SKETCH
     function execute(transaction as QueueTransactionType) as String {
-        var tid = transaction["tid"] as String;
+        // var tid = transaction["tid"] as String;
         var operation = transaction["op"];
 
         if (operation == null) {

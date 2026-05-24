@@ -21,10 +21,13 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
             var asset = new PlaylistAsset({
                 "id" => tid,
                 "metadata" => payload["metadata"] as PlaylistMetadata,
-                "trackIds" => payload["trackIds"],
+                "trackIds" => payload["trackIds"] as Array<String>,
             } as PlaylistAssetType);
 
             $.am.debug("[TRANS][BUILT][PlaylistAsset] " + asset.serialize());
+
+            var storage = new KeyValueStorage(transaction["entity"] as String);
+            storage.set(tid, asset.serialize());
         }
 
         if (operation.equals("UPDATE")) {

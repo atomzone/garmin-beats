@@ -26,6 +26,7 @@ class MediaAsset2SyncHandlerCreate extends TransactionAsyncHandler {
 
         var context = { 
             :id => id, 
+            :entity => transaction["entity"] as String,
             :metadata => payload["metadata"] as AudioMetadataType,
             :source => payload["source"] as AudioSourceType
         };
@@ -48,9 +49,15 @@ class MediaAsset2SyncHandlerCreate extends TransactionAsyncHandler {
 
     function onResponse(
         response as ResponseType,
-        context as { :id as String, :metadata as AudioMetadataType, :source as AudioSourceType }
+        context as { 
+            :id as String, 
+            :entity as String,
+            :metadata as AudioMetadataType, 
+            :source as AudioSourceType 
+        }
     ) as Void {
         var data = response[:data];
+        var id = context[:id] as String;
 
         // TODO: can we remove instanceOf check?
         if (response[:ok] != true || !(data instanceof Media.ContentRef)) {
@@ -59,13 +66,16 @@ class MediaAsset2SyncHandlerCreate extends TransactionAsyncHandler {
         }
 
         var asset = new MediaAssetNew({
-            "id" => context[:id],
+            "id" => id,
             "refId" => data.getId(),
             "metadata" => context[:metadata],
             "source" => context[:source]
         } as MediaAssetNewType);
 
         $.am.debug("[TRANS][BUILT][MediaAsset2] " + asset.serialize());
+
+        var storage = new KeyValueStorage(context[:entity] as String);
+        storage.set(id, asset.serialize());
 
         success();
     }
