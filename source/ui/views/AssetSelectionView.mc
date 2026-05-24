@@ -5,7 +5,7 @@ class AssetSelectionView extends Ui.CheckboxMenu {
 
     private var _lifecycle as MenuLifecycleBehavior = new MenuLifecycleBehavior();
 
-    function initialize(assets as Array<AudioAssetOld>) {
+    function initialize(assets as Array<XAudioAsset>) {
         Ui.CheckboxMenu.initialize({ :title => "Select Tracks" });
 
         for (var index = 0, limit = assets.size(); index < limit; index++) {

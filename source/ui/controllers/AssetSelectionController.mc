@@ -6,10 +6,10 @@ import Toybox.Lang;
 
 class AssetSelectionController extends Ui.Menu2InputDelegate {
 
-    private var _assets as Array<AudioAssetOld>;
-    private var _selected as Array<AudioAssetOld> = [];
+    private var _assets as Array<XAudioAsset>;
+    private var _selected as Array<XAudioAsset> = [];
 
-    function initialize(assets as Array<AudioAssetOld>) {
+    function initialize(assets as Array<XAudioAsset>) {
         Ui.Menu2InputDelegate.initialize();
         _assets = assets;
     }

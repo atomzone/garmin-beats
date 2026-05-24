@@ -14,7 +14,7 @@ class MainMenuView extends $.Rez.Menus.MainMenu {
 
         // Hide library if no cached assets
         // Can we use application state to trigger these updates?
-        var cachedAssets = AudioAssetOld.getCachedAssets();
+        var cachedAssets = XAudioAsset.getCachedAssets();
         if (cachedAssets.size() == 0) {
             deleteMenuItem(:PlayAll);
             deleteMenuItem(:Library);

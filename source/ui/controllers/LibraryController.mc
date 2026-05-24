@@ -25,8 +25,8 @@ class LibraryController extends Ui.Menu2InputDelegate {
             
             // maybe we pass around refIds() small footprint
             // or maybe we just use AudioAsset.getCachedAssets()
-            var refIds = AudioAssetOld.getCachedAssetRefIds();
-            var assets = AudioAssetOld.fromRefIds(refIds);
+            var refIds = XAudioAsset.getCachedAssetRefIds();
+            var assets = XAudioAsset.fromRefIds(refIds);
             
             Ui.pushView(
                 new AssetSelectionView(assets),

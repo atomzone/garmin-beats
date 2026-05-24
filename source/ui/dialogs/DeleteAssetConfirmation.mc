@@ -3,9 +3,9 @@ import Toybox.Lang;
 
 class DeleteAssetConfirmation extends Ui.ConfirmationDelegate {
 
-    private var _assetRepo as AudioAssetRepositoryOld;
+    private var _assetRepo as XAudioAssetRepository;
 
-    function initialize(assetRepo as AudioAssetRepositoryOld) {
+    function initialize(assetRepo as XAudioAssetRepository) {
         ConfirmationDelegate.initialize();
 
         _assetRepo = assetRepo;

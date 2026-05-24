@@ -13,12 +13,12 @@ typedef PlaylistType as {
 
 class Playlist {
 
-    private var _assets as Array<AudioAssetOld>;
+    private var _assets as Array<XAudioAsset>;
     private var _assetCount as Number = 0;
     private var _playFromIndex as Number;
     private var _lastTrackPositionSeconds as Number = 0;
 
-    function initialize(assets as Array<AudioAssetOld>, playFromIndex as Number) {
+    function initialize(assets as Array<XAudioAsset>, playFromIndex as Number) {
         _assets = assets;
         _assetCount = assets.size();
         _playFromIndex = isValidIndex(playFromIndex) ? playFromIndex : 0;
@@ -28,7 +28,7 @@ class Playlist {
         return _assetCount;
     }
 
-    function getAssetByIndex(index as Number) as AudioAssetOld {
+    function getAssetByIndex(index as Number) as XAudioAsset {
         return _assets[index];
     }
 
@@ -78,7 +78,7 @@ function playlistFromPayload(payload as PlaylistType) as Playlist {
     }
 
     var playlist = new Playlist(
-        AudioAssetOld.fromRefIds(refIds),
+        XAudioAsset.fromRefIds(refIds),
         payload["playFromIndex"] as Number
     );
 

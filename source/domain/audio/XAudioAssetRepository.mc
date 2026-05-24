@@ -1,9 +1,9 @@
 import Toybox.Lang;
 
-class AudioAssetRepositoryOld {
+class XAudioAssetRepository {
 
     private var _refIds as Array<Number>;
-    private var _cache as Dictionary<Number, AudioAssetOld>;
+    private var _cache as Dictionary<Number, XAudioAsset>;
 
     function initialize() {
         _refIds = MediaAsset.getCachedMediaRefIds(Media.CONTENT_TYPE_AUDIO);
@@ -18,14 +18,14 @@ class AudioAssetRepositoryOld {
     //     return _refIds[index];
     // }
 
-    function getAsset(index as Number) as AudioAssetOld {
+    function getAsset(index as Number) as XAudioAsset {
         var refId = _refIds[index];
 
         if (_cache.hasKey(refId)) {
-            return _cache[refId] as AudioAssetOld;
+            return _cache[refId] as XAudioAsset;
         }
 
-        var asset = new AudioAssetOld(refId);
+        var asset = new XAudioAsset(refId);
 
         _cache[refId] = asset;
 

@@ -3,19 +3,9 @@ using Toybox.Media;
 
 import Toybox.Lang;
 
-typedef AssetMetaOld as {
-    "title" as String?,
-    "artist" as String?,
-    "album" as String?,
-    "sourceUrl" as String?,
-    "logicalId" as String?,
-    "syncedAt" as Number?,
-    "thumbsUp" as Boolean?
-};
-
 // AudioAsset - "Track exists locally"
 // AudioAssetState - "User/device state for local track"
-class AudioAssetOld extends MediaAsset {
+class XAudioAsset extends MediaAsset {
 
     function initialize(id as Number) {
         MediaAsset.initialize(id, Media.CONTENT_TYPE_AUDIO);
@@ -28,7 +18,7 @@ class AudioAssetOld extends MediaAsset {
     }
 
     // TODO: shoudl we passs content?
-    function saveAndApplyMetadata(content as Media.Content?, meta as AudioAssetOld) as Void {
+    function saveAndApplyMetadata(content as Media.Content?, meta as XAudioAsset) as Void {
         save(meta);
         $.am.debug("[AudioAsset] saveAndApplyMetadata refId=" + getRefId() + " title=" + meta["title"]);
         
@@ -54,11 +44,11 @@ class AudioAssetOld extends MediaAsset {
         save(record);
     }
 
-    function save(meta as AudioAssetOld) as Void {
+    function save(meta as XAudioAsset) as Void {
         StorageManager.set(getStorageKey(), normalize(meta) as Storage.ValueType);
     }
 
-    function load() as AudioAssetOld {
+    function load() as XAudioAsset {
         var defaultValue = {
             "title" => "Unknown",
             "artist" => "Unknown",
@@ -78,7 +68,7 @@ class AudioAssetOld extends MediaAsset {
         MediaAsset.delete();
     }
 
-    private function normalize(meta as Object?) as AudioAssetOld {
+    private function normalize(meta as Object?) as XAudioAsset {
         var record = {} as Dictionary;
 
         if (meta instanceof Dictionary) {
@@ -89,7 +79,7 @@ class AudioAssetOld extends MediaAsset {
 
         var logicalId = DictionaryUtils.getString(record, "logicalId");
         if (logicalId == null && sourceUrl != null) {
-            logicalId = AudioAssetOld.logicalIdFromUrl(sourceUrl);
+            logicalId = XAudioAsset.logicalIdFromUrl(sourceUrl);
         }
 
         var normalized = {
@@ -102,17 +92,17 @@ class AudioAssetOld extends MediaAsset {
             "thumbsUp" => DictionaryUtils.getBooleanOrDefault(record, "thumbsUp", false)
         };
 
-        return normalized as AudioAssetOld;
+        return normalized as XAudioAsset;
     }
 
-    static function fromRefIds(ids as Array<Number>?) as Array<AudioAssetOld> {
+    static function fromRefIds(ids as Array<Number>?) as Array<XAudioAsset> {
         if (ids == null) {
             return [];
         }
 
         var assets = [];
         for (var i = 0, limit = ids.size(); i < limit; i++) {
-            assets.add(new AudioAssetOld(ids[i]));
+            assets.add(new XAudioAsset(ids[i]));
         }
 
         return assets;
@@ -122,9 +112,9 @@ class AudioAssetOld extends MediaAsset {
         return MediaAsset.getCachedMediaRefIds(Media.CONTENT_TYPE_AUDIO);
     }
 
-    static function getCachedAssets() as Array<AudioAssetOld> {
-        return AudioAssetOld.fromRefIds(
-            AudioAssetOld.getCachedAssetRefIds()
+    static function getCachedAssets() as Array<XAudioAsset> {
+        return XAudioAsset.fromRefIds(
+            XAudioAsset.getCachedAssetRefIds()
         );
     }
 

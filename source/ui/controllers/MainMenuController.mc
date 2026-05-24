@@ -29,7 +29,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         // launch playback of all tracks
         } else if (id == :PlayAll) {
 
-            var assets = AudioAssetOld.getCachedAssets();
+            var assets = XAudioAsset.getCachedAssets();
             var playlist = new Playlist(assets, 0);
 
             Media.startPlayback(playlist.serialize() as App.PersistableType);

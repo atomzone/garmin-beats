@@ -30,7 +30,7 @@ class PlaylistMenuController extends Ui.Menu2InputDelegate {
         var index = item.getId() as Number;
         // var asset = _assets[index];
 
-        var assets = AudioAssetOld.getCachedAssets();
+        var assets = XAudioAsset.getCachedAssets();
         var playlist = new Playlist(assets, 0);
 
         Media.startPlayback(playlist.serialize() as App.PersistableType);
