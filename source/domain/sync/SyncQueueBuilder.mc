@@ -24,30 +24,36 @@ class SyncQueueBuilder {
 
         for (var index = 0, limit = playlists.size(); index < limit; index++) {
             var playlist = playlists[index];
-            var localChecksum = playlistChecksums[playlist.getKey()];
+            var localChecksum = playlistChecksums[playlist.getId()];
 
             // $.am.debug("[playlist]canonicalize " + playlist.canonicalize());
             $.am.debug("[playlist]getChecksum '" 
-                + playlist.getKey() + "' => '" + playlist.getChecksum() 
+                + playlist.getId() + "' => '" + playlist.getChecksum() 
                 + "' Vs '" + localChecksum + "'");
 
             // New playlist
             if (localChecksum == null) {
                 queue.add({
-                    "id" => playlist.getKey(),
+                    "tid" => playlist.getId(),
                     "op" => "SAVE",
                     "entity" => "PLAYLIST",
-                    "payload" => playlist.serialize()
+                    "payload" => { 
+                        "metadata" => playlist.getMetadata().serialize(),
+                        "trackIds" => playlist.getTrackIds()
+                    }
                 });
                 // optimisation: load all track without checking...
             }
             // Updated playlist
             else if (!localChecksum.equals(playlist.getChecksum())) {
                 queue.add({
-                    "id" => playlist.getKey(),
+                    "tid" => playlist.getId(),
                     "op" => "UPDATE",
                     "entity" => "PLAYLIST",
-                    "payload" => playlist.serialize()
+                    "payload" => { 
+                        "metadata" => playlist.getMetadata().serialize(),
+                        "trackIds" => playlist.getTrackIds()
+                    }
                 });
             }
             // Unchanged playlist
@@ -68,16 +74,22 @@ class SyncQueueBuilder {
                 // New track
                 if (trackCheck == null) {
                     queue.add({
-                        "id" => track.getLogicalId(),
+                        "tid" => track.getId(),
                         "op" => "DOWNLOAD",
+                        "entity" => "MEDIA", // MediaAsset!
+                        "payload" => track.getSource().serialize()
+                    });
+                    queue.add({
+                        "tid" => track.getId(),
+                        "op" => "SAVE",
                         "entity" => "TRACK",
-                        "payload" => track.serialize()
+                        "payload" => track.getMetadata().serialize()
                     });
                 }
                 // Updated track
                 else if (!trackCheck.equals(track.getChecksum())) {
                     queue.add({
-                        "id" => track.getLogicalId(),
+                        "tid" => track.getId(),
                         "op" => "UPDATE",
                         "entity" => "TRACK",
                         "payload" => track.serialize()
@@ -88,7 +100,7 @@ class SyncQueueBuilder {
 
             // consider delete, no payload
             // queue.add({
-            //     "id" => track.getLogicalId(),
+            //     "tid" => track.getLogicalId(),
             //     "op" => "DELETE",
             //     "entity" => "TRACK",
             //     "payload" => null

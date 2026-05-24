@@ -1,21 +1,20 @@
 using Toybox.WatchUi as Ui;
 import Toybox.Lang;
 
-class PlaylistBrowserView extends Ui.CheckboxMenu {
+class PlaylistBrowserView extends Ui.Menu2 {
 
     private var _lifecycle as MenuLifecycleBehavior = new MenuLifecycleBehavior();
 
     function initialize(assets as Array<PlaylistResource>) {
-        Ui.CheckboxMenu.initialize({ :title => "Select Tracks" });
+        Ui.Menu2.initialize({ :title => "Select Tracks" });
 
         for (var index = 0, limit = assets.size(); index < limit; index++) {
             var asset = assets[index];
 
-            addItem(new Ui.CheckboxMenuItem(
+            addItem(new Ui.MenuItem(
                 asset.getTitle(),
                 asset.getDesc(),
                 index,
-                false,
                 {}
             ));
         }

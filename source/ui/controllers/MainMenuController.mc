@@ -88,7 +88,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         //     var playlist = playlists[index];
 
         //     // $.am.debug("[playlist]canonicalize " + playlist.canonicalize());
-        //     $.am.debug("[playlist]getChecksum " + playlist.getKey() + " -  " + playlist.getChecksum());
+        //     $.am.debug("[playlist]getChecksum " + playlist.getId() + " -  " + playlist.getChecksum());
 
         //     var tracks = playlist.getTracks();
         //     for (var index2 = 0, limit2 = tracks.size(); index2 < limit2; index2++) {

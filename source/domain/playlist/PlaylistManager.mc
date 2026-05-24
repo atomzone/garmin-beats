@@ -5,10 +5,10 @@ class PlaylistManager {
     static function save(playlist as PlaylistResource) as Void {
   
         // persist model
-        StorageManager.set(playlist.getKey(), playlist.serialize());
+        StorageManager.set(playlist.getId(), playlist.serialize());
 
         // persist checksum
-        SyncStateStore.setPlaylist(playlist.getKey(), playlist.getChecksum());
+        SyncStateStore.setPlaylist(playlist.getId(), playlist.getChecksum());
     }
 
     static function delete(key as String) as Void {

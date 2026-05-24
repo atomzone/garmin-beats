@@ -28,12 +28,12 @@ class PlaylistMenuController extends Ui.Menu2InputDelegate {
 
     function onSelect(item as Ui.MenuItem) as Void {
         var index = item.getId() as Number;
-        var asset = _assets[index];
+        // var asset = _assets[index];
 
-        if ((item as Ui.CheckboxMenuItem).isChecked()) {
-            _selected.add(asset);
-        } else {
-            _selected.remove(asset);
-        }
+        var assets = AudioAsset.getCachedAssets();
+        var playlist = new Playlist(assets, 0);
+
+        Media.startPlayback(playlist.serialize() as App.PersistableType);
+
     }
 }

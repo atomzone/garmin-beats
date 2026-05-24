@@ -1,6 +1,7 @@
 import Toybox.Lang;
 
 typedef PlaylistResourceType as {
+    "id" as String,
     "title" as String,
     "desc" as String?,
     "tracks" as Array<AudioResourceType>
@@ -8,36 +9,50 @@ typedef PlaylistResourceType as {
 
 class PlaylistResource {
 
+    private var _id as String;
     private var _checksum as String?;
-    private var _title as String;
-    private var _desc as String?;   
-    private var _tracks as Array<AudioResource>;
+    private var _tracks as Array<AudioResource> = [];
+    private var _trackIds as Array<String> = [];
+    private var _metadata as PlaylistMetadata;
 
     function initialize(raw as PlaylistResourceType) {
-        _title = raw["title"] as String;
-        _desc = raw["desc"];
-        _tracks = [];
+        _id = raw["id"] as String;
+
+        // var metadata = raw["meta"] as PlaylistMetadataType?;
+        _metadata = new PlaylistMetadata({
+            "title" => raw["title"] as String,
+            "description" => raw["desc"]
+        });
         
         var tracks = raw["tracks"] as Array<AudioResourceType>;
         for (var i = 0; i < tracks.size(); i++) {
             _tracks.add(new AudioResource(tracks[i]));
+            _trackIds.add(_tracks[i].getId());
         }
     }
 
-    public function getKey() as String {
-        return _title; //StringUtils.checksum(_title);
+    public function getId() as String {
+        return _id;
     }
 
     public function getTitle() as String {
-        return _title;
+        return _metadata._title;
     }
 
     public function getDesc() as String? {
-        return _desc;
+        return _metadata._description;
     }
 
     public function getTracks() as Array<AudioResource> {
         return _tracks;
+    }
+
+    public function getTrackIds() as Array<String> {
+        return _trackIds;
+    }
+
+    public function getMetadata() as PlaylistMetadata {
+        return _metadata;
     }
 
     public function getChecksum() as String {
@@ -50,8 +65,9 @@ class PlaylistResource {
     }
 
     public function canonicalize() as String {
-        var canonical = _title + "|" + StringUtils.stringOrDefault(_desc, "");
+        var canonical = getMetadata().canonicalize();
 
+        // we could simplify this unique method
         for (var i = 0, limit = _tracks.size(); i < limit; i++) {
             canonical += "|" + _tracks[i].canonicalize();
         }
@@ -67,8 +83,9 @@ class PlaylistResource {
         }
 
         return {
-            "title" => _title,
-            "desc" => _desc,
+            "id" => _id,
+            "title" => getTitle(),
+            "desc" => getDesc(),
             "tracks" => tracks
         };
     }
