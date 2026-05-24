@@ -1,6 +1,6 @@
 import Toybox.Lang;
 
-class AudioResourceSyncHandler extends SyncTransactionHandler {
+class MediaAsset2SyncHandler extends SyncTransactionHandler {
 
     function initialize() {
         SyncTransactionHandler.initialize();
@@ -15,15 +15,17 @@ class AudioResourceSyncHandler extends SyncTransactionHandler {
             return "FAILED";
         }
 
-        if (operation.equals("SAVE") || operation.equals("UPDATE")) {
+        if (operation.equals("CREATE") || operation.equals("UPDATE")) {
 
             var metadata = transaction["payload"] as AudioMetadataType;
-            var asset = new TrackAsset({
-                "id" => tid,
-                "metadata" => metadata
-            });
+            // var asset = new TrackAsset({
+            //     "id" => tid,
+            //     "metadata" => metadata
+            // });
 
-            $.am.debug("[TRANS][BUILT][TrackAsset] " + asset.serialize());
+            // $.am.debug("[TRANS][BUILT][TrackAsset] " + asset.serialize());
+
+            $.am.debug("[TRANS][MOCK][TrackAsset] " + metadata);
 
             // persist model + persist checksum
             // PlaylistManager.save(playlist);

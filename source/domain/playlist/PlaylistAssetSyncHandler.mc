@@ -1,6 +1,6 @@
 import Toybox.Lang;
 
-class PlaylistResourceSyncHandler extends SyncTransactionHandler {
+class PlaylistAssetSyncHandler extends SyncTransactionHandler {
 
     function initialize() {
         SyncTransactionHandler.initialize();
@@ -15,7 +15,7 @@ class PlaylistResourceSyncHandler extends SyncTransactionHandler {
             return "FAILED";
         }
 
-        if (operation.equals("SAVE")) {
+        if (operation.equals("CREATE")) {
             var payload = transaction["payload"] as Dictionary;
 
             var asset = new PlaylistAsset({

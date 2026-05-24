@@ -1,7 +1,7 @@
 using Toybox.Media as Media;
 import Toybox.Lang;
 
-class MediaResourceSyncHandler extends TransactionAsyncHandler {
+class MediaAsset2SyncHandlerCreate extends TransactionAsyncHandler {
 
     private var _onProgress as Method(Number) as Void;
 
@@ -14,16 +14,22 @@ class MediaResourceSyncHandler extends TransactionAsyncHandler {
     }
 
     function execute(transaction as QueueTransactionType) as String {
-        var tid = transaction["tid"];
-        var payload = transaction["payload"] as AudioSourceType;
+        var id = transaction["tid"];
+        var payload = transaction["payload"] as Dictionary;
+
+        var source = new AudioSource(payload["source"] as AudioSourceType);
         
-        var audioSource = new AudioSource(payload);
-        var context = { :id => tid, };
         var request = new HttpRequest({
-            :href => audioSource.getUrl(),
+            :href => source.getUrl(),
             :parameters => {}
         }, method(:onResponse));
 
+        var context = { 
+            :id => id, 
+            :metadata => payload["metadata"] as AudioMetadataType,
+            :source => payload["source"] as AudioSourceType
+        };
+        
         request.downloadMp3(context, method(:onProgress));
 
         return "PENDING";
@@ -42,7 +48,7 @@ class MediaResourceSyncHandler extends TransactionAsyncHandler {
 
     function onResponse(
         response as ResponseType,
-        context as { :id as String } 
+        context as { :id as String, :metadata as AudioMetadataType, :source as AudioSourceType }
     ) as Void {
         var data = response[:data];
 
@@ -53,11 +59,13 @@ class MediaResourceSyncHandler extends TransactionAsyncHandler {
         }
 
         var asset = new MediaAssetNew({
-            "id" => context[:id] as String,
-            "refId" => data.getId()
-        });
+            "id" => context[:id],
+            "refId" => data.getId(),
+            "metadata" => context[:metadata],
+            "source" => context[:source]
+        } as MediaAssetNewType);
 
-        $.am.debug("[TRANS][BUILT][MediaAssetNew] " + asset.serialize());
+        $.am.debug("[TRANS][BUILT][MediaAsset2] " + asset.serialize());
 
         success();
     }

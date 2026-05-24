@@ -33,7 +33,7 @@ class SyncQueueProcessor {
             }
 
             var transaction = _queue[0];
-            var handler = transactionRouter(transaction);
+            var handler = getTransactionHandler(transaction);
 
             if (handler == null) {
                 fail("No handler");
@@ -110,29 +110,43 @@ class SyncQueueProcessor {
         _onComplete.invoke(error);
     }
 
-    private function transactionRouter(transaction as QueueTransactionType) as SyncTransactionHandler? {
+    
+    private function getTransactionHandler(transaction as QueueTransactionType) as SyncTransactionHandler? {
 
         var op = transaction["op"] as String;
         var entity = transaction["entity"] as String;
 
-        // TRACK DOWNLOAD
-        if (op.equals("DOWNLOAD")) {
+/*
+        var tid = transaction["tid"];
+        var payload = transaction["payload"];
 
-            // Save MediaResource
-            return new MediaResourceSyncHandler(
-                method(:onTransactionComplete), method(:notifyProgressChange)
-            );
-        }
+        $.am.debug("------------------");
+        $.am.debug("[SYNC] op " + op + " ID " + tid);
+        $.am.debug("entity " + entity);
+        $.am.debug("payload " + payload);
+        $.am.debug("------------------");
+*/
 
+        // Playlist
         if (entity.equals("PLAYLIST")) {
 
-            // SAVE/UPDATE PlaylistResource -> PlaylistAsset
-            return new PlaylistResourceSyncHandler();
+            // all CRUD actions are sync
+            return new PlaylistAssetSyncHandler();
         }
+
+        // Tracks
         if (entity.equals("TRACK")) {
 
-            // SAVE/UPDATE AudioResource -> AudioAsset
-            return new AudioResourceSyncHandler();
+            // Create
+            if (op.equals("CREATE")) {
+
+                return new MediaAsset2SyncHandlerCreate(
+                    method(:onTransactionComplete), method(:notifyProgressChange)
+                );
+            }
+
+            // Update/delete 
+            return new MediaAsset2SyncHandler();
         }
 
         return null;

@@ -35,7 +35,7 @@ class SyncQueueBuilder {
             if (localChecksum == null) {
                 queue.add({
                     "tid" => playlist.getId(),
-                    "op" => "SAVE",
+                    "op" => "CREATE",
                     "entity" => "PLAYLIST",
                     "payload" => { 
                         "metadata" => playlist.getMetadata().serialize(),
@@ -75,15 +75,12 @@ class SyncQueueBuilder {
                 if (trackCheck == null) {
                     queue.add({
                         "tid" => track.getId(),
-                        "op" => "DOWNLOAD",
-                        "entity" => "MEDIA", // MediaAsset!
-                        "payload" => track.getSource().serialize()
-                    });
-                    queue.add({
-                        "tid" => track.getId(),
-                        "op" => "SAVE",
-                        "entity" => "TRACK",
-                        "payload" => track.getMetadata().serialize()
+                        "op" => "CREATE",
+                        "entity" => "TRACK", // MediaAsset!
+                        "payload" => {
+                            "source" => track.getSource().serialize(),
+                            "metadata" => track.getMetadata().serialize(),
+                        }
                     });
                 }
                 // Updated track

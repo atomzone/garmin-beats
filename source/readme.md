@@ -11,3 +11,4 @@
 X [1] manage sync track checksums
 - [2] decide about unique tracks/vs track under a playlist
 - [1] improve sync queue builder
+- [1] assign metadata to media..
