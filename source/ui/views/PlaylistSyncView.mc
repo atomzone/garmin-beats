@@ -14,7 +14,7 @@ class PlaylistSyncView extends Ui.CheckboxMenu {
 
             addItem(new Ui.CheckboxMenuItem(
                 playlist.getTitle() as String,
-                playlist.getDesc(),
+                playlist.getDescription(),
                 index,
                 false,
                 {}

@@ -3,7 +3,7 @@ import Toybox.Lang;
 typedef PlaylistResourceType as {
     "id" as String,
     "title" as String,
-    "desc" as String?,
+    "description" as String?,
     "tracks" as Array<AudioResourceType>
 };
 
@@ -21,7 +21,7 @@ class PlaylistResource {
         // var metadata = raw["meta"] as PlaylistMetadataType?;
         _metadata = new PlaylistMetadata({
             "title" => raw["title"] as String,
-            "description" => raw["desc"]
+            "description" => raw["description"]
         });
         
         var tracks = raw["tracks"] as Array<AudioResourceType>;
@@ -39,7 +39,7 @@ class PlaylistResource {
         return _metadata.getTitle();
     }
 
-    public function getDesc() as String? {
+    public function getDescription() as String? {
         return _metadata.getDescription();
     }
 
@@ -85,7 +85,7 @@ class PlaylistResource {
         return {
             "id" => _id,
             "title" => getTitle(),
-            "desc" => getDesc(),
+            "description" => getDescription(),
             "tracks" => tracks
         };
     }

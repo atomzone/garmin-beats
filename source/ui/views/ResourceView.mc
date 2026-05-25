@@ -7,7 +7,7 @@ class ResourceView extends Ui.CheckboxMenu {
     private var _lifecycle as MenuLifecycleBehavior = new MenuLifecycleBehavior();
 
     function initialize(resources as Array<AudioResource>) {
-        Ui.CheckboxMenu.initialize({:title => "ResourceView"});
+        Ui.CheckboxMenu.initialize({:title => "Track sync"});
 
         for (var index = 0, limit = resources.size(); index < limit; index++) {
             var resource = resources[index];

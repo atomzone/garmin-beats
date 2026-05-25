@@ -24,7 +24,9 @@ class ResourceInputController extends Ui.Menu2InputDelegate {
         }
 
         var playlist = [new PlaylistResource({
-            "title" => "Dynamic playlist from resources",
+            "id" => "pl:tracks.json",
+            "title" => "Tracks.json",
+            "description" => "Dynamic playlist from tracks.json",
             "tracks" => serialized
         })];
         

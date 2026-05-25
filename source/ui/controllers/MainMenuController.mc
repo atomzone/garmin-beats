@@ -64,7 +64,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
             var loader = new AudioResourceLoader("https://atomzone.github.io/static/playlists.json");
 
             _overlay.begin(:GetPlaylists, "Fetching playlists");
-            loader.fetchPlaylists(method(:demo));
+            loader.fetchPlaylists(method(:displayPlaylists));
 
         // async fetch then push reources view
         } else if (id == :GetTracks) {
@@ -87,6 +87,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
     
     function displayResources(resources as Array<AudioResource>) as Void {
         _overlay.end(:GetTracks);
+        
         Ui.pushView(
             new ResourceView(resources),
             new ResourceInputController(resources),
@@ -94,8 +95,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         );
     }
 
-    function demo(playlists as Array<PlaylistResource>) as Void {
-
+    function displayPlaylists(playlists as Array<PlaylistResource>) as Void {
         _overlay.end(:GetPlaylists);
         
         Ui.pushView(
