@@ -18,13 +18,26 @@ class KeyValueStorage {
     }
 
     function get(id as String) as Storage.ValueType? {
-        if (!isValid(id)) {
+        if (!isIndexValid(id)) {
             return null;
         }
 
-        var partitionKey = buildPartitionKey(id);
+        return StorageManager.get(buildPartitionKey(id));
+    }
 
-        return StorageManager.get(partitionKey);
+    function getAll() as Array<Storage.ValueType> {
+        var records = [];
+        var indexIds = getIndexIds();
+
+        for (var i = 0, limit = indexIds.size(); i < limit; i++) {
+            var value = get(indexIds[i]);
+
+            if (value != null) {
+                records.add(value);
+            }
+        }
+
+        return records;
     }
 
     function getIndexIds() as Array<String> {
@@ -42,23 +55,17 @@ class KeyValueStorage {
     }
     
     function set(id as String, value as Dictionary?) as Void {
-        var partitionKey = buildPartitionKey(id);
-
-        StorageManager.set(partitionKey, value as Storage.ValueType?);
+        StorageManager.set(buildPartitionKey(id), value as Storage.ValueType?);
         addIndexId(id);
     }
 
     function delete(id as String) as Void {
-        var partitionKey = buildPartitionKey(id);
-
-        StorageManager.delete(partitionKey);
+        StorageManager.delete(buildPartitionKey(id));
         deleteIndexId(id);
     }
 
-    function isValid(id as String) as Boolean {
-        var indexes = getIndexIds();
-
-        return indexes.indexOf(id) != -1;
+    function isIndexValid(id as String) as Boolean {
+        return getIndexIds().indexOf(id) != -1;
     }
 
     private function addIndexId(id as String) as Void {

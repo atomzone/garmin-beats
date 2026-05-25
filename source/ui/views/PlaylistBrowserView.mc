@@ -5,15 +5,16 @@ class PlaylistBrowserView extends Ui.Menu2 {
 
     private var _lifecycle as MenuLifecycleBehavior = new MenuLifecycleBehavior();
 
-    function initialize(assets as Array<PlaylistResource>) {
-        Ui.Menu2.initialize({ :title => "Select Tracks" });
+    function initialize(assets as Array<PlaylistAsset>) {
+        Ui.Menu2.initialize({ :title => "Select Playlist" });
 
         for (var index = 0, limit = assets.size(); index < limit; index++) {
             var asset = assets[index];
+            var meta = asset.getMetadata();
 
             addItem(new Ui.MenuItem(
-                asset.getTitle(),
-                asset.getDesc(),
+                meta.getTitle(),
+                meta.getDescription(),
                 index,
                 {}
             ));

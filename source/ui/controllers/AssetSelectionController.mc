@@ -6,10 +6,10 @@ import Toybox.Lang;
 
 class AssetSelectionController extends Ui.Menu2InputDelegate {
 
-    private var _assets as Array<XAudioAsset>;
-    private var _selected as Array<XAudioAsset> = [];
+    private var _assets as Array<AudioAsset>;
+    private var _selected as Array<AudioAsset> = [];
 
-    function initialize(assets as Array<XAudioAsset>) {
+    function initialize(assets as Array<AudioAsset>) {
         Ui.Menu2InputDelegate.initialize();
         _assets = assets;
     }
@@ -20,7 +20,18 @@ class AssetSelectionController extends Ui.Menu2InputDelegate {
             return;
         }
 
-        var playlist = new Playlist(_selected, 0);
+        // OLD SCHOOL FROM HERE
+        // TODO: REPALCE OLD SCHOOL
+
+        // convert new -> old
+        var refIds = [] as Array<Number>;
+        for (var i = 0; i < _selected.size(); i++) {
+            refIds.add(_selected[i].getRefId() as Number);
+        }
+
+        var assets = XAudioAsset.fromRefIds(refIds);            
+        var playlist = new Playlist(assets, 0);
+        
         Media.startPlayback(playlist.serialize() as App.PersistableType);
     }
 

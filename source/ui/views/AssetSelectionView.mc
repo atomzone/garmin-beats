@@ -5,16 +5,16 @@ class AssetSelectionView extends Ui.CheckboxMenu {
 
     private var _lifecycle as MenuLifecycleBehavior = new MenuLifecycleBehavior();
 
-    function initialize(assets as Array<XAudioAsset>) {
+    function initialize(assets as Array<AudioAsset>) {
         Ui.CheckboxMenu.initialize({ :title => "Select Tracks" });
 
         for (var index = 0, limit = assets.size(); index < limit; index++) {
             var asset = assets[index];
-            var meta = asset.load();
+            var meta = asset.getMetadata();
 
             addItem(new Ui.CheckboxMenuItem(
-                meta["title"] as String,
-                meta["artist"],
+                meta.getTitle() as String, // default value?
+                meta.getArtist(),
                 index,
                 false,
                 {}

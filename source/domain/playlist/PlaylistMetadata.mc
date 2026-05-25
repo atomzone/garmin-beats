@@ -8,9 +8,9 @@ typedef PlaylistMetadataType as {
 };
 
 class PlaylistMetadata {
-    public var _title as String = "";
-    public var _description as String?;
-    public var _artwork as String?;
+    private var _title as String = "";
+    private var _description as String?;
+    private var _artwork as String?;
 
     function initialize(metadata as PlaylistMetadataType?) {
         if (metadata == null) {
@@ -20,6 +20,18 @@ class PlaylistMetadata {
         _title = metadata["title"] as String;
         _description = metadata["description"];
         _artwork = metadata["artwork"];
+    }
+
+    public function getTitle() as String {
+        return _title;
+    }
+
+    public function getDescription() as String? {
+        return _description;
+    }
+
+    public function getArtwork() as String? {
+        return _artwork;
     }
 
     public function canonicalize() as String {

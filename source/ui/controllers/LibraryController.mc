@@ -1,4 +1,5 @@
 using Toybox.WatchUi as Ui;
+import Toybox.Lang;
 
 class LibraryController extends Ui.Menu2InputDelegate {
     private var _transition as Ui.SlideType = Ui.SLIDE_IMMEDIATE;
@@ -11,27 +12,27 @@ class LibraryController extends Ui.Menu2InputDelegate {
         var id = item.getId();
 
         if (id == :Playlists) {
-            // [TODO] this would not render if empty
-            var playlistResourceIds = PlaylistManager.getActiveIds();
-            var playlistResources = PlaylistManager.fromArray(playlistResourceIds);
+            var playlistStorage = new KeyValueStorage("PLAYLIST");
+            var playlists = playlistStorage.getAll() as Array<PlaylistAssetType>;
+
+            var assets = PlaylistAsset.fromArray(playlists);
 
             Ui.pushView(
-                new PlaylistBrowserView(playlistResources),
-                new PlaylistMenuController(playlistResources),
+                new PlaylistBrowserView(assets),
+                new PlaylistMenuController(assets),
                 _transition
             );
 
         } else if (id == :AllTracks) {
-            
-            // maybe we pass around refIds() small footprint
-            // or maybe we just use AudioAsset.getCachedAssets()
-            var refIds = XAudioAsset.getCachedAssetRefIds();
-            var assets = XAudioAsset.fromRefIds(refIds);
-            
+            var trackStorage = new KeyValueStorage("TRACK");
+            var tracks = trackStorage.getAll() as Array<AudioAssetType>;
+
+            var assets = AudioAsset.fromArray(tracks);
+           
             Ui.pushView(
                 new AssetSelectionView(assets),
                 new AssetSelectionController(assets),
-                self._transition
+                _transition
             );
         } else if (id == :Artists) {
             //

@@ -29,6 +29,10 @@ class AudioAsset {
         return _refId;
     }
 
+    public function getMetadata() as AudioMetadata {
+        return _metadata;
+    }
+
     public function serialize() as AudioAssetType {
         return {
             "id" => _id,
@@ -36,5 +40,15 @@ class AudioAsset {
             "source" => _source.serialize(),
             "metadata" => _metadata.serialize(),
         };
+    }
+
+    static function fromArray(raw as Array<AudioAssetType>) as Array<AudioAsset> {
+        var assets = [];
+
+        for (var index = 0, limit = raw.size(); index < limit; index++) {
+            assets.add(new AudioAsset(raw[index]));
+        }
+
+        return assets;
     }
 }

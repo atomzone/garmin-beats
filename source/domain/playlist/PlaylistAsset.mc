@@ -28,6 +28,10 @@ class PlaylistAsset {
         return _trackIds;
     }
 
+    // public function getTrack(trackIndexId as String) as AudioAsset {
+    //     var trackId = _trackIds[trackIndexId];
+    // }
+
     public function getMetadata() as PlaylistMetadata {
         return _metadata;
     }
@@ -55,7 +59,7 @@ class PlaylistAsset {
         return {
             "id" => _id,
             "metadata" => _metadata.serialize(),
-            "tracksIds" => _trackIds
+            "trackIds" => _trackIds
         };
     }
 

@@ -39,15 +39,15 @@ class AudioResource {
     }
 
     public function getTitle() as String? {
-        return _metadata._title;
+        return _metadata.getTitle();
     }
 
     public function getArtist() as String? {
-        return _metadata._artist;
+        return _metadata.getArtist();
     }
 
     public function getAlbum() as String? {
-        return _metadata._album;
+        return _metadata.getAlbum();
     }
 
     public function getSource() as AudioSource {

@@ -36,11 +36,11 @@ class PlaylistResource {
     }
 
     public function getTitle() as String {
-        return _metadata._title;
+        return _metadata.getTitle();
     }
 
     public function getDesc() as String? {
-        return _metadata._description;
+        return _metadata.getDescription();
     }
 
     public function getTracks() as Array<AudioResource> {
