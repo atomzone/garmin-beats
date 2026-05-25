@@ -8,7 +8,7 @@ class SettingsMenuController extends Ui.Menu2InputDelegate {
     function initialize() {
         Ui.Menu2InputDelegate.initialize();
 
-        var store = new KeyValueStorage("TRACK");
+        var store = new IndexedStore("TRACK");
         _totalTracks = store.getIndexIds().size();
     }
 

@@ -1,26 +1,30 @@
 import Toybox.Lang;
 
+typedef PlaylistPlayerStateType as {
+    "trackIndex" as Number,
+    "trackPosition" as Number?,
+};
+
 class PlayerPlaylist {
 
     private var _playlist as PlaylistAsset;
     private var _assetCount as Number = 0;
     private var _playFromIndex as Number;
-    private var _lastTrackPositionSeconds as Number = 0;
+    private var _lastTrackPositionSeconds as Number;
 
-    private var _storage as KeyValueStorage;
+    private var _storage as IndexedStore;
 
     function initialize(
-        playlist as PlaylistAsset,
-        playFromIndex as Number
+        state as PlaylistPlayerStateType,
+        playlist as PlaylistAsset
     ) {
         _playlist = playlist;
         _assetCount = playlist.getTrackIds().size();
 
-        _playFromIndex = isValidIndex(playFromIndex)
-            ? playFromIndex
-            : 0;
+        _playFromIndex = !isValidIndex(state["trackIndex"]) ? 0 : state["trackIndex"] as Number;
+        _lastTrackPositionSeconds = state["trackPosition"] == null ? 0 : state["trackPosition"] as Number;
 
-        _storage = new KeyValueStorage("TRACK");
+        _storage = new IndexedStore("TRACK");
     }
 
     function getAssetCount() as Number {
@@ -50,7 +54,7 @@ class PlayerPlaylist {
         _lastTrackPositionSeconds = position;
     }
 
-    function isValidIndex(index as Number) as Boolean {
-        return !(index < 0 or index > _assetCount - 1);
-    }
+    function isValidIndex(index as Number?) as Boolean {
+        return index != null && index >= 0 && index < _assetCount;
+    }   
 }

@@ -29,7 +29,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         // launch playback of all tracks
         } else if (id == :PlayAll) {
             
-            var audioAssetStore = new KeyValueStorage("TRACK");
+            var audioAssetStore = new IndexedStore("TRACK");
             var trackIds = audioAssetStore.getIndexIds();
 
             var playlist = new PlaylistAsset({
@@ -41,7 +41,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
                 "trackIds" => trackIds
             } as PlaylistAssetType);
 
-            var playlistAssetStore = new KeyValueStorage("PLAYLIST");
+            var playlistAssetStore = new IndexedStore("PLAYLIST");
             playlistAssetStore.set(playlist.getId(), playlist.serialize());
 
             $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");
@@ -87,7 +87,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
     
     function displayResources(resources as Array<AudioResource>) as Void {
         _overlay.end(:GetTracks);
-        
+
         Ui.pushView(
             new ResourceView(resources),
             new ResourceInputController(resources),

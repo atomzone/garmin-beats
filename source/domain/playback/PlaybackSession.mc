@@ -5,9 +5,9 @@ import Toybox.Lang;
 class PlaybackSession {
 
     private var _playlist as PlayerPlaylist;
-    private var _store as KeyValueStorage?; // this id more like playback State
+    private var _store as IndexedStore?; // this id more like playback State
 
-    function initialize(playlist as PlayerPlaylist, store as KeyValueStorage?) {
+    function initialize(playlist as PlayerPlaylist, store as IndexedStore?) {
         _playlist = playlist;
         _store = store;
     }

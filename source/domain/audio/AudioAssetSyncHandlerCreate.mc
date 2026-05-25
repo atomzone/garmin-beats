@@ -74,7 +74,7 @@ class AudioAssetSyncHandlerCreate extends TransactionAsyncHandler {
 
         $.am.debug("[TRANS][BUILT][MediaAsset2] " + asset.serialize());
 
-        var storage = new KeyValueStorage(context[:entity] as String);
+        var storage = new IndexedStore(context[:entity] as String);
         storage.set(id, asset.serialize());
 
         success();

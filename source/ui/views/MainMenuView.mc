@@ -16,7 +16,7 @@ class MainMenuView extends $.Rez.Menus.MainMenu {
         // Can we use application state to trigger these updates?
 
         // TODO: NEW SCHOOL COOL
-        var storage = new KeyValueStorage("TRACK");
+        var storage = new IndexedStore("TRACK");
         var hasAssets = (storage.getIndexIds().size() > 0);
 
         if (!hasAssets) {

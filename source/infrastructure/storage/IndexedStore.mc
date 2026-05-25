@@ -4,8 +4,8 @@ import Toybox.Lang;
 // "{ASSET}:INDEXES" = [id1, id2]
 // "{ASSET}:id1" = model1
 // "{ASSET}:id2" = model2
-class KeyValueStorage {
-
+class IndexedStore {
+    
     private var _partitionId as String;
     private var _indexIdCache as Array<String> = [];
 
@@ -66,6 +66,10 @@ class KeyValueStorage {
 
     function isIndexValid(id as String) as Boolean {
         return getIndexIds().indexOf(id) != -1;
+    }
+
+    function count() as Number {
+        return getIndexIds().size();
     }
 
     private function addIndexId(id as String) as Void {

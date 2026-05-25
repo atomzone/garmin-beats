@@ -35,7 +35,7 @@ class AssetSelectionController extends Ui.Menu2InputDelegate {
             "trackIds" => trackIds
         } as PlaylistAssetType);
 
-        var playlistAssetStore = new KeyValueStorage("PLAYLIST");
+        var playlistAssetStore = new IndexedStore("PLAYLIST");
         playlistAssetStore.set(playlist.getId(), playlist.serialize());
 
         // Start playback

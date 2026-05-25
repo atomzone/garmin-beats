@@ -10,6 +10,13 @@ class AppEntry extends App.AudioContentProviderApp {
 
     function initialize() {
         App.AudioContentProviderApp.initialize();
+
+        var media = MediaUtils.getCachedMediaRefIds(Media.CONTENT_TYPE_AUDIO);
+        var plStore = new IndexedStore("PLAYLIST");
+        var trStore = new IndexedStore("TRACK");
+        $.am.debug("TrackCount='" + trStore.count()
+            + "', PlaylistCount='" + plStore.count()
+            + "', MediaCount='" + media.size() + "'");
     }
 
     function getContentDelegate(playlistAssetId as App.PersistableType) as Media.ContentDelegate {
@@ -19,7 +26,7 @@ class AppEntry extends App.AudioContentProviderApp {
         }
 
         // FETCH THE PLAYLIST ASSET
-        var playlistAssetStore = new KeyValueStorage("PLAYLIST");
+        var playlistAssetStore = new IndexedStore("PLAYLIST");
         var raw = playlistAssetStore.get(playlistAssetId as String);
 
         // can we avoid doing all this if the playlist does not exist!
@@ -29,7 +36,7 @@ class AppEntry extends App.AudioContentProviderApp {
 
         // Player Playlist + PlaylistAsset
         var playlistAsset = new PlaylistAsset(raw as PlaylistAssetType);
-        var playerPlaylist = new PlayerPlaylist(playlistAsset, 0);
+        var playerPlaylist = new PlayerPlaylist({ "trackIndex" => 2, "trackPosition" => 30 }, playlistAsset);
 
         $.am.debug("[AppEntry.getContentDelegate]"
             + " assets=" + playerPlaylist.getAssetCount()

@@ -26,7 +26,7 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
 
             $.am.debug("[TRANS][BUILT][PlaylistAsset] " + asset.serialize());
 
-            var storage = new KeyValueStorage(transaction["entity"] as String);
+            var storage = new IndexedStore(transaction["entity"] as String);
             storage.set(tid, asset.serialize());
         }
 
