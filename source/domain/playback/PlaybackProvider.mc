@@ -3,11 +3,11 @@ import Toybox.Lang;
 
 class PlaybackProvider extends Media.ContentDelegate {
 
-    private var _playlist as Playlist;
+    private var _playlist as PlayerPlaylist;
     private var _session as PlaybackSession;
     private var _iterator as Media.ContentIterator;
 
-    function initialize(playlist as Playlist, session as PlaybackSession) {
+    function initialize(playlist as PlayerPlaylist, session as PlaybackSession) {
         Media.ContentDelegate.initialize();
 
         _playlist = playlist;
@@ -118,15 +118,13 @@ class PlaybackProvider extends Media.ContentDelegate {
     function onThumbsDown(contentRefId as Object) as Void {
         $.am.debugWithArgs("[onThumbsDown]", contentRefId);
 
-        var asset = new XAudioAsset(contentRefId as Number);
-        asset.setThumbsUp(false);
+        // _session.setThumbsUp(true);
     }
 
     // Respond to a thumbs-up action
     function onThumbsUp(contentRefId as Object) as Void {
         $.am.debugWithArgs("[onThumbsUp]", contentRefId);
 
-        var asset = new XAudioAsset(contentRefId as Number);
-        asset.setThumbsUp(true);
+        // _session.setThumbsUp(false);
     }
 }

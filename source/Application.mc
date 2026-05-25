@@ -12,24 +12,34 @@ class AppEntry extends App.AudioContentProviderApp {
         App.AudioContentProviderApp.initialize();
     }
 
-    function getContentDelegate(playlistRaw as App.PersistableType) as Media.ContentDelegate {
-        var store = new PlaylistStore("active");
-        var playlist;
-
-        if (playlistRaw == null) {
-            playlist = store.getPlaylist();
-        } else {
-            playlist = playlistFromPayload(playlistRaw as PlaylistType);
-            store.setPlaylist(playlist);
+    function getContentDelegate(playlistAssetId as App.PersistableType) as Media.ContentDelegate {
+        // DEFAULT FOR NOW...
+        if (playlistAssetId == null) {
+            playlistAssetId = "pl:nowplaying";
         }
 
-        $.am.debug("[AppEntry.getContentDelegate]"
-            + " assets=" + playlist.getAssetCount()
-            + " index=" + playlist.getCurrentTrackIndex() 
-            + " position=" + playlist.getCurrentTrackPosition());
+        // FETCH THE PLAYLIST ASSET
+        var playlistAssetStore = new KeyValueStorage("PLAYLIST");
+        var raw = playlistAssetStore.get(playlistAssetId as String);
 
-        var session = new PlaybackSession(playlist, store);
-        return new PlaybackProvider(playlist, session);
+        // can we avoid doing all this if the playlist does not exist!
+        if (raw == null) {
+            raw = {};
+        }
+
+        // Player Playlist + PlaylistAsset
+        var playlistAsset = new PlaylistAsset(raw as PlaylistAssetType);
+        var playerPlaylist = new PlayerPlaylist(playlistAsset, 0);
+
+        $.am.debug("[AppEntry.getContentDelegate]"
+            + " assets=" + playerPlaylist.getAssetCount()
+            + " index=" + playerPlaylist.getCurrentTrackIndex() 
+            + " position=" + playerPlaylist.getCurrentTrackPosition());
+
+        // Playback Provider
+        var session = new PlaybackSession(playerPlaylist, playlistAssetStore);
+        
+        return new PlaybackProvider(playerPlaylist, session);
     }
 
     function getSyncDelegate() as Comm.SyncDelegate? {

@@ -4,10 +4,10 @@ import Toybox.Lang;
 // Owns where playback goes next
 class PlaybackQueue extends Media.ContentIterator {
 
-    private var _playlist as Playlist;
+    private var _playlist as PlayerPlaylist;
     private var _shuffle as Boolean = false;
 
-    function initialize(playlist as Playlist) {
+    function initialize(playlist as PlayerPlaylist) {
         Media.ContentIterator.initialize();
 
         _playlist = playlist;
@@ -115,11 +115,11 @@ class PlaybackQueue extends Media.ContentIterator {
 
         if (position > 0) {
             $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playlist.getAssetCount() - 1) + " position=" + position);
-            return asset.getActiveContent(position);
+            return MediaUtils.getActiveContent(asset.getRefId(), position);
         }
 
         $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playlist.getAssetCount() - 1));
-        return asset.getContent();
+        return MediaUtils.getContent(asset.getRefId());
     }
 
 }

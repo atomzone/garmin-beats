@@ -1,13 +1,15 @@
 using Toybox.WatchUi as Ui;
+import Toybox.Lang;
 
 class SettingsMenuController extends Ui.Menu2InputDelegate {
 
-    private var _assetRepo as XAudioAssetRepository;
+    private var _totalTracks as Number;
 
     function initialize() {
         Ui.Menu2InputDelegate.initialize();
 
-        _assetRepo = new XAudioAssetRepository();
+        var store = new KeyValueStorage("TRACK");
+        _totalTracks = store.getIndexIds().size();
     }
 
     function onSelect(item as Ui.MenuItem) as Void {
@@ -17,8 +19,8 @@ class SettingsMenuController extends Ui.Menu2InputDelegate {
             // (speed, quality, autoplay)
         } else if (id == :Storage) {
             Ui.pushView(
-                new StorageMenuView(_assetRepo),
-                new StorageMenuController(_assetRepo),
+                new StorageMenuView(_totalTracks),
+                new StorageMenuController(_totalTracks),
                 Ui.SLIDE_IMMEDIATE
             );
         } else if (id == :Donate) {

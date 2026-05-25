@@ -10,14 +10,13 @@ class PlaylistAsset {
 
     private var _id as String;
     private var _checksum as String?;
-    private var _trackIds as Array<String> = [];
+    private var _trackIds as Array<String>;
     private var _metadata as PlaylistMetadata;
 
-    // ID?! IT WONT SERIALISE!
     function initialize(raw as PlaylistAssetType) {
         _id = raw["id"] as String;
         _metadata = new PlaylistMetadata(raw["metadata"] as PlaylistMetadataType?);
-        _trackIds = raw["trackIds"] as Array<String>;
+        _trackIds = raw["trackIds"] == null ? [] : raw["trackIds"] as Array<String>;
     }
 
     public function getId() as String {

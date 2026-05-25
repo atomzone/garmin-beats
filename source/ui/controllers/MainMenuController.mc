@@ -28,11 +28,25 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         // launch playback of all tracks
         } else if (id == :PlayAll) {
+            
+            var audioAssetStore = new KeyValueStorage("TRACK");
+            var trackIds = audioAssetStore.getIndexIds();
 
-            var assets = XAudioAsset.getCachedAssets();
-            var playlist = new Playlist(assets, 0);
+            var playlist = new PlaylistAsset({
+                "id" => "pl:nowplaying",
+                "metadata" => {
+                    "title" => "Now playing",
+                    "description" => "- All Tracks -"
+                },
+                "trackIds" => trackIds
+            } as PlaylistAssetType);
 
-            Media.startPlayback(playlist.serialize() as App.PersistableType);
+            var playlistAssetStore = new KeyValueStorage("PLAYLIST");
+            playlistAssetStore.set(playlist.getId(), playlist.serialize());
+
+            $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");
+
+            Media.startPlayback(playlist.getId());
 
         // push library view
         } else if (id == :Library) {

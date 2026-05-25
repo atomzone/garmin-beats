@@ -3,19 +3,21 @@ import Toybox.Lang;
 
 class DeleteAssetConfirmation extends Ui.ConfirmationDelegate {
 
-    private var _assetRepo as XAudioAssetRepository;
+    // private var _assetRepo as XAudioAssetRepository;
 
-    function initialize(assetRepo as XAudioAssetRepository) {
+    function initialize() { //assetRepo as XAudioAssetRepository) {
         ConfirmationDelegate.initialize();
 
-        _assetRepo = assetRepo;
+        // _assetRepo = assetRepo;
     }
 
     function onResponse(response as Ui.Confirm) as Boolean {
         if (response == WatchUi.CONFIRM_YES) {
-            _assetRepo.deleteAll();
-            $.am.debug("[SettingsMenuController] Cleared " + _assetRepo.size() + " cached audio + assets");
-            return true;
+
+            // _assetRepo.deleteAll();
+            
+            // $.am.debug("[SettingsMenuController] Cleared " + _assetRepo.size() + " cached audio + assets");
+            return false;
         }
 
         return false;

@@ -20,19 +20,27 @@ class AssetSelectionController extends Ui.Menu2InputDelegate {
             return;
         }
 
-        // OLD SCHOOL FROM HERE
-        // TODO: REPALCE OLD SCHOOL
-
-        // convert new -> old
-        var refIds = [] as Array<Number>;
-        for (var i = 0; i < _selected.size(); i++) {
-            refIds.add(_selected[i].getRefId() as Number);
+        var trackIds = [];
+        for (var i = 0, limit = _selected.size(); i < limit; i++) {
+            trackIds.add(_selected[i].getId());
         }
 
-        var assets = XAudioAsset.fromRefIds(refIds);            
-        var playlist = new Playlist(assets, 0);
-        
-        Media.startPlayback(playlist.serialize() as App.PersistableType);
+        // Build and Safe playlist
+        var playlist = new PlaylistAsset({
+            "id" => "pl:nowplaying",
+            "metadata" => {
+                "title" => "Now playing",
+                "description" => "- Custom collection -"
+            },
+            "trackIds" => trackIds
+        } as PlaylistAssetType);
+
+        var playlistAssetStore = new KeyValueStorage("PLAYLIST");
+        playlistAssetStore.set(playlist.getId(), playlist.serialize());
+
+        // Start playback
+        $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");
+        Media.startPlayback(playlist.getId());
     }
 
     function onSelect(item as Ui.MenuItem) as Void {
