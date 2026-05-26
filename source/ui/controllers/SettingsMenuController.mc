@@ -9,7 +9,7 @@ class SettingsMenuController extends Ui.Menu2InputDelegate {
         Ui.Menu2InputDelegate.initialize();
 
         var store = new IndexedStore("TRACK");
-        _totalTracks = store.getIndexIds().size();
+        _totalTracks = store.count();
     }
 
     function onSelect(item as Ui.MenuItem) as Void {

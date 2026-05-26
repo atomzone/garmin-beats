@@ -4,12 +4,18 @@ using Toybox.WatchUi as Ui;
 import Toybox.Lang;
 
 class MainMenuController extends Ui.Menu2InputDelegate {
+
+    private var _playlistStore as IndexedStore;
+    private var _trackStore as IndexedStore;
     private var _transition as Ui.SlideType = Ui.SLIDE_IMMEDIATE;
     private var _overlay as LoadingOverlayController;
 
     function initialize() {
         Ui.Menu2InputDelegate.initialize();
 
+        _playlistStore = new IndexedStore("PLAYLIST");
+        _trackStore = new IndexedStore("TRACK");
+        
         _overlay = new LoadingOverlayController(
             new Ui.ProgressBar("Fetching...", null)
         );
@@ -29,8 +35,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         // launch playback of all tracks
         } else if (id == :PlayAll) {
             
-            var audioAssetStore = new IndexedStore("TRACK");
-            var trackIds = audioAssetStore.getIndexIds();
+            var trackIds = _trackStore.getIndexIds();
 
             var playlist = new PlaylistAsset({
                 "id" => "pl:nowplaying",
@@ -41,8 +46,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
                 "trackIds" => trackIds
             } as PlaylistAssetType);
 
-            var playlistAssetStore = new IndexedStore("PLAYLIST");
-            playlistAssetStore.set(playlist.getId(), playlist.serialize());
+            _playlistStore.set(playlist.getId(), playlist.serialize());
 
             $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");
 
@@ -99,7 +103,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         _overlay.end(:GetPlaylists);
         
         Ui.pushView(
-            new PlaylistSyncView(playlists),
+            new PlaylistSyncView(playlists, _playlistStore.getIndexIds()),
             new PlaylistSyncController(playlists),
             self._transition
         );

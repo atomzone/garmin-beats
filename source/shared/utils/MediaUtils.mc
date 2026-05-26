@@ -18,7 +18,7 @@ class MediaUtils {
         );
     }
 
-    static function getCachedMediaRefIds(contentType as Media.ContentType) as Array<Number> {
+    static function getCachedMediaRefIds(contentType as Media.ContentType) as Array<Object> {
         var iterator = Media.getContentRefIter({ :contentType => contentType });
         var ids = [];
 
@@ -28,10 +28,16 @@ class MediaUtils {
 
         var ref = iterator.next();
         while (ref != null) {
-            ids.add(ref.getId() as Number);
+            ids.add(ref.getId());
             ref = iterator.next();
         }
 
         return ids;
+    }
+
+    static function delete(refId as Object) as Void {
+        Media.deleteCachedItem(
+            new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO)
+        );
     }
 }

@@ -9,26 +9,19 @@ class MainMenuView extends $.Rez.Menus.MainMenu {
         $.Rez.Menus.MainMenu.initialize();
 
         // Clarify the use of...
-        deleteMenuItem(:NowPlaying);
-        deleteMenuItem(:ContinueListening);
+        MenuUtils.deleteMenuItem(self, :NowPlaying);
+        MenuUtils.deleteMenuItem(self, :ContinueListening);
 
         // Hide library if no cached assets
         // Can we use application state to trigger these updates?
 
         // TODO: NEW SCHOOL COOL
         var storage = new IndexedStore("TRACK");
-        var hasAssets = (storage.getIndexIds().size() > 0);
+        var hasAssets = storage.count() > 0;
 
         if (!hasAssets) {
-            deleteMenuItem(:PlayAll);
-            deleteMenuItem(:Library);
-        }
-    }
-
-    private function deleteMenuItem(id as Symbol) as Void {
-        var index = findItemById(id);
-        if (index > -1) {
-            deleteItem(index);
+            MenuUtils.deleteMenuItem(self, :PlayAll);
+            MenuUtils.deleteMenuItem(self, :Library);
         }
     }
 }
