@@ -1,7 +1,7 @@
 using Toybox.Media as Media;
 import Toybox.Lang;
 
-class AudioAssetSyncHandlerCreate extends TransactionAsyncHandler {
+class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
 
     private var _onProgress as Method(Number) as Void;
 
@@ -14,7 +14,7 @@ class AudioAssetSyncHandlerCreate extends TransactionAsyncHandler {
     }
 
     function execute(transaction as QueueTransactionType) as String {
-        var id = transaction["tid"];
+        var tid = transaction["tid"];
         var payload = transaction["payload"] as Dictionary;
 
         var source = new AudioSource(payload["source"] as AudioSourceType);
@@ -25,7 +25,7 @@ class AudioAssetSyncHandlerCreate extends TransactionAsyncHandler {
         }, method(:onResponse));
 
         var context = { 
-            :id => id, 
+            :tid => tid, 
             :entity => transaction["entity"] as String,
             :metadata => payload["metadata"] as AudioMetadataType,
             :source => payload["source"] as AudioSourceType
@@ -50,14 +50,14 @@ class AudioAssetSyncHandlerCreate extends TransactionAsyncHandler {
     function onResponse(
         response as ResponseType,
         context as { 
-            :id as String, 
+            :tid as String, 
             :entity as String,
             :metadata as AudioMetadataType, 
             :source as AudioSourceType 
         }
     ) as Void {
         var data = response[:data];
-        var id = context[:id] as String;
+        var tid = context[:tid] as String;
 
         // TODO: can we remove instanceOf check?
         if (response[:ok] != true || !(data instanceof Media.ContentRef)) {
@@ -66,16 +66,17 @@ class AudioAssetSyncHandlerCreate extends TransactionAsyncHandler {
         }
 
         var asset = new AudioAsset({
-            "id" => id,
+            "id" => tid,
             "refId" => data.getId(),
             "metadata" => context[:metadata],
             "source" => context[:source]
         } as AudioAssetType);
 
-        $.am.debug("[TRANS][BUILT][MediaAsset2] " + asset.serialize());
+        $.am.debug("[AudioAssetSyncHandlerCreate.execute][AudioAsset] :: targetId='" 
+            + asset.getId() + "', data='" + asset.serialize() + "'");
 
         var storage = new IndexedStore(context[:entity] as String);
-        storage.set(id, asset.serialize());
+        storage.set(asset.getId(), asset.serialize());
 
         success();
     }

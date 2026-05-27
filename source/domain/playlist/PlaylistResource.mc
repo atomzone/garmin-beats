@@ -17,6 +17,7 @@ class PlaylistResource {
 
     function initialize(raw as PlaylistResourceType) {
         _id = raw["id"] as String;
+        // _id = CounterStore.increment("PLAYLIST").toString();
 
         // var metadata = raw["meta"] as PlaylistMetadataType?;
         _metadata = new PlaylistMetadata({
@@ -67,9 +68,8 @@ class PlaylistResource {
     public function canonicalize() as String {
         var canonical = getMetadata().canonicalize();
 
-        // we could simplify this unique method
-        for (var i = 0, limit = _tracks.size(); i < limit; i++) {
-            canonical += "|" + _tracks[i].canonicalize();
+        for (var i = 0, limit = _trackIds.size(); i < limit; i++) {
+            canonical += "|" + _trackIds[i];
         }
         
         return canonical;

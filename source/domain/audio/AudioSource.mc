@@ -17,6 +17,10 @@ class AudioSource {
         return _url;
     }
 
+    public function getChecksum() as String {
+        return canonicalize();
+    }
+
     public function canonicalize() as String {
         return _url;
     }

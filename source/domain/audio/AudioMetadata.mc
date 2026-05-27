@@ -8,6 +8,8 @@ typedef AudioMetadataType as {
 };
 
 class AudioMetadata {
+
+    private var _checksum as String?;
     private var _title as String?;
     private var _artist as String?;
     private var _album as String?;
@@ -32,6 +34,15 @@ class AudioMetadata {
 
     public function getAlbum() as String? {
         return _album;
+    }
+
+    public function getChecksum() as String {
+        if (_checksum != null) {
+            return _checksum;
+        }
+
+        _checksum = StringUtils.checksum(canonicalize());
+        return _checksum;
     }
 
     public function canonicalize() as String {

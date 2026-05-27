@@ -20,7 +20,8 @@ class AppEntry extends App.AudioContentProviderApp {
             + "', MediaCount='" + media.size() + "'");
 
         // TODO: Identify a good time/place for this checks (after aa sync)
-        if (media.size() == trStore.count()) {
+        // 1(media) : Many(tracks)
+        if (media.size() <= trStore.count()) {
             return;
         }
 
@@ -61,7 +62,7 @@ class AppEntry extends App.AudioContentProviderApp {
 
         // Player Playlist + PlaylistAsset
         var playlistAsset = new PlaylistAsset(raw as PlaylistAssetType);
-        var playerPlaylist = new PlayerPlaylist({ "trackIndex" => 2, "trackPosition" => 30 }, playlistAsset);
+        var playerPlaylist = new PlayerPlaylist({ "trackIndex" => 0, "trackPosition" => 0 }, playlistAsset);
 
         $.am.debug("[AppEntry.getContentDelegate]"
             + " assets=" + playerPlaylist.getAssetCount()

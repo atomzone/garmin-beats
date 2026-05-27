@@ -16,7 +16,8 @@ class PlaylistSyncView extends Ui.CheckboxMenu {
                 playlist.getTitle() as String,
                 playlist.getDescription(),
                 index,
-                activePlaylistIds.indexOf(playlist.getId()) > -1, // this is good, but, unticking will not delete the assets
+                false,
+                // activePlaylistIds.indexOf(playlist.getId()) > -1, // this is good, but, unticking will not delete the assets
                 {}
             ));
         }

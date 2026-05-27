@@ -110,22 +110,9 @@ class SyncQueueProcessor {
         _onComplete.invoke(error);
     }
 
-    
     private function getTransactionHandler(transaction as QueueTransactionType) as SyncTransactionHandler? {
-
         var op = transaction["op"] as String;
         var entity = transaction["entity"] as String;
-
-/*
-        var tid = transaction["tid"];
-        var payload = transaction["payload"];
-
-        $.am.debug("------------------");
-        $.am.debug("[SYNC] op " + op + " ID " + tid);
-        $.am.debug("entity " + entity);
-        $.am.debug("payload " + payload);
-        $.am.debug("------------------");
-*/
 
         // Playlist
         if (entity.equals("PLAYLIST")) {
@@ -137,10 +124,10 @@ class SyncQueueProcessor {
         // Tracks
         if (entity.equals("TRACK")) {
 
-            // Create
-            if (op.equals("CREATE")) {
+            // Download
+            if (op.equals("DOWNLOAD")) {
 
-                return new AudioAssetSyncHandlerCreate(
+                return new AudioAssetSyncDownloadHandler(
                     method(:onTransactionComplete), method(:notifyProgressChange)
                 );
             }

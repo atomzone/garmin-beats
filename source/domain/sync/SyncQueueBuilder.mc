@@ -2,108 +2,161 @@ import Toybox.Lang;
 
 class SyncQueueBuilder {
 
-    private var _entityChecksums as Dictionary<Symbol, Dictionary<String, String>>;
+    private var _playlistStore as IndexedStore;
+    private var _trackStore as IndexedStore;
 
-    function initialize(entityChecksums as {
-        :PLAYLIST as Dictionary<String, String>,
-        :TRACK as Dictionary<String, String>
-    }) {
-        _entityChecksums = entityChecksums;
+    function initialize() {
+        _playlistStore = new IndexedStore("PLAYLIST");
+        _trackStore = new IndexedStore("TRACK");
     }
 
-    // make queue tasks
-    // future - this builder will
-    // - check the playlist/track against local stored assets
-    // - by comparing checksums
-    // - todo/descide if tracks are unique or shared across pl
     function buildQueue(playlists as Array<PlaylistResource>) as Array<QueueTransactionType> {
-        var playlistChecksums = _entityChecksums[:PLAYLIST] as Dictionary<String, String>;
-        var trackChecksums = _entityChecksums[:TRACK] as Dictionary<String, String>;
-
-        var queue = [];
+        var queue = [] as Array<QueueTransactionType>;
 
         for (var index = 0, limit = playlists.size(); index < limit; index++) {
-            var playlist = playlists[index];
-            var localChecksum = playlistChecksums[playlist.getId()];
+            queue.addAll(buildPlaylistTransactions(playlists[index]));
+        }
 
-            // $.am.debug("[playlist]canonicalize " + playlist.canonicalize());
-            $.am.debug("[playlist]getChecksum '" 
-                + playlist.getId() + "' => '" + playlist.getChecksum() 
-                + "' Vs '" + localChecksum + "'");
-
-            // New playlist
-            if (localChecksum == null) {
-                queue.add({
-                    "tid" => playlist.getId(),
-                    "op" => "CREATE",
-                    "entity" => "PLAYLIST",
-                    "payload" => { 
-                        "metadata" => playlist.getMetadata().serialize(),
-                        "trackIds" => playlist.getTrackIds()
-                    }
-                });
-                // optimisation: load all track without checking...
-            }
-            // Updated playlist
-            else if (!localChecksum.equals(playlist.getChecksum())) {
-                queue.add({
-                    "tid" => playlist.getId(),
-                    "op" => "UPDATE",
-                    "entity" => "PLAYLIST",
-                    "payload" => { 
-                        "metadata" => playlist.getMetadata().serialize(),
-                        "trackIds" => playlist.getTrackIds()
-                    }
-                });
-            }
-            // Unchanged playlist
-            else {
-                continue;
-            }
-
-            var tracks = playlist.getTracks();
-            for (var index2 = 0, limit2 = tracks.size(); index2 < limit2; index2++) {
-                var track = tracks[index2];
-                var trackCheck = trackChecksums[track.getLogicalId()];
-
-                // $.am.debug("[track]canonicalize " + track.canonicalize());
-                $.am.debug("[TRACK]getChecksum '" 
-                    + track.getLogicalId() + "' => '" + track.getChecksum() 
-                    + "' VS '" + trackCheck + "'");
-
-                // New track
-                if (trackCheck == null) {
-                    queue.add({
-                        "tid" => track.getId(),
-                        "op" => "CREATE",
-                        "entity" => "TRACK", // MediaAsset!
-                        "payload" => {
-                            "source" => track.getSource().serialize(),
-                            "metadata" => track.getMetadata().serialize(),
-                        }
-                    });
-                }
-                // Updated track
-                else if (!trackCheck.equals(track.getChecksum())) {
-                    queue.add({
-                        "tid" => track.getId(),
-                        "op" => "UPDATE",
-                        "entity" => "TRACK",
-                        "payload" => track.serialize()
-                    });
-                }
-                // Unchanged track 
-            }
-
-            // consider delete, no payload
-            // queue.add({
-            //     "tid" => track.getLogicalId(),
-            //     "op" => "DELETE",
-            //     "entity" => "TRACK",
-            //     "payload" => null
-            // });
+        for (var index = 0, limit = queue.size(); index < limit; index++) {
+            $.am.debug("::[" + queue[index]["entity"] + " > " + queue[index]["op"] + "]:: " + queue[index]);
         }
 
         return queue;
+    }
+
+    private function buildPlaylistTransactions(resource as PlaylistResource) as Array<QueueTransactionType> {
+        var queue = [] as Array<QueueTransactionType>;
+        var rawAsset = _playlistStore.get(resource.getId()) as PlaylistAssetType?;
+
+        // local asset exist
+        if (rawAsset == null) {
+            queue.add(enqueuePlaylistCreate(resource.getId(), resource));
+            queue.addAll(buildTrackTransactionFromArray(resource.getTracks()));
+
+            return queue;
+        }
+
+        var asset = new PlaylistAsset(rawAsset);
+
+        // metadata / tracks changed
+        if(resource.getChecksum().equals(asset.getChecksum()) == false) {
+            queue.add(enqueuePlaylistUpdate(asset.getId(), resource));
+            queue.addAll(buildTrackTransactionFromArray(resource.getTracks()));
+        }
+        else {
+            $.am.debug("::[SKIP playlist]:: id='" + resource.getId() + "' - no changes detected");
+        }
+
+        return queue;
+    }
+    
+    private function buildTrackTransactions(resource as AudioResource) as QueueTransactionType? {
+        $.am.debug("Resouce: id='" + resource.getId() + "', checksum='" + resource.getChecksum() + "'");
+        
+        var rawAsset = _trackStore.get(resource.getId()) as AudioAssetType?;
+
+        // local asset exist
+        // this check works based on assumption that 
+        // resource id and asset id are the same
+        // which is currrently a convention knowing if assets exists
+        // not ideal
+        if (rawAsset == null) {
+            return enqueueTrackDownload(resource.getId(), resource);
+        }
+
+        var asset = new AudioAsset(rawAsset);
+
+        $.am.debug("Asset: id='" + asset.getId() + "', checksum='" + asset.getChecksum() + "'");
+
+        // metadata / source changed
+        if (resource.getChecksum().equals(asset.getChecksum()) == false) {
+
+            // source changed, download needed
+            if (resource.getSource().getChecksum().equals(asset.getSource().getChecksum()) == false) {
+                return enqueueTrackDownload(asset.getId(), resource);
+            }
+            else {
+                // in this instance, the linked media is the same (source) but the metadata has changed
+                // if we upate the meta we change ALL instances of this asset
+                // we need to create a new asset LINKED to the same media
+                
+                // THIS IS NOT! DOING THIS CORRECTLY
+                // AS THE ASSET ID IS THE SAME, IT WILL UPDATE THE SAME ASSET IN THE STORE
+                return enqueueTrackUpdate(asset.getId(), asset.getRefId(), resource);
+            }
+        }
+
+        return null;
+    }
+
+    private function buildTrackTransactionFromArray(resources as Array<AudioResource>) as Array<QueueTransactionType> {
+        var queue = [];
+
+        for (var index = 0, limit = resources.size(); index < limit; index++) {
+            var transaction = buildTrackTransactions(resources[index]);
+            if (transaction != null) {
+                queue.add(transaction);
+            }
+            else {
+                $.am.debug("::[SKIP > TRACK]:: id='" + resources[index].getId() + "' - no changes detected!");
+            }
+        }
+
+        return queue;
+    }
+
+    private function enqueuePlaylistCreate(id as String, resource as PlaylistResource) as QueueTransactionType {
+        var payload = {
+            "metadata" => resource.getMetadata().serialize(),
+            "trackIds" => resource.getTrackIds()
+        };
+
+        return buildTransaction(id, "CREATE", "PLAYLIST", payload);       
+    }
+
+    private function enqueuePlaylistUpdate(id as String, resource as PlaylistResource) as QueueTransactionType {
+        var payload = {
+            "metadata" => resource.getMetadata().serialize(),
+            "trackIds" => resource.getTrackIds()
+        };
+
+        return buildTransaction(id, "UPDATE", "PLAYLIST", payload);
+    }
+
+    private function enqueueTrackDownload(id as String, resource as AudioResource) as QueueTransactionType {
+        var payload = {
+            "source" => resource.getSource().serialize(),
+            "metadata" => resource.getMetadata().serialize()
+        };
+
+        return buildTransaction(id, "DOWNLOAD", "TRACK", payload);
+    }
+    
+    private function enqueueTrackUpdate(
+        id as String, 
+        refId as Object, 
+        resource as AudioResource
+    ) as QueueTransactionType {
+        var payload = {
+            "refId" => refId,
+            "source" => resource.getSource().serialize(),
+            "metadata" => resource.getMetadata().serialize()
+        };
+
+        return buildTransaction(id, "UPDATE", "TRACK", payload);
+    }
+
+    private function buildTransaction(
+        id as String, 
+        operation as String, 
+        entity as String, 
+        payload as Dictionary
+    ) as QueueTransactionType {
+        return {
+            "tid" => id,
+            "op" => operation,
+            "entity" => entity,
+            "payload" => payload
+        };
     }
 }

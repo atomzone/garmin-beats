@@ -2,39 +2,39 @@ import Toybox.Lang;
 
 class AudioAssetSyncHandler extends SyncTransactionHandler {
 
+    private var _storage as IndexedStore;
+
     function initialize() {
         SyncTransactionHandler.initialize();
+        _storage = new IndexedStore("TRACK");
     }
 
-    // LOOSE SKETCH
     function execute(transaction as QueueTransactionType) as String {
-        // var tid = transaction["tid"] as String;
+        var tid = transaction["tid"];
         var operation = transaction["op"];
 
-        if (operation == null) {
+        if (tid == null || operation == null) {
             return "FAILED";
         }
 
         if (operation.equals("CREATE") || operation.equals("UPDATE")) {
+            var payload = transaction["payload"] as Dictionary;
 
-            var metadata = transaction["payload"] as AudioMetadataType;
-            // var asset = new TrackAsset({
-            //     "id" => tid,
-            //     "metadata" => metadata
-            // });
+            var asset = new AudioAsset({
+                "id" => tid,
+                "refId" => payload["refId"] as Object,
+                "metadata" => payload["metadata"] as AudioMetadataType,
+                "source" => payload["source"] as AudioSourceType,
+            } as AudioAssetType);
 
-            // $.am.debug("[TRANS][BUILT][TrackAsset] " + asset.serialize());
+            $.am.debug("[AudioAssetSyncHandler.execute][" + operation 
+                + "][AudioAsset] :: targetId='" + tid + "', data='" + asset.serialize() + "'");
 
-            $.am.debug("[TRANS][MOCK][TrackAsset] " + metadata);
-
-            // persist model + persist checksum
-            // PlaylistManager.save(playlist);
+            _storage.set(asset.getId(), asset.serialize());
         }
 
         if (operation.equals("DELETE")) {
-            
-            // delete model + remove checksum
-            // PlaylistManager.delete(transaction["id"] as String);
+            _storage.delete(tid);
         }
 
         return "COMPLETE";

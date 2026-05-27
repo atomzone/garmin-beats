@@ -10,6 +10,7 @@ typedef AudioAssetType as {
 class AudioAsset {
 
     private var _id as String;
+    private var _checksum as String?;
     private var _refId as Object;
     private var _source as AudioSource;
     private var _metadata as AudioMetadata;
@@ -31,6 +32,23 @@ class AudioAsset {
 
     public function getMetadata() as AudioMetadata {
         return _metadata;
+    }
+
+    public function getSource() as AudioSource {
+        return _source;
+    }
+
+    public function getChecksum() as String {
+        if (_checksum != null) {
+            return _checksum;
+        }
+
+        _checksum = StringUtils.checksum(canonicalize());
+        return _checksum;
+    }
+
+    public function canonicalize() as String {
+        return _source.canonicalize() + "|" + _metadata.canonicalize();
     }
 
     public function serialize() as AudioAssetType {

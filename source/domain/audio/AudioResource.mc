@@ -19,7 +19,9 @@ class AudioResource {
 
         _source = new AudioSource(source);
         _metadata = new AudioMetadata(metadata);
-        _id = StringUtils.checksum(_source.canonicalize());
+
+        _id = StringUtils.checksum(_source.canonicalize()); // needs to be unique
+        // _id = CounterStore.increment("TRACK").toString();
     }
 
     // THE uniqiue id, build from source

@@ -2,20 +2,23 @@ import Toybox.Lang;
 
 class PlaylistAssetSyncHandler extends SyncTransactionHandler {
 
+    private var _storage as IndexedStore;
+
     function initialize() {
         SyncTransactionHandler.initialize();
+        _storage = new IndexedStore("PLAYLIST");
     }
 
-    // LOOSE SKETCH
     function execute(transaction as QueueTransactionType) as String {
-        var tid = transaction["tid"] as String;
+        var tid = transaction["tid"];
         var operation = transaction["op"];
 
-        if (operation == null) {
+        if (tid == null || operation == null) {
             return "FAILED";
         }
 
-        if (operation.equals("CREATE")) {
+        // build asset and persist against tid
+        if (operation.equals("CREATE") || operation.equals("UPDATE")) {
             var payload = transaction["payload"] as Dictionary;
 
             var asset = new PlaylistAsset({
@@ -24,26 +27,14 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
                 "trackIds" => payload["trackIds"] as Array<String>,
             } as PlaylistAssetType);
 
-            $.am.debug("[TRANS][BUILT][PlaylistAsset] " + asset.serialize());
+            $.am.debug("[PlaylistAssetSyncHandler.execute][" + operation 
+                + "][PlaylistAsset] :: targetId='" + tid + "', data='" + asset.serialize() + "'");
 
-            var storage = new IndexedStore(transaction["entity"] as String);
-            storage.set(tid, asset.serialize());
-        }
-
-        if (operation.equals("UPDATE")) {
-            var payload = transaction["payload"] as PlaylistAssetType;
-            var metadata = new PlaylistMetadata(payload["metadata"] as PlaylistMetadataType);
-            var playlistId = payload["trackIds"] as Array<String>;
-
-            $.am.debug("[TRANS][" + operation 
-                + "][PlaylistAsset] :: targetId=" + tid + ", metadata=" 
-                + metadata.serialize() + ", trackIds=" + playlistId);
+            _storage.set(asset.getId(), asset.serialize());
         }
 
         if (operation.equals("DELETE")) {
-            
-            // delete model + remove checksum
-            PlaylistManager.delete(tid);
+            _storage.delete(tid);
         }
 
         return "COMPLETE";
