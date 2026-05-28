@@ -114,7 +114,7 @@ class SyncQueueBuilder {
             "metadata" => resource.getMetadata().serialize()
         };
 
-        return buildTransaction(id, "DOWNLOAD", "TRACK", payload);
+        return buildTransaction(id, "DOWNLOAD_CREATE", "TRACK", payload);
     }
     
     private function enqueueSaveTrack(
