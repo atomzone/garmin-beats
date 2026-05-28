@@ -14,7 +14,7 @@ class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
     }
 
     function execute(transaction as QueueTransactionType) as String {
-        var tid = transaction["tid"];
+        var id = transaction["tid"];
         var payload = transaction["payload"] as Dictionary;
 
         var source = new AudioSource(payload["source"] as AudioSourceType);
@@ -25,7 +25,7 @@ class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
         }, method(:onResponse));
 
         var context = { 
-            :tid => tid, 
+            :id => id, 
             :entity => transaction["entity"] as String,
             :metadata => payload["metadata"] as AudioMetadataType,
             :source => payload["source"] as AudioSourceType
@@ -50,14 +50,14 @@ class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
     function onResponse(
         response as ResponseType,
         context as { 
-            :tid as String, 
+            :id as String, 
             :entity as String,
             :metadata as AudioMetadataType, 
             :source as AudioSourceType 
         }
     ) as Void {
         var data = response[:data];
-        var tid = context[:tid] as String;
+        var id = context[:id] as String;
 
         // TODO: can we remove instanceOf check?
         if (response[:ok] != true || !(data instanceof Media.ContentRef)) {
@@ -65,18 +65,25 @@ class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
             return;
         }
 
+        // MEDIA
+        var media = new MediaRecord({ "refId" => data.getId() });
+        var source = new AudioSource(context[:source] as AudioSourceType);
+
+        var mediaStore = new IndexedStore("MEDIA");
+        mediaStore.set(source.getChecksum(), media.serialize());
+
+        // AUDIO
         var asset = new AudioAsset({
-            "id" => tid,
             "refId" => data.getId(),
             "metadata" => context[:metadata],
             "source" => context[:source]
         } as AudioAssetType);
 
         $.am.debug("[AudioAssetSyncHandlerCreate.execute][AudioAsset] :: targetId='" 
-            + asset.getId() + "', data='" + asset.serialize() + "'");
+            + id + "', data='" + asset.serialize() + "'");
 
         var storage = new IndexedStore(context[:entity] as String);
-        storage.set(asset.getId(), asset.serialize());
+        storage.set(id, asset.serialize());
 
         success();
     }

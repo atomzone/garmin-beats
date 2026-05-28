@@ -1,31 +1,36 @@
 import Toybox.Lang;
 
 typedef AudioAssetType as {
-    "id" as String,
     "refId" as Object,
     "source" as AudioSourceType,
     "meta" as AudioMetadataType?
 };
 
+// Persisted immutable object
 class AudioAsset {
 
-    private var _id as String;
     private var _checksum as String?;
     private var _refId as Object;
     private var _source as AudioSource;
     private var _metadata as AudioMetadata;
 
     function initialize(raw as AudioAssetType) {
-        _id = raw["id"] as String;
         _refId = raw["refId"] as Object;
         _source = new AudioSource(raw["source"] as AudioSourceType);
         _metadata = new AudioMetadata(raw["metadata"] as AudioMetadataType?);
     }
 
+    // asset identity derives from content
     public function getId() as String {
-        return _id;
+        return getChecksum();
     }
 
+    // media identity derives from source
+    public function getMediaId() as String {
+        return _source.getChecksum();
+    }
+
+    // convenience prevents lookup of media record
     public function getRefId() as Object {
         return _refId;
     }
@@ -53,7 +58,6 @@ class AudioAsset {
 
     public function serialize() as AudioAssetType {
         return {
-            "id" => _id,
             "refId" => _refId,
             "source" => _source.serialize(),
             "metadata" => _metadata.serialize(),

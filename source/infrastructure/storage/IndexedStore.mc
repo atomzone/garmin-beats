@@ -42,12 +42,9 @@ class IndexedStore {
 
     function getIndexIds() as Array<String> {
         if (_indexIdCache.size() > 0) {
-            // $.am.debug("getIndexIds[" + _partitionId + "][CACHE][HIT]");
             return _indexIdCache;
         }
         
-        // $.am.debug("getIndexIds[" + _partitionId + "][CACHE][MISS]");
-
         var partitionKey = buildPartitionKey("INDEXES");
         _indexIdCache = StorageManager.getOrDefault(partitionKey, []) as Array<String>;
 

@@ -3,12 +3,55 @@ using Toybox.Media;
 
 import Toybox.Lang;
 
+class MediaAssetOld {
+    private var _refId as Object;
+    private var _contentType as Media.ContentType;
+
+    function initialize(refId as Object, contentType as Media.ContentType) {
+        self._refId = refId;
+        self._contentType = contentType;
+    }
+
+    function delete() as Void {
+        Media.deleteCachedItem(self.getContentRef());
+    }
+
+    function getContent() as Media.Content {
+        return Media.getCachedContentObj(self.getContentRef());
+    }
+
+    function getContentRef() as Media.ContentRef {
+        return new Media.ContentRef(self._refId, self._contentType);
+    }
+
+    function getRefId() as Object {
+        return self._refId;
+    }
+
+    static function getCachedMediaRefIds(contentType as Media.ContentType) as Array<Number> {
+        var iterator = Media.getContentRefIter({ :contentType => contentType });
+        var ids = [];
+
+        if (iterator as Media.ContentRefIterator? == null) {
+            return ids;
+        }
+
+        var ref = iterator.next();
+        while (ref != null) {
+            ids.add(ref.getId() as Number);
+            ref = iterator.next();
+        }
+
+        return ids;
+    }
+}
+
 // AudioAsset - "Track exists locally"
 // AudioAssetState - "User/device state for local track"
-class XAudioAsset extends MediaAsset {
+class XAudioAsset extends MediaAssetOld {
 
     function initialize(id as Number) {
-        MediaAsset.initialize(id, Media.CONTENT_TYPE_AUDIO);
+        MediaAssetOld.initialize(id, Media.CONTENT_TYPE_AUDIO);
     }
 
     function getActiveContent(startPositionSeconds as Number) as Media.Content {
@@ -65,7 +108,7 @@ class XAudioAsset extends MediaAsset {
 
     public function delete() as Void {
         StorageManager.delete(getStorageKey());
-        MediaAsset.delete();
+        MediaAssetOld.delete();
     }
 
     private function normalize(meta as Object?) as XAudioAsset {
@@ -109,7 +152,7 @@ class XAudioAsset extends MediaAsset {
     }
 
     static function getCachedAssetRefIds() as Array<Number> {
-        return MediaAsset.getCachedMediaRefIds(Media.CONTENT_TYPE_AUDIO);
+        return MediaAssetOld.getCachedMediaRefIds(Media.CONTENT_TYPE_AUDIO);
     }
 
     static function getCachedAssets() as Array<XAudioAsset> {

@@ -6,9 +6,10 @@ typedef AudioResourceType as {
     "meta" as AudioMetadataType?
 };
 
+// Transient observation
+// Identity derived from getChecksum()
 class AudioResource {   
 
-    private var _id as String;
     private var _checksum as String?;
     private var _source as AudioSource;
     private var _metadata as AudioMetadata;
@@ -19,14 +20,6 @@ class AudioResource {
 
         _source = new AudioSource(source);
         _metadata = new AudioMetadata(metadata);
-
-        _id = StringUtils.checksum(_source.canonicalize()); // needs to be unique
-        // _id = CounterStore.increment("TRACK").toString();
-    }
-
-    // THE uniqiue id, build from source
-    public function getId() as String {
-        return _id;
     }
 
     public function getSourceUrl() as String {

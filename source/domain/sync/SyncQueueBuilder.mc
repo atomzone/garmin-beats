@@ -4,10 +4,12 @@ class SyncQueueBuilder {
 
     private var _playlistStore as IndexedStore;
     private var _trackStore as IndexedStore;
+    private var _mediaStore as IndexedStore;
 
     function initialize() {
         _playlistStore = new IndexedStore("PLAYLIST");
         _trackStore = new IndexedStore("TRACK");
+        _mediaStore = new IndexedStore("MEDIA");
     }
 
     function buildQueue(playlists as Array<PlaylistResource>) as Array<QueueTransactionType> {
@@ -50,55 +52,38 @@ class SyncQueueBuilder {
         return queue;
     }
     
-    private function buildTrackTransactions(resource as AudioResource) as QueueTransactionType? {
-        $.am.debug("Resouce: id='" + resource.getId() + "', checksum='" + resource.getChecksum() + "'");
-        
-        var rawAsset = _trackStore.get(resource.getId()) as AudioAssetType?;
+    private function buildTrackTransaction(resource as AudioResource) as QueueTransactionType? {
+        var assetId = resource.getChecksum();
+        var rawAsset = _trackStore.get(assetId) as AudioAssetType?;
 
-        // local asset exist
-        // this check works based on assumption that 
-        // resource id and asset id are the same
-        // which is currrently a convention knowing if assets exists
-        // not ideal
-        if (rawAsset == null) {
-            return enqueueTrackDownload(resource.getId(), resource);
+        if (rawAsset != null) {
+            return null;
         }
 
-        var asset = new AudioAsset(rawAsset);
+        var existingMediaAsset = _mediaStore.get(resource.getSource().getChecksum()) as MediaAssetType?;
 
-        $.am.debug("Asset: id='" + asset.getId() + "', checksum='" + asset.getChecksum() + "'");
+        if (existingMediaAsset != null) {
 
-        // metadata / source changed
-        if (resource.getChecksum().equals(asset.getChecksum()) == false) {
-
-            // source changed, download needed
-            if (resource.getSource().getChecksum().equals(asset.getSource().getChecksum()) == false) {
-                return enqueueTrackDownload(asset.getId(), resource);
-            }
-            else {
-                // in this instance, the linked media is the same (source) but the metadata has changed
-                // if we upate the meta we change ALL instances of this asset
-                // we need to create a new asset LINKED to the same media
-                
-                // THIS IS NOT! DOING THIS CORRECTLY
-                // AS THE ASSET ID IS THE SAME, IT WILL UPDATE THE SAME ASSET IN THE STORE
-                return enqueueTrackUpdate(asset.getId(), asset.getRefId(), resource);
-            }
+            return enqueueSaveTrack(
+                assetId,
+                existingMediaAsset["refId"] as Object,
+                resource
+            );
         }
 
-        return null;
+        return enqueueDownloadAndSaveTrack(assetId, resource);
     }
 
     private function buildTrackTransactionFromArray(resources as Array<AudioResource>) as Array<QueueTransactionType> {
         var queue = [];
 
         for (var index = 0, limit = resources.size(); index < limit; index++) {
-            var transaction = buildTrackTransactions(resources[index]);
+            var transaction = buildTrackTransaction(resources[index]);
             if (transaction != null) {
                 queue.add(transaction);
             }
             else {
-                $.am.debug("::[SKIP > TRACK]:: id='" + resources[index].getId() + "' - no changes detected!");
+                $.am.debug("::[SKIP > TRACK]:: id='" + resources[index].getChecksum() + "' - no changes detected!");
             }
         }
 
@@ -123,7 +108,7 @@ class SyncQueueBuilder {
         return buildTransaction(id, "UPDATE", "PLAYLIST", payload);
     }
 
-    private function enqueueTrackDownload(id as String, resource as AudioResource) as QueueTransactionType {
+    private function enqueueDownloadAndSaveTrack(id as String, resource as AudioResource) as QueueTransactionType {
         var payload = {
             "source" => resource.getSource().serialize(),
             "metadata" => resource.getMetadata().serialize()
@@ -132,7 +117,7 @@ class SyncQueueBuilder {
         return buildTransaction(id, "DOWNLOAD", "TRACK", payload);
     }
     
-    private function enqueueTrackUpdate(
+    private function enqueueSaveTrack(
         id as String, 
         refId as Object, 
         resource as AudioResource
@@ -143,7 +128,7 @@ class SyncQueueBuilder {
             "metadata" => resource.getMetadata().serialize()
         };
 
-        return buildTransaction(id, "UPDATE", "TRACK", payload);
+        return buildTransaction(id, "CREATE", "TRACK", payload);
     }
 
     private function buildTransaction(

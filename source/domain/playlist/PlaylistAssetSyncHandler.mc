@@ -10,31 +10,31 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
     }
 
     function execute(transaction as QueueTransactionType) as String {
-        var tid = transaction["tid"];
+        var id = transaction["tid"];
         var operation = transaction["op"];
 
-        if (tid == null || operation == null) {
+        if (id == null || operation == null) {
             return "FAILED";
         }
 
-        // build asset and persist against tid
+        // build asset and persist against targetId
         if (operation.equals("CREATE") || operation.equals("UPDATE")) {
             var payload = transaction["payload"] as Dictionary;
 
             var asset = new PlaylistAsset({
-                "id" => tid,
+                "id" => id,
                 "metadata" => payload["metadata"] as PlaylistMetadata,
                 "trackIds" => payload["trackIds"] as Array<String>,
             } as PlaylistAssetType);
 
             $.am.debug("[PlaylistAssetSyncHandler.execute][" + operation 
-                + "][PlaylistAsset] :: targetId='" + tid + "', data='" + asset.serialize() + "'");
+                + "][PlaylistAsset] :: targetId='" + id + "', data='" + asset.serialize() + "'");
 
-            _storage.set(asset.getId(), asset.serialize());
+            _storage.set(id, asset.serialize());
         }
 
         if (operation.equals("DELETE")) {
-            _storage.delete(tid);
+            _storage.delete(id);
         }
 
         return "COMPLETE";

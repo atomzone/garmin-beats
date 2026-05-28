@@ -17,9 +17,6 @@ class PlaylistResource {
 
     function initialize(raw as PlaylistResourceType) {
         _id = raw["id"] as String;
-        // _id = CounterStore.increment("PLAYLIST").toString();
-
-        // var metadata = raw["meta"] as PlaylistMetadataType?;
         _metadata = new PlaylistMetadata({
             "title" => raw["title"] as String,
             "description" => raw["description"]
@@ -28,7 +25,7 @@ class PlaylistResource {
         var tracks = raw["tracks"] as Array<AudioResourceType>;
         for (var i = 0; i < tracks.size(); i++) {
             _tracks.add(new AudioResource(tracks[i]));
-            _trackIds.add(_tracks[i].getId());
+            _trackIds.add(_tracks[i].getChecksum());
         }
     }
 

@@ -10,31 +10,30 @@ class AudioAssetSyncHandler extends SyncTransactionHandler {
     }
 
     function execute(transaction as QueueTransactionType) as String {
-        var tid = transaction["tid"];
+        var id = transaction["tid"];
         var operation = transaction["op"];
 
-        if (tid == null || operation == null) {
+        if (id == null || operation == null) {
             return "FAILED";
         }
 
-        if (operation.equals("CREATE") || operation.equals("UPDATE")) {
+        if (operation.equals("CREATE")) {
             var payload = transaction["payload"] as Dictionary;
 
             var asset = new AudioAsset({
-                "id" => tid,
                 "refId" => payload["refId"] as Object,
                 "metadata" => payload["metadata"] as AudioMetadataType,
                 "source" => payload["source"] as AudioSourceType,
             } as AudioAssetType);
 
             $.am.debug("[AudioAssetSyncHandler.execute][" + operation 
-                + "][AudioAsset] :: targetId='" + tid + "', data='" + asset.serialize() + "'");
+                + "][AudioAsset] :: targetId='" + id + "', data='" + asset.serialize() + "'");
 
-            _storage.set(asset.getId(), asset.serialize());
+            _storage.set(id, asset.serialize());
         }
 
         if (operation.equals("DELETE")) {
-            _storage.delete(tid);
+            _storage.delete(id);
         }
 
         return "COMPLETE";

@@ -8,6 +8,7 @@ typedef AudioSourceType as {
 class AudioSource {
 
     private var _url as String;
+    private var _checksum as String?;
 
     function initialize(source as AudioSourceType) {
         _url = source["url"] as String;
@@ -18,7 +19,12 @@ class AudioSource {
     }
 
     public function getChecksum() as String {
-        return canonicalize();
+        if (_checksum != null) {
+            return _checksum;
+        }
+
+        _checksum = StringUtils.checksum(canonicalize());
+        return _checksum;
     }
 
     public function canonicalize() as String {

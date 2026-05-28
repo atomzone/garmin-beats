@@ -125,14 +125,14 @@ class SyncQueueProcessor {
         if (entity.equals("TRACK")) {
 
             // Download
-            if (op.equals("DOWNLOAD")) {
+            if (op.equals("DOWNLOAD_CREATE")) {
 
                 return new AudioAssetSyncDownloadHandler(
                     method(:onTransactionComplete), method(:notifyProgressChange)
                 );
             }
 
-            // Update/delete 
+            // create/delete 
             return new AudioAssetSyncHandler();
         }
 
