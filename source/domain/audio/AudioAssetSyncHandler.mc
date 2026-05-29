@@ -21,9 +21,8 @@ class AudioAssetSyncHandler extends SyncTransactionHandler {
             var payload = transaction["payload"] as Dictionary;
 
             var asset = new AudioAsset({
-                "refId" => payload["refId"] as Object,
-                "metadata" => payload["metadata"] as AudioMetadataType,
-                "source" => payload["source"] as AudioSourceType,
+                "mediaId" => payload["mediaId"] as String,
+                "metadata" => payload["metadata"] as AudioMetadataType
             } as AudioAssetType);
 
             $.am.debug("[AudioAssetSyncHandler.execute][" + operation 

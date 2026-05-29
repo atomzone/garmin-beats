@@ -1,7 +1,7 @@
 using Toybox.Media as Media;
 import Toybox.Lang;
 
-class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
+class MediaRecordSyncHandler extends TransactionAsyncHandler {
 
     private var _onProgress as Method(Number) as Void;
 
@@ -14,9 +14,7 @@ class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
     }
 
     function execute(transaction as QueueTransactionType) as String {
-        var id = transaction["tid"];
         var payload = transaction["payload"] as Dictionary;
-
         var source = new AudioSource(payload["source"] as AudioSourceType);
         
         var request = new HttpRequest({
@@ -25,9 +23,8 @@ class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
         }, method(:onResponse));
 
         var context = { 
-            :id => id, 
+            :mediaId => transaction["tid"], 
             :entity => transaction["entity"] as String,
-            :metadata => payload["metadata"] as AudioMetadataType,
             :source => payload["source"] as AudioSourceType
         };
         
@@ -50,14 +47,13 @@ class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
     function onResponse(
         response as ResponseType,
         context as { 
-            :id as String, 
+            :mediaId as String, 
             :entity as String,
-            :metadata as AudioMetadataType, 
             :source as AudioSourceType 
         }
     ) as Void {
         var data = response[:data];
-        var id = context[:id] as String;
+        var mediaId = context[:mediaId] as String;
 
         // TODO: can we remove instanceOf check?
         if (response[:ok] != true || !(data instanceof Media.ContentRef)) {
@@ -66,24 +62,16 @@ class AudioAssetSyncDownloadHandler extends TransactionAsyncHandler {
         }
 
         // MEDIA
-        var media = new MediaRecord({ "refId" => data.getId() });
-        var source = new AudioSource(context[:source] as AudioSourceType);
+        var media = new MediaRecord({ 
+            "source" => context[:source] as AudioSourceType,
+            "refId" => data.getId() 
+        });
 
         var mediaStore = new IndexedStore("MEDIA");
-        mediaStore.set(source.getChecksum(), media.serialize());
+        mediaStore.set(mediaId, media.serialize());
 
-        // AUDIO
-        var asset = new AudioAsset({
-            "refId" => data.getId(),
-            "metadata" => context[:metadata],
-            "source" => context[:source]
-        } as AudioAssetType);
-
-        $.am.debug("[AudioAssetSyncHandlerCreate.execute][AudioAsset] :: targetId='" 
-            + id + "', data='" + asset.serialize() + "'");
-
-        var storage = new IndexedStore(context[:entity] as String);
-        storage.set(id, asset.serialize());
+        $.am.debug("[AudioAssetSyncHandlerCreate.execute][MediaRecord] :: targetId='" 
+            + mediaId + "', data='" + media.serialize() + "'");
 
         success();
     }

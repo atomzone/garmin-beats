@@ -111,7 +111,6 @@ class SyncQueueProcessor {
     }
 
     private function getTransactionHandler(transaction as QueueTransactionType) as SyncTransactionHandler? {
-        var op = transaction["op"] as String;
         var entity = transaction["entity"] as String;
 
         // Playlist
@@ -124,16 +123,16 @@ class SyncQueueProcessor {
         // Tracks
         if (entity.equals("TRACK")) {
 
-            // Download
-            if (op.equals("DOWNLOAD_CREATE")) {
-
-                return new AudioAssetSyncDownloadHandler(
-                    method(:onTransactionComplete), method(:notifyProgressChange)
-                );
-            }
-
             // create/delete 
             return new AudioAssetSyncHandler();
+        }
+
+        if (entity.equals("MEDIA")) {
+
+            // Download
+            return new MediaRecordSyncHandler(
+                method(:onTransactionComplete), method(:notifyProgressChange)
+            );
         }
 
         return null;

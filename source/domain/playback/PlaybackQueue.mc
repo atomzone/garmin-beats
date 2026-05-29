@@ -5,12 +5,14 @@ import Toybox.Lang;
 class PlaybackQueue extends Media.ContentIterator {
 
     private var _playerPlaylist as PlayerPlaylist;
+    private var _mediaStore as IndexedStore;
     private var _shuffle as Boolean = false;
 
     function initialize(playerPlaylist as PlayerPlaylist) {
         Media.ContentIterator.initialize();
 
         _playerPlaylist = playerPlaylist;
+        _mediaStore = new IndexedStore("MEDIA");
     }
 
     function get() as Media.Content? {
@@ -112,14 +114,33 @@ class PlaybackQueue extends Media.ContentIterator {
 
         var asset = _playerPlaylist.getAssetByIndex(index);
         var position = _playerPlaylist.getCurrentTrackPosition();
+        var refId = getRefId(asset);
+
+        if (refId == null) {
+            return null;
+        }
 
         if (position > 0) {
             $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playerPlaylist.getAssetCount() - 1) + " position=" + position);
-            return MediaUtils.getActiveContent(asset.getRefId(), position);
+            return MediaUtils.getActiveContent(refId, position);
         }
 
         $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playerPlaylist.getAssetCount() - 1));
-        return MediaUtils.getContent(asset.getRefId());
+        return MediaUtils.getContent(refId);
     }
 
+    // think avbout cached
+    // think avout changing to a stragih lookup
+    // get(asset.mediaId) -> refId -> getContent(refId)
+    private function getRefId(asset as AudioAsset) as Object? {
+        $.am.debug("[PlaybackQueue.getRefId] sourceChecksum='" + asset.getMediaId() + "'");
+
+        var mediaAssetType = _mediaStore.get(asset.getMediaId()) as MediaAssetType?;
+
+        if (mediaAssetType == null) {
+            return null;
+        }
+        
+        return mediaAssetType["refId"] as Object;
+    }
 }

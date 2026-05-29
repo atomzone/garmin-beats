@@ -28,20 +28,21 @@ class AppEntry extends App.AudioContentProviderApp {
         $.am.debug("Media count does not match track store count!");
         $.am.debug("Fixing this consistency");
 
-        var trackIds = trStore.getIndexIds();
-        for (var i = 0, limit = trStore.count(); i < limit; i++) {
+        // TODO: fix/builkd this clean up
+        // var trackIds = trStore.getIndexIds();
+        // for (var i = 0, limit = trStore.count(); i < limit; i++) {
 
-            var raw = trStore.get(trackIds[i]);
-            var track = new AudioAsset(raw as AudioAssetType);
+        //     var raw = trStore.get(trackIds[i]);
+        //     var track = new AudioAsset(raw as AudioAssetType);
 
-            if (media.remove(track.getRefId())) {
-                $.am.debug("Removed id='" + track.getId() + "'");
-            }
-        }
+        //     if (media.remove(track.getRefId())) {
+        //         $.am.debug("Removed id='" + track.getId() + "'");
+        //     }
+        // }
 
-        for (var i = 0, limit = media.size(); i < limit; i++) {
-            MediaUtils.delete(media[i]);
-        }
+        // for (var i = 0, limit = media.size(); i < limit; i++) {
+        //     MediaUtils.delete(media[i]);
+        // }
 
     }
 

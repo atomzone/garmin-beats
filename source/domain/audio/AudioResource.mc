@@ -6,7 +6,7 @@ typedef AudioResourceType as {
     "meta" as AudioMetadataType?
 };
 
-// Transient observation
+// Transient track snapshot
 // Identity derived from getChecksum()
 class AudioResource {   
 

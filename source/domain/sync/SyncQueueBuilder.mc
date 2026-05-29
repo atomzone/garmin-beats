@@ -6,34 +6,39 @@ class SyncQueueBuilder {
     private var _trackStore as IndexedStore;
     private var _mediaStore as IndexedStore;
 
+    private var _queuedMediaChecksums as Dictionary<String, Boolean>;
+
     function initialize() {
         _playlistStore = new IndexedStore("PLAYLIST");
         _trackStore = new IndexedStore("TRACK");
         _mediaStore = new IndexedStore("MEDIA");
+        _queuedMediaChecksums = {};
     }
 
     function buildQueue(playlists as Array<PlaylistResource>) as Array<QueueTransactionType> {
         var queue = [] as Array<QueueTransactionType>;
 
         for (var index = 0, limit = playlists.size(); index < limit; index++) {
-            queue.addAll(buildPlaylistTransactions(playlists[index]));
+            queue.addAll(
+                buildPlaylistTransactions(playlists[index])
+            );
         }
 
         for (var index = 0, limit = queue.size(); index < limit; index++) {
-            $.am.debug("::[" + queue[index]["entity"] + " > " + queue[index]["op"] + "]:: " + queue[index]);
+            $.am.debug("::[" + queue[index]["entity"] + " > " + queue[index]["op"] + "]:: " + queue[index]["payload"]);
         }
 
         return queue;
     }
 
-    private function buildPlaylistTransactions(resource as PlaylistResource) as Array<QueueTransactionType> {
+    private function buildPlaylistTransactions(playlist as PlaylistResource) as Array<QueueTransactionType> {
         var queue = [] as Array<QueueTransactionType>;
-        var rawAsset = _playlistStore.get(resource.getId()) as PlaylistAssetType?;
+        var rawAsset = _playlistStore.get(playlist.getId()) as PlaylistAssetType?;
 
         // local asset exist
         if (rawAsset == null) {
-            queue.add(enqueuePlaylistCreate(resource.getId(), resource));
-            queue.addAll(buildTrackTransactionFromArray(resource.getTracks()));
+            queue.add(enqueuePlaylistCreate(playlist.getId(), playlist));
+            queue.addAll(buildTrackTransactionFromArray(playlist.getTracks()));
 
             return queue;
         }
@@ -41,50 +46,48 @@ class SyncQueueBuilder {
         var asset = new PlaylistAsset(rawAsset);
 
         // metadata / tracks changed
-        if(resource.getChecksum().equals(asset.getChecksum()) == false) {
-            queue.add(enqueuePlaylistUpdate(asset.getId(), resource));
-            queue.addAll(buildTrackTransactionFromArray(resource.getTracks()));
+        if(playlist.getChecksum().equals(asset.getChecksum()) == false) {
+            queue.add(enqueuePlaylistUpdate(asset.getId(), playlist));
+            queue.addAll(buildTrackTransactionFromArray(playlist.getTracks()));
         }
         else {
-            $.am.debug("::[SKIP playlist]:: id='" + resource.getId() + "' - no changes detected");
+            $.am.debug("::[SKIP playlist]:: id='" + playlist.getId() + "' - no changes detected");
         }
 
         return queue;
     }
     
-    private function buildTrackTransaction(resource as AudioResource) as QueueTransactionType? {
-        var assetId = resource.getChecksum();
+    private function buildTrackTransaction(track as AudioResource) as Array<QueueTransactionType> {
+        var assetId = track.getChecksum();
         var rawAsset = _trackStore.get(assetId) as AudioAssetType?;
 
         if (rawAsset != null) {
-            return null;
+            return [];
         }
 
-        var existingMediaAsset = _mediaStore.get(resource.getSource().getChecksum()) as MediaAssetType?;
+        var queue = [] as Array<QueueTransactionType>;
+        var mediaId = track.getSource().getChecksum();
+        var existingMediaAsset = _mediaStore.get(mediaId) as MediaAssetType?;
 
-        if (existingMediaAsset != null) {
-
-            return enqueueSaveTrack(
-                assetId,
-                existingMediaAsset["refId"] as Object,
-                resource
+        if (existingMediaAsset == null && _queuedMediaChecksums[mediaId] == null) {
+            queue.add(
+                enqueueMediaDownload(mediaId, track)
             );
-        }
+            _queuedMediaChecksums[mediaId] = true;
+        }   
 
-        return enqueueDownloadAndSaveTrack(assetId, resource);
+        return queue.add(
+            enqueueTrackCreate(assetId, mediaId, track)
+        );
     }
 
-    private function buildTrackTransactionFromArray(resources as Array<AudioResource>) as Array<QueueTransactionType> {
+    private function buildTrackTransactionFromArray(tracks as Array<AudioResource>) as Array<QueueTransactionType> {
         var queue = [];
 
-        for (var index = 0, limit = resources.size(); index < limit; index++) {
-            var transaction = buildTrackTransaction(resources[index]);
-            if (transaction != null) {
-                queue.add(transaction);
-            }
-            else {
-                $.am.debug("::[SKIP > TRACK]:: id='" + resources[index].getChecksum() + "' - no changes detected!");
-            }
+        for (var index = 0, limit = tracks.size(); index < limit; index++) {
+            queue.addAll(
+                buildTrackTransaction(tracks[index])
+            );
         }
 
         return queue;
@@ -107,28 +110,29 @@ class SyncQueueBuilder {
 
         return buildTransaction(id, "UPDATE", "PLAYLIST", payload);
     }
-
-    private function enqueueDownloadAndSaveTrack(id as String, resource as AudioResource) as QueueTransactionType {
-        var payload = {
-            "source" => resource.getSource().serialize(),
-            "metadata" => resource.getMetadata().serialize()
-        };
-
-        return buildTransaction(id, "DOWNLOAD_CREATE", "TRACK", payload);
-    }
     
-    private function enqueueSaveTrack(
+    private function enqueueTrackCreate(
         id as String, 
         refId as Object, 
         resource as AudioResource
     ) as QueueTransactionType {
         var payload = {
-            "refId" => refId,
-            "source" => resource.getSource().serialize(),
+            "mediaId" => resource.getSource().getChecksum(),
             "metadata" => resource.getMetadata().serialize()
         };
 
         return buildTransaction(id, "CREATE", "TRACK", payload);
+    }
+
+    private function enqueueMediaDownload(
+        mediaId as String,
+        track as AudioResource
+    ) as QueueTransactionType {
+        var payload = {
+            "source" => track.getSource().serialize()
+        };
+
+        return buildTransaction(mediaId, "DOWNLOAD", "MEDIA", payload);
     }
 
     private function buildTransaction(

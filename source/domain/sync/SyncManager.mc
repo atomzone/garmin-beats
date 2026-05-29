@@ -25,6 +25,7 @@ class SyncManager extends Comm.SyncDelegate {
         _processor.start();
     }
 
+    // need to cleanup on error or cancellation
     function onStopSync() as Void {
         if (_processor != null) {
             _processor.stop();
