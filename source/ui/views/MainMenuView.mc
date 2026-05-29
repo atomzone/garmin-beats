@@ -11,17 +11,23 @@ class MainMenuView extends $.Rez.Menus.MainMenu {
         // Clarify the use of...
         MenuUtils.deleteMenuItem(self, :NowPlaying);
         MenuUtils.deleteMenuItem(self, :ContinueListening);
+    }
 
+    // rebuild menu items is not a suitable approach
+    // best have multple menu types OR build dynamically
+    public function onShow() as Void {
         // Hide library if no cached assets
         // Can we use application state to trigger these updates?
 
-        // TODO: NEW SCHOOL COOL
-        var storage = new IndexedStore("TRACK");
-        var hasAssets = storage.count() > 0;
+        // $.Rez.Menus.MainMenu.initialize();
 
-        if (!hasAssets) {
-            MenuUtils.deleteMenuItem(self, :PlayAll);
-            MenuUtils.deleteMenuItem(self, :Library);
-        }
+        // TODO: NEW SCHOOL COOL
+        // var storage = new IndexedStore("TRACK");
+        // var hasAssets = storage.count() > 0;
+
+        // if (!hasAssets) {
+            // MenuUtils.deleteMenuItem(self, :PlayAll);
+            // MenuUtils.deleteMenuItem(self, :Library);
+        // }
     }
 }
