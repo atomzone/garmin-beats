@@ -54,6 +54,8 @@ class IndexedStore {
     function set(id as String, value as Dictionary?) as Void {
         StorageManager.set(buildPartitionKey(id), value as Storage.ValueType?);
         addIndexId(id);
+
+        $.am.debug("[IndexedStore][Set][" + _partitionId + "] :: id='" + id + "', value='" + value + "'");
     }
 
     function delete(id as String) as Void {

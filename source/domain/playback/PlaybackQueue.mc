@@ -113,20 +113,38 @@ class PlaybackQueue extends Media.ContentIterator {
         }
 
         var asset = _playerPlaylist.getAssetByIndex(index);
-        var position = _playerPlaylist.getCurrentTrackPosition();
         var refId = getRefId(asset);
 
         if (refId == null) {
             return null;
         }
 
+        var metadata = mergeMetadata(
+            MediaUtils.getContent(refId).getMetadata(),
+            asset.getMetadata()
+        );
+
+        var position = _playerPlaylist.getCurrentTrackPosition();
+
         if (position > 0) {
             $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playerPlaylist.getAssetCount() - 1) + " position=" + position);
-            return MediaUtils.getActiveContent(refId, position);
+            return MediaUtils.getActiveContentWithMetadata(refId, metadata, position);
         }
 
         $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playerPlaylist.getAssetCount() - 1));
-        return MediaUtils.getContent(refId);
+        return MediaUtils.getContentWithMetadata(refId, metadata);
+    }
+
+    private function mergeMetadata(
+        source as Media.ContentMetadata, 
+        audio as AudioMetadata
+    ) as Media.ContentMetadata {
+
+        source.title = StringUtils.stringOrDefault(audio.getTitle(), "[Title Not Found]");
+        source.artist = StringUtils.stringOrDefault(audio.getArtist(), "[Artist Not Found]");
+        source.album = StringUtils.stringOrDefault(audio.getAlbum(), "[Album Not Found]");
+
+        return source;
     }
 
     // think avbout cached
@@ -135,7 +153,7 @@ class PlaybackQueue extends Media.ContentIterator {
     private function getRefId(asset as AudioAsset) as Object? {
         $.am.debug("[PlaybackQueue.getRefId] sourceChecksum='" + asset.getMediaId() + "'");
 
-        var mediaAssetType = _mediaStore.get(asset.getMediaId()) as MediaAssetType?;
+        var mediaAssetType = _mediaStore.get(asset.getMediaId()) as MediaRecordType?;
 
         if (mediaAssetType == null) {
             return null;

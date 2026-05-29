@@ -3,6 +3,7 @@ import Toybox.Lang;
 
 class MediaRecordSyncHandler extends TransactionAsyncHandler {
 
+    private var _mediaStore as IndexedStore;
     private var _onProgress as Method(Number) as Void;
 
     function initialize(
@@ -10,6 +11,8 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         onProgress as Method(Number) as Void
     ) {
         TransactionAsyncHandler.initialize(onComplete);
+
+        _mediaStore = new IndexedStore("MEDIA");
         _onProgress = onProgress;
     }
 
@@ -49,11 +52,10 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         context as { 
             :mediaId as String, 
             :entity as String,
-            :source as AudioSourceType 
+            :source as AudioSourceType
         }
     ) as Void {
         var data = response[:data];
-        var mediaId = context[:mediaId] as String;
 
         // TODO: can we remove instanceOf check?
         if (response[:ok] != true || !(data instanceof Media.ContentRef)) {
@@ -61,17 +63,15 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
             return;
         }
 
-        // MEDIA
-        var media = new MediaRecord({ 
-            "source" => context[:source] as AudioSourceType,
-            "refId" => data.getId() 
+        var mediaId = context[:mediaId] as String;
+        var source = context[:source] as AudioSourceType;
+
+        var mediaRecord = new MediaRecord({ 
+            "source" => source,
+            "refId" => data.getId()
         });
 
-        var mediaStore = new IndexedStore("MEDIA");
-        mediaStore.set(mediaId, media.serialize());
-
-        $.am.debug("[AudioAssetSyncHandlerCreate.execute][MediaRecord] :: targetId='" 
-            + mediaId + "', data='" + media.serialize() + "'");
+        _mediaStore.set(mediaId, mediaRecord.serialize());
 
         success();
     }

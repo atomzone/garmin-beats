@@ -1,6 +1,6 @@
 import Toybox.Lang;
 
-typedef MediaAssetType as {
+typedef MediaRecordType as {
     "refId" as Object,
     "source" as AudioSourceType
 };
@@ -11,7 +11,7 @@ class MediaRecord {
     private var _refId as Object;
     private var _source as AudioSource;
 
-    function initialize(raw as MediaAssetType) {
+    function initialize(raw as MediaRecordType) {
         _refId = raw["refId"] as Object;
         _source = new AudioSource(raw["source"] as AudioSourceType);
     }
@@ -24,10 +24,10 @@ class MediaRecord {
         return _source;
     }
 
-    public function serialize() as MediaAssetType {
+    public function serialize() as MediaRecordType {
         return {
             "refId" => _refId,
-            "source" => _source.serialize()
+            "source" => _source.serialize(),
         };
     }
 }

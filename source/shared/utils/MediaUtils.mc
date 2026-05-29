@@ -1,13 +1,21 @@
 using Toybox.Media;
-
 import Toybox.Lang;
 
 class MediaUtils {
 
+    static function getContentRef(refId as Object) as Media.ContentRef {
+        return new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO);
+    }
+
     static function getContent(refId as Object) as Media.Content {
-        return Media.getCachedContentObj(
-            new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO)
-        );
+        return Media.getCachedContentObj(getContentRef(refId));
+    }
+
+    static function getContentWithMetadata(
+        refId as Object, 
+        metadata as Media.ContentMetadata
+    ) as Media.Content {
+        return new Media.Content(getContentRef(refId), metadata);
     }
     
     static function getActiveContent(refId as Object, startPositionSeconds as Number) as Media.Content {
@@ -15,6 +23,16 @@ class MediaUtils {
 
         return new Media.ActiveContent(
             content.getContentRef(), content.getMetadata(), startPositionSeconds
+        );
+    }
+
+    static function getActiveContentWithMetadata(
+        refId as Object, 
+        metadata as Media.ContentMetadata,
+        startPositionSeconds as Number
+    ) as Media.Content {
+        return new Media.ActiveContent(
+            getContentRef(refId), metadata, startPositionSeconds
         );
     }
 
@@ -36,8 +54,6 @@ class MediaUtils {
     }
 
     static function delete(refId as Object) as Void {
-        Media.deleteCachedItem(
-            new Media.ContentRef(refId, Media.CONTENT_TYPE_AUDIO)
-        );
+        Media.deleteCachedItem(getContentRef(refId));
     }
 }
