@@ -71,6 +71,17 @@ class IndexedStore {
         return getIndexIds().size();
     }
 
+    function clear() as Void {
+        var indexIds = getIndexIds();
+
+        for (var i = 0, limit = indexIds.size(); i < limit; i++) {
+            StorageManager.delete(buildPartitionKey(indexIds[i]));
+        }
+
+        StorageManager.delete(buildPartitionKey("INDEXES"));
+        _indexIdCache = [];
+    }
+
     private function addIndexId(id as String) as Void {
         var indexes = getIndexIds();
 
