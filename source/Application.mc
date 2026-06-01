@@ -93,4 +93,9 @@ class AppEntry extends App.AudioContentProviderApp {
             $.Rez.Drawables.ProviderIcon, Toybox.Graphics.COLOR_ORANGE
         );
     }
+
+    // https://developer.garmin.com/connect-iq/api-docs/Toybox/Application/AppBase.html#onSettingsChanged-instance_function
+    function onSettingChanged(key as String, value as String) as Void {
+        $.am.debug("Setting changed: " + key + " = " + value);
+    }
 }

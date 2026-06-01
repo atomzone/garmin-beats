@@ -108,4 +108,12 @@ class MainMenuController extends Ui.Menu2InputDelegate {
             self._transition
         );
     }
+
+    private function getPlaylistUrl() as String {
+        try {
+            return App.Properties.getValue("playlistSourceUrl") as String;
+        } catch (e) {
+            return "https://atomzone.github.io/static/playlists.json";
+        }
+    }
 }

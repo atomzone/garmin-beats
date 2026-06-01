@@ -1,0 +1,12 @@
+<settings>
+
+    <setting
+        propertyKey="@Properties.playlistSourceUrl"
+        title="Playlist Source URL"
+        prompt="Enter the URL of the JSON document containing your playlists.">
+        <settingConfig
+            type="url"
+            required="true"/>
+    </setting>
+
+</settings>
