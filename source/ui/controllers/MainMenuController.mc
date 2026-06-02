@@ -38,6 +38,8 @@ class MainMenuController extends Ui.Menu2InputDelegate {
             
             var trackIds = _trackStore.loadIndexIds();
 
+            // Code duplication, maintenance burden
+            // Fix: Extract to PlaylistManager.createNowPlayingPlaylist(trackIds, description)
             var playlist = new PlaylistAsset({
                 "id" => "pl:nowplaying",
                 "metadata" => {

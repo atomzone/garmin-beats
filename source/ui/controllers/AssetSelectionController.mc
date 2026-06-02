@@ -25,7 +25,9 @@ class AssetSelectionController extends Ui.Menu2InputDelegate {
             trackIds.add(_selected[i].getId());
         }
 
-        // Build and Safe playlist
+        // Build and Save playlist
+        // Code duplication, maintenance burden
+        // Fix: Extract to PlaylistManager.createNowPlayingPlaylist(trackIds, description)
         var playlist = new PlaylistAsset({
             "id" => "pl:nowplaying",
             "metadata" => {
