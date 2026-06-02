@@ -1,5 +1,6 @@
 import Toybox.Lang;
 
+// Currently unused: no call sites in source.
 class DictionaryUtils {
 
     private static function getValue(record as Dictionary?, key as String) as Object? {

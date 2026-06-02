@@ -18,6 +18,7 @@ class MediaUtils {
         return new Media.Content(getContentRef(refId), metadata);
     }
     
+    // Currently unused: no active call sites in source.
     static function getActiveContent(refId as Object, startPositionSeconds as Number) as Media.Content {
         var content = MediaUtils.getContent(refId);
 

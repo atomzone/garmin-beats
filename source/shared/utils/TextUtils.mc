@@ -2,6 +2,7 @@ import Toybox.Lang;
 
 class StringUtils {
 
+    // Currently unused: no active call sites in source.
     static function hasText(value as String?) as Boolean {
         return value != null && !value.equals("");
     }
