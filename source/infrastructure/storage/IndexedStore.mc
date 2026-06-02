@@ -68,7 +68,7 @@ class IndexedStore {
     }
 
     function count() as Number {
-        return getIndexIds().size();
+        return loadIndexIds().size();
     }
 
     function clear() as Void {
