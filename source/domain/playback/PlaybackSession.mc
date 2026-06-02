@@ -5,24 +5,37 @@ import Toybox.Lang;
 class PlaybackSession {
 
     private var _playlist as PlayerPlaylist;
-    private var _store as IndexedStore?; // this id more like playback State
 
-    function initialize(playlist as PlayerPlaylist, store as IndexedStore?) {
+    function initialize(playlist as PlayerPlaylist) {
         _playlist = playlist;
-        _store = store;
+        savePlaybackState();
     }
 
     function onResumeCheckpoint(position as Number) as Void {
         $.am.debug("[onPlaybackPosition] index=" + _playlist.getCurrentTrackIndex() + " Current=" + _playlist.getCurrentTrackPosition() + ", New=" + position);
 
         _playlist.setCurrentTrackPosition(position);
-        // _store.setPlaylist(_playlist);
+        savePlaybackState();
     }
 
     function onTrackChanged() as Void {
         $.am.debug("[onTrackChanged] index=" + _playlist.getCurrentTrackIndex());
 
         _playlist.setCurrentTrackPosition(0);
-        // _store.setPlaylist(_playlist);
+        savePlaybackState();
+    }
+
+    private function savePlaybackState() as Void {
+        var currentState = buildStateFromPlaylist();
+        // TODO: use a checksum-based guard here if write frequency becomes a concern.
+        PlaybackStateStore.save(currentState);
+    }
+
+    private function buildStateFromPlaylist() as PlaybackStateType {
+        return {
+            "playlistId" => _playlist.getPlaylistId(),
+            "trackIndex" => _playlist.getCurrentTrackIndex(),
+            "trackPosition" => _playlist.getCurrentTrackPosition()
+        };
     }
 }

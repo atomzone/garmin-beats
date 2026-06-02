@@ -30,6 +30,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         // resume unfinished tracks
         } else if (id == :ContinueListening) {
+            Media.startPlayback(null);
 
 
         // launch playback of all tracks

@@ -1,6 +1,6 @@
 import Toybox.Lang;
 
-typedef PlaylistPlayerStateType as {
+typedef PlaybackCursorType as {
     "trackIndex" as Number,
     "trackPosition" as Number?,
 };
@@ -15,20 +15,24 @@ class PlayerPlaylist {
     private var _storage as IndexedStore;
 
     function initialize(
-        state as PlaylistPlayerStateType,
+        cursor as PlaybackCursorType,
         playlist as PlaylistAsset
     ) {
         _playlist = playlist;
         _assetCount = playlist.getTrackIds().size();
 
-        _playFromIndex = !isValidIndex(state["trackIndex"]) ? 0 : state["trackIndex"] as Number;
-        _lastTrackPositionSeconds = state["trackPosition"] == null ? 0 : state["trackPosition"] as Number;
+        _playFromIndex = !isValidIndex(cursor["trackIndex"]) ? 0 : cursor["trackIndex"] as Number;
+        _lastTrackPositionSeconds = cursor["trackPosition"] == null ? 0 : cursor["trackPosition"] as Number;
 
         _storage = new IndexedStore("TRACK");
     }
 
     function getAssetCount() as Number {
         return _assetCount;
+    }
+
+    function getPlaylistId() as String {
+        return _playlist.getId();
     }
 
     function getAssetByIndex(index as Number) as AudioAsset {
