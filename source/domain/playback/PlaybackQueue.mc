@@ -153,7 +153,7 @@ class PlaybackQueue extends Media.ContentIterator {
     private function getRefId(asset as AudioAsset) as Object? {
         $.am.debug("[PlaybackQueue.getRefId] sourceChecksum='" + asset.getMediaId() + "'");
 
-        var mediaAssetType = _mediaStore.get(asset.getMediaId()) as MediaRecordType?;
+        var mediaAssetType = _mediaStore.load(asset.getMediaId()) as MediaRecordType?;
 
         if (mediaAssetType == null) {
             return null;

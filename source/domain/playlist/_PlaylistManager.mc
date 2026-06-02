@@ -5,23 +5,23 @@ class PlaylistManager {
     static function save(playlist as PlaylistResource) as Void {
   
         // persist model
-        StorageManager.set(playlist.getId(), playlist.serialize());
+        StorageManager.save(playlist.getId(), playlist.serialize());
 
         // persist checksum
-        SyncStateStore.setPlaylist(playlist.getId(), playlist.getChecksum());
+        _SyncStateStore.setPlaylist(playlist.getId(), playlist.getChecksum());
     }
 
     static function delete(key as String) as Void {
         
         // delete model
-        StorageManager.delete(key);
+        StorageManager.remove(key);
 
         // remove checksum
-        SyncStateStore.deletePlaylist(key);
+        _SyncStateStore.deletePlaylist(key);
     }
 
     static function load(key as String) as PlaylistResource? {
-        var playlistResource = StorageManager.get(key) as PlaylistResourceType?;
+        var playlistResource = StorageManager.load(key) as PlaylistResourceType?;
         
         if (playlistResource == null) {
             return null;
@@ -45,7 +45,7 @@ class PlaylistManager {
     }
 
     static function getActiveIds() as Array<String> {
-        return SyncStateStore.getPlaylistChecksums().keys();
+        return _SyncStateStore.getPlaylistChecksums().keys();
     }
 
     // function getEnabled()

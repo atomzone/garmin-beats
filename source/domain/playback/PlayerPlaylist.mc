@@ -33,7 +33,7 @@ class PlayerPlaylist {
 
     function getAssetByIndex(index as Number) as AudioAsset {
         var trackId = _playlist.getTrackIds()[index];
-        var track = _storage.get(trackId);
+        var track = _storage.load(trackId);
 
         return new AudioAsset(track as AudioAssetType);
     }

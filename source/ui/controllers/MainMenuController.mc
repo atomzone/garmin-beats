@@ -35,7 +35,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         // launch playback of all tracks
         } else if (id == :PlayAll) {
             
-            var trackIds = _trackStore.getIndexIds();
+            var trackIds = _trackStore.loadIndexIds();
 
             var playlist = new PlaylistAsset({
                 "id" => "pl:nowplaying",
@@ -46,7 +46,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
                 "trackIds" => trackIds
             } as PlaylistAssetType);
 
-            _playlistStore.set(playlist.getId(), playlist.serialize());
+            _playlistStore.save(playlist.getId(), playlist.serialize());
 
             $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");
 
@@ -103,7 +103,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         _overlay.end(:GetPlaylists);
         
         Ui.pushView(
-            new PlaylistSyncView(playlists, _playlistStore.getIndexIds()),
+            new PlaylistSyncView(playlists, _playlistStore.loadIndexIds()),
             new PlaylistSyncController(playlists),
             self._transition
         );

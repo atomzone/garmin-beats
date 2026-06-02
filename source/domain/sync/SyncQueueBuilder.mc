@@ -33,7 +33,7 @@ class SyncQueueBuilder {
 
     private function buildPlaylistTransactions(playlist as PlaylistResource) as Array<QueueTransactionType> {
         var queue = [] as Array<QueueTransactionType>;
-        var rawAsset = _playlistStore.get(playlist.getId()) as PlaylistAssetType?;
+        var rawAsset = _playlistStore.load(playlist.getId()) as PlaylistAssetType?;
 
         if (rawAsset == null) {
             
@@ -59,7 +59,7 @@ class SyncQueueBuilder {
     
     private function buildTrackTransaction(track as AudioResource) as Array<QueueTransactionType> {
         var assetId = track.getChecksum();
-        var rawAsset = _trackStore.get(assetId) as AudioAssetType?;
+        var rawAsset = _trackStore.load(assetId) as AudioAssetType?;
 
         if (rawAsset != null) {
             return [];
@@ -67,7 +67,7 @@ class SyncQueueBuilder {
 
         var queue = [] as Array<QueueTransactionType>;
         var mediaId = track.getSource().getChecksum();
-        var existingMediaAsset = _mediaStore.get(mediaId) as MediaRecordType?;
+        var existingMediaAsset = _mediaStore.load(mediaId) as MediaRecordType?;
 
         // Queue and Media we didnt know about yet
         if (existingMediaAsset == null && _queuedMediaChecksums[mediaId] == null) {

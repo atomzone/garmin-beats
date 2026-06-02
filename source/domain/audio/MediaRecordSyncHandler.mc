@@ -71,7 +71,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
             "refId" => data.getId()
         });
 
-        _mediaStore.set(mediaId, mediaRecord.serialize());
+        _mediaStore.save(mediaId, mediaRecord.serialize());
 
         success();
     }

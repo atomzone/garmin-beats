@@ -3,20 +3,20 @@ import Toybox.Lang;
 
 class StorageManager {
 
-    static function get(key as Storage.KeyType) as Storage.ValueType? {
+    static function load(key as Storage.KeyType) as Storage.ValueType? {
         return Storage.getValue(key);
     }
 
-    static function getOrDefault(key as Storage.KeyType, defaultValue as Storage.ValueType) as Storage.ValueType {
-        var value = get(key);
+    static function loadOrDefault(key as Storage.KeyType, defaultValue as Storage.ValueType) as Storage.ValueType {
+        var value = load(key);
         return (value != null) ? value : defaultValue;
     }
     
-    static function set(key as Storage.KeyType, value as Storage.ValueType) as Void {
+    static function save(key as Storage.KeyType, value as Storage.ValueType) as Void {
         Storage.setValue(key, value);
     }
 
-    static function delete(key as Storage.KeyType) as Void {
+    static function remove(key as Storage.KeyType) as Void {
         Storage.deleteValue(key);
     }
 }

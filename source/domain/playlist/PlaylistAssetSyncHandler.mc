@@ -30,11 +30,11 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
             $.am.debug("[PlaylistAssetSyncHandler.execute][" + operation 
                 + "][PlaylistAsset] :: targetId='" + id + "', data='" + asset.serialize() + "'");
 
-            _storage.set(id, asset.serialize());
+            _storage.save(id, asset.serialize());
         }
 
         if (operation.equals("DELETE")) {
-            _storage.delete(id);
+            _storage.remove(id);
         }
 
         return "COMPLETE";

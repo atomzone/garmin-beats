@@ -29,10 +29,10 @@ class AppEntry extends App.AudioContentProviderApp {
         $.am.debug("Fixing this consistency");
 
         // TODO: fix/builkd this clean up
-        // var trackIds = trStore.getIndexIds();
+        // var trackIds = trStore.loadIndexIds();
         // for (var i = 0, limit = trStore.count(); i < limit; i++) {
 
-        //     var raw = trStore.get(trackIds[i]);
+        //     var raw = trStore.load(trackIds[i]);
         //     var track = new AudioAsset(raw as AudioAssetType);
 
         //     if (media.remove(track.getRefId())) {
@@ -54,7 +54,7 @@ class AppEntry extends App.AudioContentProviderApp {
 
         // FETCH THE PLAYLIST ASSET
         var playlistAssetStore = new IndexedStore("PLAYLIST");
-        var raw = playlistAssetStore.get(playlistAssetId as String);
+        var raw = playlistAssetStore.load(playlistAssetId as String);
 
         // can we avoid doing all this if the playlist does not exist!
         if (raw == null) {

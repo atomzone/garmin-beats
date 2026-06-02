@@ -4,11 +4,11 @@ import Toybox.Lang;
 class SyncQueueStore {
 
     static function load() as Array<QueueTransactionType> {
-        return StorageManager.getOrDefault("QUEUE", []) as Array<QueueTransactionType>;
+        return StorageManager.loadOrDefault("QUEUE", []) as Array<QueueTransactionType>;
     }
 
     static function save(queue as Array<QueueTransactionType>) as Void {
-        StorageManager.set("QUEUE", queue as Storage.ValueType);
+        StorageManager.save("QUEUE", queue as Storage.ValueType);
     }
 
     static function getSize() as Number {

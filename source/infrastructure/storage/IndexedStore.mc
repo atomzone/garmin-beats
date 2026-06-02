@@ -17,20 +17,20 @@ class IndexedStore {
         return _partitionId + ":" + id;
     }
 
-    function get(id as String) as Storage.ValueType? {
+    function load(id as String) as Storage.ValueType? {
         if (!isIndexValid(id)) {
             return null;
         }
 
-        return StorageManager.get(buildPartitionKey(id));
+        return StorageManager.load(buildPartitionKey(id));
     }
 
-    function getAll() as Array<Storage.ValueType> {
+    function loadAll() as Array<Storage.ValueType> {
         var records = [];
-        var indexIds = getIndexIds();
+        var indexIds = loadIndexIds();
 
         for (var i = 0, limit = indexIds.size(); i < limit; i++) {
-            var value = get(indexIds[i]);
+            var value = load(indexIds[i]);
 
             if (value != null) {
                 records.add(value);
@@ -40,31 +40,31 @@ class IndexedStore {
         return records;
     }
 
-    function getIndexIds() as Array<String> {
+    function loadIndexIds() as Array<String> {
         if (_indexIdCache.size() > 0) {
             return _indexIdCache;
         }
         
         var partitionKey = buildPartitionKey("INDEXES");
-        _indexIdCache = StorageManager.getOrDefault(partitionKey, []) as Array<String>;
+        _indexIdCache = StorageManager.loadOrDefault(partitionKey, []) as Array<String>;
 
         return _indexIdCache;
     }
     
-    function set(id as String, value as Dictionary?) as Void {
-        StorageManager.set(buildPartitionKey(id), value as Storage.ValueType?);
+    function save(id as String, value as Dictionary?) as Void {
+        StorageManager.save(buildPartitionKey(id), value as Storage.ValueType?);
         addIndexId(id);
 
-        $.am.debug("[IndexedStore][Set][" + _partitionId + "] :: id='" + id + "', value='" + value + "'");
+        $.am.debug("[IndexedStore][Save][" + _partitionId + "] :: id='" + id + "', value='" + value + "'");
     }
 
-    function delete(id as String) as Void {
-        StorageManager.delete(buildPartitionKey(id));
-        deleteIndexId(id);
+    function remove(id as String) as Void {
+        StorageManager.remove(buildPartitionKey(id));
+        removeIndexId(id);
     }
 
     function isIndexValid(id as String) as Boolean {
-        return getIndexIds().indexOf(id) != -1;
+        return loadIndexIds().indexOf(id) != -1;
     }
 
     function count() as Number {
@@ -72,18 +72,18 @@ class IndexedStore {
     }
 
     function clear() as Void {
-        var indexIds = getIndexIds();
+        var indexIds = loadIndexIds();
 
         for (var i = 0, limit = indexIds.size(); i < limit; i++) {
-            StorageManager.delete(buildPartitionKey(indexIds[i]));
+            StorageManager.remove(buildPartitionKey(indexIds[i]));
         }
 
-        StorageManager.delete(buildPartitionKey("INDEXES"));
+        StorageManager.remove(buildPartitionKey("INDEXES"));
         _indexIdCache = [];
     }
 
     private function addIndexId(id as String) as Void {
-        var indexes = getIndexIds();
+        var indexes = loadIndexIds();
 
         if (indexes.indexOf(id) > -1) {
             return;
@@ -93,8 +93,8 @@ class IndexedStore {
         storeIndexes(indexes);
     }
 
-    private function deleteIndexId(id as String) as Void {
-        var indexes = getIndexIds();
+    private function removeIndexId(id as String) as Void {
+        var indexes = loadIndexIds();
 
         if (indexes.remove(id)) {
             _indexIdCache = indexes;
@@ -103,6 +103,6 @@ class IndexedStore {
     }
 
     private function storeIndexes(indexes as Array<String>) as Void {
-        StorageManager.set(buildPartitionKey("INDEXES"), indexes as Array<Storage.ValueType>);
+        StorageManager.save(buildPartitionKey("INDEXES"), indexes as Array<Storage.ValueType>);
     }
 }
