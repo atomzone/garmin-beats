@@ -21,6 +21,7 @@ class AudioAssetSyncHandler extends SyncTransactionHandler {
             var payload = transaction["payload"] as Dictionary;
 
             var asset = new AudioAsset({
+                "id" => id,
                 "mediaId" => payload["mediaId"] as String,
                 "metadata" => payload["metadata"] as AudioMetadataType
             } as AudioAssetType);

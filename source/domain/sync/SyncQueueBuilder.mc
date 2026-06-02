@@ -69,6 +69,7 @@ class SyncQueueBuilder {
         var mediaId = track.getSource().getChecksum();
         var existingMediaAsset = _mediaStore.get(mediaId) as MediaRecordType?;
 
+        // Queue and Media we didnt know about yet
         if (existingMediaAsset == null && _queuedMediaChecksums[mediaId] == null) {
             queue.add(enqueueMediaDownload(mediaId, track));
             _queuedMediaChecksums[mediaId] = true;
