@@ -1,7 +1,5 @@
 <properties>
 
-    <property id="playlistSourceUrl" type="string">
-        https://atomzone.github.io/static/playlists.json
-    </property>
+    <property id="playlistSourceUrl" type="string">https://atomzone.github.io/static/playlists.json</property>
 
 </properties>

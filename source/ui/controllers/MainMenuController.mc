@@ -65,7 +65,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         // fetch playlist.json and build navigation
         else if (id == :GetPlaylists) {
 
-            var loader = new AudioResourceLoader("https://atomzone.github.io/static/playlists.json");
+            var loader = new AudioResourceLoader(getPlaylistUrl());
 
             _overlay.begin(:GetPlaylists, "Fetching playlists");
             loader.fetchPlaylists(method(:displayPlaylists));
