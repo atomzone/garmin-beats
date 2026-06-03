@@ -26,6 +26,7 @@ class SyncManager extends Comm.SyncDelegate {
     }
 
     // need to cleanup on error or cancellation
+    // can we redirect to the playlist menu?
     function onStopSync() as Void {
         if (_processor != null) {
             _processor.stop();
@@ -39,6 +40,7 @@ class SyncManager extends Comm.SyncDelegate {
         Comm.notifySyncProgress(progress);
     }
 
+    // can we redirect to the playlist menu?
     function onComplete(error as String?) as Void {
         Comm.notifySyncComplete(error);
     }

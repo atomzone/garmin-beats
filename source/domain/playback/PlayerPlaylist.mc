@@ -60,5 +60,27 @@ class PlayerPlaylist {
 
     function isValidIndex(index as Number?) as Boolean {
         return index != null && index >= 0 && index < _assetCount;
-    }   
+    }
+
+    // Combine playlist and persisted playback state to determine the appropriate starting cursor for playback
+    static function load(requestedPlaylistId as String?) as PlayerPlaylist? {
+
+        var storedState = PlaybackStateStore.load();
+        var playlistId = requestedPlaylistId;
+
+        if (playlistId == null && storedState != null) {
+            playlistId = storedState["playlistId"] as String;
+        }
+
+        if (playlistId == null) {
+            return null;
+        }
+
+        var raw = new IndexedStore("PLAYLIST").load(playlistId) as PlaylistAssetType;
+        var playlistAsset = new PlaylistAsset(raw);
+        var cursor = PlaybackStartPosition.getCursor(playlistAsset, storedState);
+
+        return new PlayerPlaylist(cursor, playlistAsset);
+    }
+
 }

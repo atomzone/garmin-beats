@@ -46,57 +46,23 @@ class AppEntry extends App.AudioContentProviderApp {
 
     }
 
-    function getContentDelegate(playlistAssetId as App.PersistableType) as Media.ContentDelegate {
-        // Read requested playlist id from runtime input.
-        var requestedPlaylistId = playlistAssetId as String?;
+    function getContentDelegate(playlistId as App.PersistableType) as Media.ContentDelegate {
 
-        // Load last persisted playback session state.
-        var storedState = PlaybackStateStore.load();
+        var playerPlaylist = PlayerPlaylist.load(playlistId as String?);
 
-        // Resolve playlist id: explicit request first, then stored session.
-        var resolvedPlaylistId = requestedPlaylistId;
-        if (resolvedPlaylistId == null && storedState != null) {
-            resolvedPlaylistId = storedState["playlistId"] as String?;
+        if (playerPlaylist == null) {
+            // Can we relaunch the app in another mode o.O
+            return new EmptyContentDelegate();
         }
 
-        // Fall back to default now-playing playlist id.
-        if (resolvedPlaylistId == null) {
-            resolvedPlaylistId = "pl:nowplaying";
-        }
-
-        // Open playlist store and load the selected playlist asset.
-        var playlistAssetStore = new IndexedStore("PLAYLIST");
-        var raw = playlistAssetStore.load(resolvedPlaylistId);
-
-        // Use an empty placeholder payload when the playlist is missing.
-        if (raw == null) {
-            raw = {};
-        }
-
-        // Build playlist domain object from persisted payload.
-        var playlistAsset = new PlaylistAsset(raw as PlaylistAssetType);
-
-        // Resolve runtime cursor (resume or reset) from request + stored state.
-        var playbackCursor = PlaybackStateStore.resolvePlaylistState(
-            requestedPlaylistId,
-            playlistAsset.getId(),
-            storedState
-        );
-        
-        // Construct runtime playback playlist with resolved cursor.
-        var playerPlaylist = new PlayerPlaylist(playbackCursor, playlistAsset);
-
-        // Emit playback bootstrap diagnostics.
         $.am.debug("[AppEntry.getContentDelegate]"
             + " assets=" + playerPlaylist.getAssetCount()
             + " playlist=" + playerPlaylist.getPlaylistId()
             + " index=" + playerPlaylist.getCurrentTrackIndex() 
             + " position=" + playerPlaylist.getCurrentTrackPosition());
 
-        // Build playback session/persistence manager for this playlist instance.
         var session = new PlaybackSession(playerPlaylist);
-        
-        // Return playback delegate consumed by the platform.
+
         return new PlaybackProvider(playerPlaylist, session);
     }
 

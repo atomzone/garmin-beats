@@ -22,28 +22,4 @@ class PlaybackStateStore {
     static function clear() as Void {
         StorageManager.remove(KEY);
     }
-
-    static function resolvePlaylistState(
-        requestedPlaylistId as String?,
-        playlistId as String,
-        storedState as PlaybackStateType?
-    ) as PlaybackCursorType {
-        var playlistState = {
-            "trackIndex" => 0,
-            "trackPosition" => 0
-        } as PlaybackCursorType;
-
-        if (requestedPlaylistId != null || storedState == null) {
-            return playlistState;
-        }
-
-        if (!(storedState["playlistId"] as String).equals(playlistId)) {
-            return playlistState;
-        }
-
-        return {
-            "trackIndex" => storedState["trackIndex"],
-            "trackPosition" => storedState["trackPosition"]
-        } as PlaybackCursorType;
-    }
 }
