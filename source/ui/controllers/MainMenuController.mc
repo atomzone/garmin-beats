@@ -13,8 +13,8 @@ class MainMenuController extends Ui.Menu2InputDelegate {
     function initialize() {
         Ui.Menu2InputDelegate.initialize();
 
-        _playlistStore = new IndexedStore("PLAYLIST");
-        _trackStore = new IndexedStore("TRACK");
+        _playlistStore = new IndexedStore(IndexedStore.PLAYLIST);
+        _trackStore = new IndexedStore(IndexedStore.TRACK);
         
         _overlay = new LoadingOverlayController(
             new Ui.ProgressBar("Fetching...", null)

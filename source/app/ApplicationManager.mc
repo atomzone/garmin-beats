@@ -21,6 +21,30 @@ class ApplicationManager {
         self.debug(message + "(" + self.parseArgs(args) + ")");
     }
 
+    public function clearAll() as Void {
+
+        // REMOVE PLAYLISTS
+        var playlistStore = new IndexedStore(IndexedStore.PLAYLIST);
+        playlistStore.clear();
+
+        // REMOVE TRACKS
+        var trackStore = new IndexedStore(IndexedStore.TRACK);
+        trackStore.clear();
+
+        // REMOVE MEDIA RECORDS
+        var mediaStore = new IndexedStore(IndexedStore.MEDIA);
+        mediaStore.clear();
+
+        // REMOVE PLAYBACK STATE
+        PlaybackStateStore.clear();
+
+        // REMOVE CACHCED CONTENT
+        var cachedMedia = MediaUtils.getCachedMediaRefIds(Media.CONTENT_TYPE_AUDIO);
+        for (var index = 0, limit = cachedMedia.size(); index < limit; index++) {
+            MediaUtils.delete(cachedMedia[index]);
+        }
+    }
+
     private function parseArgs(args as Object?) as String {
         return (args == null) ? "null" : args.toString();
     }

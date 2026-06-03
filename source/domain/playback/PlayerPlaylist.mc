@@ -24,7 +24,7 @@ class PlayerPlaylist {
         _playFromIndex = !isValidIndex(cursor["trackIndex"]) ? 0 : cursor["trackIndex"] as Number;
         _lastTrackPositionSeconds = cursor["trackPosition"] == null ? 0 : cursor["trackPosition"] as Number;
 
-        _storage = new IndexedStore("TRACK");
+        _storage = new IndexedStore(IndexedStore.TRACK);
     }
 
     function getAssetCount() as Number {
@@ -76,7 +76,7 @@ class PlayerPlaylist {
             return null;
         }
 
-        var raw = new IndexedStore("PLAYLIST").load(playlistId) as PlaylistAssetType;
+        var raw = new IndexedStore(IndexedStore.PLAYLIST).load(playlistId) as PlaylistAssetType;
         var playlistAsset = new PlaylistAsset(raw);
         var cursor = PlaybackStartPosition.getCursor(playlistAsset, storedState);
 

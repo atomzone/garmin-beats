@@ -12,7 +12,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
     ) {
         TransactionAsyncHandler.initialize(onComplete);
 
-        _mediaStore = new IndexedStore("MEDIA");
+        _mediaStore = new IndexedStore(IndexedStore.MEDIA);
         _onProgress = onProgress;
     }
 

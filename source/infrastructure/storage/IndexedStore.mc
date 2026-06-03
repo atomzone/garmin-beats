@@ -5,11 +5,16 @@ import Toybox.Lang;
 // "{ASSET}:id1" = model1
 // "{ASSET}:id2" = model2
 class IndexedStore {
+    enum PartitionEnum {
+        PLAYLIST,
+        TRACK,
+        MEDIA
+    }
     
-    private var _partitionId as String;
+    private var _partitionId as PartitionEnum;
     private var _indexIdCache as Array<String> = [];
 
-    function initialize(partitionId as String) {
+    function initialize(partitionId as PartitionEnum) {
         _partitionId = partitionId;
     }
 

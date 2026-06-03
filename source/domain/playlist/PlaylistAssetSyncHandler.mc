@@ -6,7 +6,7 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
 
     function initialize() {
         SyncTransactionHandler.initialize();
-        _storage = new IndexedStore("PLAYLIST");
+        _storage = new IndexedStore(IndexedStore.PLAYLIST);
     }
 
     function execute(transaction as QueueTransactionType) as String {

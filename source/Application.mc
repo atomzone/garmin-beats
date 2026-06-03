@@ -11,9 +11,11 @@ class AppEntry extends App.AudioContentProviderApp {
     function initialize() {
         App.AudioContentProviderApp.initialize();
 
+        // $.am.clearAll();
+
         var media = MediaUtils.getCachedMediaRefIds(Media.CONTENT_TYPE_AUDIO);
-        var plStore = new IndexedStore("PLAYLIST");
-        var trStore = new IndexedStore("TRACK");
+        var plStore = new IndexedStore(IndexedStore.PLAYLIST);
+        var trStore = new IndexedStore(IndexedStore.TRACK);
 
         $.am.debug("TrackCount='" + trStore.count()
             + "', PlaylistCount='" + plStore.count()
@@ -43,7 +45,6 @@ class AppEntry extends App.AudioContentProviderApp {
         // for (var i = 0, limit = media.size(); i < limit; i++) {
         //     MediaUtils.delete(media[i]);
         // }
-
     }
 
     function getContentDelegate(playlistId as App.PersistableType) as Media.ContentDelegate {
@@ -52,6 +53,7 @@ class AppEntry extends App.AudioContentProviderApp {
 
         if (playerPlaylist == null) {
             // Can we relaunch the app in another mode o.O
+            // https://developer.garmin.com/connect-iq/api-docs/Toybox/System/Intent.html
             return new EmptyContentDelegate();
         }
 

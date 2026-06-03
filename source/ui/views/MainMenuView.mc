@@ -22,7 +22,7 @@ class MainMenuView extends $.Rez.Menus.MainMenu {
         // $.Rez.Menus.MainMenu.initialize();
 
         // TODO: NEW SCHOOL COOL
-        // var storage = new IndexedStore("TRACK");
+        // var storage = new IndexedStore(IndexedStore.TRACK);
         // var hasAssets = storage.count() > 0;
 
         // if (!hasAssets) {

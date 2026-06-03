@@ -6,7 +6,7 @@ class AudioAssetSyncHandler extends SyncTransactionHandler {
 
     function initialize() {
         SyncTransactionHandler.initialize();
-        _storage = new IndexedStore("TRACK");
+        _storage = new IndexedStore(IndexedStore.TRACK);
     }
 
     function execute(transaction as QueueTransactionType) as String {

@@ -12,7 +12,7 @@ class PlaybackQueue extends Media.ContentIterator {
         Media.ContentIterator.initialize();
 
         _playerPlaylist = playerPlaylist;
-        _mediaStore = new IndexedStore("MEDIA");
+        _mediaStore = new IndexedStore(IndexedStore.MEDIA);
     }
 
     function get() as Media.Content? {

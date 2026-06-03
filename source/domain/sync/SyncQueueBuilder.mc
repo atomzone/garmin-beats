@@ -9,9 +9,9 @@ class SyncQueueBuilder {
     private var _queuedMediaChecksums as Dictionary<String, Boolean>;
 
     function initialize() {
-        _playlistStore = new IndexedStore("PLAYLIST");
-        _trackStore = new IndexedStore("TRACK");
-        _mediaStore = new IndexedStore("MEDIA");
+        _playlistStore = new IndexedStore(IndexedStore.PLAYLIST);
+        _trackStore = new IndexedStore(IndexedStore.TRACK);
+        _mediaStore = new IndexedStore(IndexedStore.MEDIA);
         _queuedMediaChecksums = {};
     }
 
