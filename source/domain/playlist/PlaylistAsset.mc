@@ -27,9 +27,9 @@ class PlaylistAsset {
         return _trackIds;
     }
 
-    // public function getTrack(trackIndexId as String) as AudioAsset {
-    //     var trackId = _trackIds[trackIndexId];
-    // }
+    public function setTrackIds(trackIds as Array<String>) as Void {
+        _trackIds = trackIds;
+    }
 
     public function getMetadata() as PlaylistMetadata {
         return _metadata;

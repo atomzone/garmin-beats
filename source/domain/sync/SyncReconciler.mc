@@ -1,16 +1,18 @@
 import Toybox.Lang;
 
+// string vs symbol, only for the debug qualities
 typedef MissingTrackReferenceType as {
-    :playlistId as String,
-    :trackIds as Array<String>
+    "playlistId" as String,
+    "trackIds" as Array<String>
 };
 
 typedef AuditResultType as {
-    :orphanedMedia as Array<String>,
-    :orphanedTracks as Array<String>,
-    :missingTrackReferences as Array<MissingTrackReferenceType>
+    "orphanedMedia" as Array<String>,
+    "orphanedTracks" as Array<String>,
+    "missingTrackReferences" as Array<MissingTrackReferenceType>
 };
 
+// Can we be smarter about when reconcilation needs to execute?
 class SyncReconciler {
 
     private var _playlistStore as IndexedStore;
@@ -30,16 +32,16 @@ class SyncReconciler {
     public function reconcile() as Void {
         var audit = runAudit();
 
-        cleanupMedia(audit[:orphanedMedia] as Array<String>);
-        cleanupTracks(audit[:orphanedTracks] as Array<String>);
-        cleanupPlaylists(audit[:missingTrackReferences] as Array<MissingTrackReferenceType>);
+        cleanupMedia(audit["orphanedMedia"] as Array<String>);
+        cleanupTracks(audit["orphanedTracks"] as Array<String>);
+        cleanupPlaylists(audit["missingTrackReferences"] as Array<MissingTrackReferenceType>);
     }
 
     private function runAudit() as AuditResultType {
         return {
-            :orphanedMedia => findOrphanedMedia(),
-            :orphanedTracks => findOrphanedTracks(),
-            :missingTrackReferences => findMissingTrackReferences()
+            "orphanedMedia" => findOrphanedMedia(),
+            "orphanedTracks" => findOrphanedTracks(),
+            "missingTrackReferences" => findMissingTrackReferences()
         };
     }
 
@@ -89,8 +91,8 @@ class SyncReconciler {
 
             if (missingTrackIds.size() > 0) {
                 results.add({
-                    :playlistId => playlists[i].getId(),
-                    :trackIds => missingTrackIds
+                    "playlistId" => playlists[i].getId(),
+                    "trackIds" => missingTrackIds
                 } as MissingTrackReferenceType);
             }
         }
@@ -113,8 +115,8 @@ class SyncReconciler {
     private function cleanupPlaylists(missingReferences as Array<MissingTrackReferenceType>) as Void {
 
         for (var i = 0, refLimit = missingReferences.size(); i < refLimit; i++) {
-            var playlistId = missingReferences[i][:playlistId] as String;
-            var missingTrackIds = missingReferences[i][:trackIds] as Array<String>;
+            var playlistId = missingReferences[i]["playlistId"] as String;
+            var missingTrackIds = missingReferences[i]["trackIds"] as Array<String>;
 
             var playlist = new PlaylistAsset(_playlistStore.load(playlistId) as PlaylistAssetType);
             var trackIds = playlist.getTrackIds();

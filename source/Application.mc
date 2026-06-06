@@ -11,40 +11,9 @@ class AppEntry extends App.AudioContentProviderApp {
     function initialize() {
         App.AudioContentProviderApp.initialize();
 
-        // $.am.clearAll();
-
-        var media = MediaUtils.getCachedMediaRefIds(Media.CONTENT_TYPE_AUDIO);
-        var plStore = new IndexedStore(IndexedStore.PLAYLIST);
-        var trStore = new IndexedStore(IndexedStore.TRACK);
-
-        $.am.debug("TrackCount='" + trStore.count()
-            + "', PlaylistCount='" + plStore.count()
-            + "', MediaCount='" + media.size() + "'");
-
-        // TODO: Identify a good time/place for this checks (after aa sync)
-        // 1(media) : Many(tracks)
-        if (media.size() <= trStore.count()) {
-            return;
-        }
-
-        $.am.debug("Media count does not match track store count!");
-        $.am.debug("Fixing this consistency");
-
-        // TODO: fix/builkd this clean up
-        // var trackIds = trStore.loadIndexIds();
-        // for (var i = 0, limit = trStore.count(); i < limit; i++) {
-
-        //     var raw = trStore.load(trackIds[i]);
-        //     var track = new AudioAsset(raw as AudioAssetType);
-
-        //     if (media.remove(track.getRefId())) {
-        //         $.am.debug("Removed id='" + track.getId() + "'");
-        //     }
-        // }
-
-        // for (var i = 0, limit = media.size(); i < limit; i++) {
-        //     MediaUtils.delete(media[i]);
-        // }
+        // Do we need to track drift between system storage and the app?
+        var reconciler = new SyncReconciler();
+        $.am.debug("Reconciliation result: " + reconciler.audit());
     }
 
     function getContentDelegate(playlistId as App.PersistableType) as Media.ContentDelegate {
