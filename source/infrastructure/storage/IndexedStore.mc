@@ -1,18 +1,21 @@
 using Toybox.Application.Storage as Storage;
 import Toybox.Lang;
 
-// "{ASSET}:INDEXES" = [id1, id2]
+// "{ASSET}:<INDEX_PARITION_ID>" = [id1, id2]
 // "{ASSET}:id1" = model1
 // "{ASSET}:id2" = model2
 class IndexedStore {
+
     enum PartitionEnum {
         PLAYLIST,
         TRACK,
         MEDIA
     }
+
+    private const INDEX_PARITION_ID = "I";
     
     private var _partitionId as PartitionEnum;
-    private var _indexIdCache as Array<String> = [];
+    private var _indexIdCache as Array<String>?;
 
     function initialize(partitionId as PartitionEnum) {
         _partitionId = partitionId;
@@ -35,7 +38,7 @@ class IndexedStore {
         var indexIds = loadIndexIds();
 
         for (var i = 0, limit = indexIds.size(); i < limit; i++) {
-            var value = load(indexIds[i]);
+            var value = StorageManager.load(buildPartitionKey(indexIds[i]));
 
             if (value != null) {
                 records.add(value);
@@ -46,11 +49,11 @@ class IndexedStore {
     }
 
     function loadIndexIds() as Array<String> {
-        if (_indexIdCache.size() > 0) {
+        if (_indexIdCache != null) {
             return _indexIdCache;
         }
-        
-        var partitionKey = buildPartitionKey("INDEXES");
+
+        var partitionKey = buildPartitionKey(INDEX_PARITION_ID);
         _indexIdCache = StorageManager.loadOrDefault(partitionKey, []) as Array<String>;
 
         return _indexIdCache;
@@ -83,7 +86,7 @@ class IndexedStore {
             StorageManager.remove(buildPartitionKey(indexIds[i]));
         }
 
-        StorageManager.remove(buildPartitionKey("INDEXES"));
+        StorageManager.remove(buildPartitionKey(INDEX_PARITION_ID));
         _indexIdCache = [];
     }
 
@@ -108,6 +111,9 @@ class IndexedStore {
     }
 
     private function storeIndexes(indexes as Array<String>) as Void {
-        StorageManager.save(buildPartitionKey("INDEXES"), indexes as Array<Storage.ValueType>);
+        StorageManager.save(
+            buildPartitionKey(INDEX_PARITION_ID), 
+            indexes as Array<Storage.ValueType>
+        );
     }
 }
