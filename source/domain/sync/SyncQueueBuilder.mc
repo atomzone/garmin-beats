@@ -2,16 +2,9 @@ import Toybox.Lang;
 
 class SyncQueueBuilder {
 
-    private var _playlistStore as IndexedStore;
-    private var _trackStore as IndexedStore;
-    private var _mediaStore as IndexedStore;
-
     private var _queuedMediaChecksums as Dictionary<String, Boolean>;
 
     function initialize() {
-        _playlistStore = new IndexedStore(IndexedStore.PLAYLIST);
-        _trackStore = new IndexedStore(IndexedStore.TRACK);
-        _mediaStore = new IndexedStore(IndexedStore.MEDIA);
         _queuedMediaChecksums = {};
     }
 
@@ -33,7 +26,7 @@ class SyncQueueBuilder {
 
     private function buildPlaylistTransactions(playlist as PlaylistResource) as Array<QueueTransactionType> {
         var queue = [] as Array<QueueTransactionType>;
-        var rawAsset = _playlistStore.load(playlist.getId()) as PlaylistAssetType?;
+        var rawAsset = AppStores.playlists.load(playlist.getId()) as PlaylistAssetType?;
 
         if (rawAsset == null) {
             
@@ -59,7 +52,7 @@ class SyncQueueBuilder {
     
     private function buildTrackTransaction(track as AudioResource) as Array<QueueTransactionType> {
         var assetId = track.getChecksum();
-        var rawAsset = _trackStore.load(assetId) as AudioAssetType?;
+        var rawAsset = AppStores.tracks.load(assetId) as AudioAssetType?;
 
         if (rawAsset != null) {
             return [];
@@ -67,7 +60,7 @@ class SyncQueueBuilder {
 
         var queue = [] as Array<QueueTransactionType>;
         var mediaId = track.getSource().getChecksum();
-        var existingMediaAsset = _mediaStore.load(mediaId) as MediaRecordType?;
+        var existingMediaAsset = AppStores.media.load(mediaId) as MediaRecordType?;
 
         // Queue and Media we didnt know about yet
         if (existingMediaAsset == null && _queuedMediaChecksums[mediaId] == null) {

@@ -24,16 +24,13 @@ class ApplicationManager {
     public function clearAll() as Void {
 
         // REMOVE PLAYLISTS
-        var playlistStore = new IndexedStore(IndexedStore.PLAYLIST);
-        playlistStore.clear();
+        AppStores.playlists.clear();
 
         // REMOVE TRACKS
-        var trackStore = new IndexedStore(IndexedStore.TRACK);
-        trackStore.clear();
+        AppStores.tracks.clear();
 
         // REMOVE MEDIA RECORDS
-        var mediaStore = new IndexedStore(IndexedStore.MEDIA);
-        mediaStore.clear();
+        AppStores.media.clear();
 
         // REMOVE PLAYBACK STATE
         PlaybackStateStore.clear();

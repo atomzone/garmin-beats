@@ -37,8 +37,7 @@ class AssetSelectionController extends Ui.Menu2InputDelegate {
             "trackIds" => trackIds
         } as PlaylistAssetType);
 
-        var playlistAssetStore = new IndexedStore(IndexedStore.PLAYLIST);
-        playlistAssetStore.save(playlist.getId(), playlist.serialize());
+        AppStores.playlists.save(playlist.getId(), playlist.serialize());
 
         // Start playback
         $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");

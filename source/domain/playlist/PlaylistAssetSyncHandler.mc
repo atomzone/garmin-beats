@@ -2,11 +2,8 @@ import Toybox.Lang;
 
 class PlaylistAssetSyncHandler extends SyncTransactionHandler {
 
-    private var _storage as IndexedStore;
-
     function initialize() {
         SyncTransactionHandler.initialize();
-        _storage = new IndexedStore(IndexedStore.PLAYLIST);
     }
 
     function execute(transaction as QueueTransactionType) as String {
@@ -30,11 +27,11 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
             $.am.debug("[PlaylistAssetSyncHandler.execute][" + operation 
                 + "][PlaylistAsset] :: targetId='" + id + "', data='" + asset.serialize() + "'");
 
-            _storage.save(id, asset.serialize());
+            AppStores.playlists.save(id, asset.serialize());
         }
 
         if (operation.equals("DELETE")) {
-            _storage.remove(id);
+            AppStores.playlists.remove(id);
         }
 
         return "COMPLETE";

@@ -12,8 +12,7 @@ class LibraryController extends Ui.Menu2InputDelegate {
         var id = item.getId();
 
         if (id == :Playlists) {
-            var playlistStorage = new IndexedStore(IndexedStore.PLAYLIST);
-            var playlists = playlistStorage.loadAll() as Array<PlaylistAssetType>;
+            var playlists = AppStores.playlists.loadAll() as Array<PlaylistAssetType>;
 
             var assets = PlaylistAsset.fromArray(playlists);
 
@@ -24,8 +23,7 @@ class LibraryController extends Ui.Menu2InputDelegate {
             );
 
         } else if (id == :AllTracks) {
-            var trackStorage = new IndexedStore(IndexedStore.TRACK);
-            var tracks = trackStorage.loadAll() as Array<AudioAssetType>;
+            var tracks = AppStores.tracks.loadAll() as Array<AudioAssetType>;
 
             var assets = AudioAsset.fromArray(tracks);
            

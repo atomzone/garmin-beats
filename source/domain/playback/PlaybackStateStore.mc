@@ -7,8 +7,10 @@ typedef PlaybackStateType as {
     "trackPosition" as Number
 };
 
+// Move under AppStore?
 class PlaybackStateStore {
 
+    // shorten key mem footprint
     private static const KEY as String = "PLAYBACK";
 
     static function load() as PlaybackStateType? {

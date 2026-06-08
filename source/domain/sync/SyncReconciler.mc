@@ -13,17 +13,8 @@ typedef AuditResultType as {
 };
 
 // Can we be smarter about when reconcilation needs to execute?
+// this looks like a static
 class SyncReconciler {
-
-    private var _playlistStore as IndexedStore;
-    private var _trackStore as IndexedStore;
-    private var _mediaStore as IndexedStore;
-
-    function initialize() {
-        _playlistStore = new IndexedStore(IndexedStore.PLAYLIST);
-        _trackStore = new IndexedStore(IndexedStore.TRACK);
-        _mediaStore = new IndexedStore(IndexedStore.MEDIA);
-    }
 
     public function audit() as AuditResultType {
         return runAudit();
@@ -47,8 +38,8 @@ class SyncReconciler {
 
     private function findOrphanedMedia() as Array<String> {
 
-        var orphanMedia = createLookup(_mediaStore.loadIndexIds());
-        var tracks = AudioAsset.fromArray(_trackStore.loadAll() as Array<AudioAssetType>);
+        var orphanMedia = createLookup(AppStores.media.loadIndexIds());
+        var tracks = AudioAsset.fromArray(AppStores.tracks.loadAll() as Array<AudioAssetType>);
 
         for (var i = 0, limit = tracks.size(); i < limit; i++) {
             orphanMedia.remove(tracks[i].getMediaId());
@@ -59,8 +50,8 @@ class SyncReconciler {
 
     private function findOrphanedTracks() as Array<String> {
 
-        var orphanTracks = createLookup(_trackStore.loadIndexIds());
-        var playlists = PlaylistAsset.fromArray(_playlistStore.loadAll() as Array<PlaylistAssetType>);
+        var orphanTracks = createLookup(AppStores.tracks.loadIndexIds());
+        var playlists = PlaylistAsset.fromArray(AppStores.playlists.loadAll() as Array<PlaylistAssetType>);
 
         for (var i = 0, plLimit = playlists.size(); i < plLimit; i++) {
             var trackIds = playlists[i].getTrackIds();
@@ -76,8 +67,8 @@ class SyncReconciler {
     private function findMissingTrackReferences() as Array<MissingTrackReferenceType> {
 
         var results = [] as Array<MissingTrackReferenceType>;
-        var trackExists = createLookup(_trackStore.loadIndexIds());
-        var playlists = PlaylistAsset.fromArray(_playlistStore.loadAll() as Array<PlaylistAssetType>);
+        var trackExists = createLookup(AppStores.tracks.loadIndexIds());
+        var playlists = PlaylistAsset.fromArray(AppStores.playlists.loadAll() as Array<PlaylistAssetType>);
 
         for (var i = 0, plLimit = playlists.size(); i < plLimit; i++) {
             var missingTrackIds = [] as Array<String>;
@@ -102,13 +93,13 @@ class SyncReconciler {
 
     private function cleanupMedia(mediaIds as Array<String>) as Void {
         for (var i = 0, limit = mediaIds.size(); i < limit; i++) {
-            _mediaStore.remove(mediaIds[i]);
+            AppStores.media.remove(mediaIds[i]);
         }
     }
 
     private function cleanupTracks(trackIds as Array<String>) as Void {
         for (var i = 0, limit = trackIds.size(); i < limit; i++) {
-            _trackStore.remove(trackIds[i]);
+            AppStores.tracks.remove(trackIds[i]);
         }
     }
 
@@ -118,7 +109,7 @@ class SyncReconciler {
             var playlistId = missingReferences[i]["playlistId"] as String;
             var missingTrackIds = missingReferences[i]["trackIds"] as Array<String>;
 
-            var playlist = new PlaylistAsset(_playlistStore.load(playlistId) as PlaylistAssetType);
+            var playlist = new PlaylistAsset(AppStores.playlists.load(playlistId) as PlaylistAssetType);
             var trackIds = playlist.getTrackIds();
 
             for (var j = 0, limit = missingTrackIds.size(); j < limit; j++) {
@@ -126,7 +117,7 @@ class SyncReconciler {
             }
 
             playlist.setTrackIds(trackIds);
-            _playlistStore.save(playlist.getId(), playlist.serialize());
+            AppStores.playlists.save(playlist.getId(), playlist.serialize());
         }
     }
 

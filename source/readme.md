@@ -1,6 +1,9 @@
 # TODO
 
-- [0] Resume playback position
+- [1] UX! UI design
+- [1] Queue points/track bookmarks
+x [0] Resume playback position
+^ [0] playlist state for track resume
 - [1] CRASHING ON SYCN ABORT (simlator).. (ASYNC?)
 - [-] more robust sync source detection... (or realiy)
 x [3] Playlist browser
@@ -15,7 +18,6 @@ X [2] decide about unique tracks/vs track under a playlist - pl linked to tr
 X [1] improve sync queue builder
 X [1] assign metadata to media..
 - [1] playlist owns replay on playlist
-- [0] playlist state for track resume
 - [-] clean up after failed syncs
 - [-] dontate link
 - [-] textare for storage statistics

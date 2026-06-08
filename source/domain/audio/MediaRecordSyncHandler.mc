@@ -3,7 +3,6 @@ import Toybox.Lang;
 
 class MediaRecordSyncHandler extends TransactionAsyncHandler {
 
-    private var _mediaStore as IndexedStore;
     private var _onProgress as Method(Number) as Void;
 
     function initialize(
@@ -12,7 +11,6 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
     ) {
         TransactionAsyncHandler.initialize(onComplete);
 
-        _mediaStore = new IndexedStore(IndexedStore.MEDIA);
         _onProgress = onProgress;
     }
 
@@ -71,7 +69,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
             "refId" => data.getId()
         });
 
-        _mediaStore.save(mediaId, mediaRecord.serialize());
+        AppStores.media.save(mediaId, mediaRecord.serialize());
 
         success();
     }

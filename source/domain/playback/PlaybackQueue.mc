@@ -5,14 +5,12 @@ import Toybox.Lang;
 class PlaybackQueue extends Media.ContentIterator {
 
     private var _playerPlaylist as PlayerPlaylist;
-    private var _mediaStore as IndexedStore;
     private var _shuffle as Boolean = false;
 
     function initialize(playerPlaylist as PlayerPlaylist) {
         Media.ContentIterator.initialize();
 
         _playerPlaylist = playerPlaylist;
-        _mediaStore = new IndexedStore(IndexedStore.MEDIA);
     }
 
     function get() as Media.Content? {
@@ -153,7 +151,7 @@ class PlaybackQueue extends Media.ContentIterator {
     private function getRefId(asset as AudioAsset) as Object? {
         $.am.debug("[PlaybackQueue.getRefId] sourceChecksum='" + asset.getMediaId() + "'");
 
-        var mediaAssetType = _mediaStore.load(asset.getMediaId()) as MediaRecordType?;
+        var mediaAssetType = AppStores.media.load(asset.getMediaId()) as MediaRecordType?;
 
         if (mediaAssetType == null) {
             return null;
