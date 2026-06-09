@@ -3,24 +3,26 @@ import Toybox.Lang;
 
 class StorageMenuView extends $.Rez.Menus.StorageMenu {
 
-    private var _totalTracks as Number;
+    private var _state as AppState;
     private var _deleteLabel as String;
 
-    function initialize(totalTracks as Number) {
+    function initialize(state as AppState) {
         $.Rez.Menus.StorageMenu.initialize();
 
-        _totalTracks = totalTracks;
+        _state = state;
         _deleteLabel = Ui.loadResource($.Rez.Strings.DeleteLabel) as String;
     }
 
     function onShow() as Void {
-        if (_totalTracks == 0) {
+        var trackCount = _state.getTrackCount();
+
+        if (trackCount == 0) {
             MenuUtils.deleteMenuItem(self, :Delete);
             return;
         } 
 
         MenuUtils.setMenuItemLabel(
-            self, :Delete, format(_deleteLabel, [_totalTracks])
+            self, :Delete, format(_deleteLabel, [trackCount])
         );
     }
 }

@@ -5,16 +5,14 @@ import Toybox.Lang;
 
 class MainMenuController extends Ui.Menu2InputDelegate {
 
-    private var _playlistStore as IndexedStore;
-    private var _trackStore as IndexedStore;
+    private var _state as AppState;
     private var _transition as Ui.SlideType = Ui.SLIDE_IMMEDIATE;
     private var _overlay as LoadingOverlayController;
 
-    function initialize() {
+    function initialize(state as AppState) {
         Ui.Menu2InputDelegate.initialize();
 
-        _playlistStore = new IndexedStore(IndexedStore.PLAYLIST);
-        _trackStore = new IndexedStore(IndexedStore.TRACK);
+        _state = state;
         
         _overlay = new LoadingOverlayController(
             new Ui.ProgressBar("Fetching...", null)
@@ -26,7 +24,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         // launch now playing view
         if (id == :NowPlaying) {
-
+            Ui.popView(_transition);
 
         // resume unfinished tracks
         } else if (id == :ContinueListening) {
@@ -36,7 +34,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         // launch playback of all tracks
         } else if (id == :PlayAll) {
             
-            var trackIds = _trackStore.loadIndexIds();
+            var trackIds = AppStores.tracks.getIds();
 
             // Code duplication, maintenance burden
             // Fix: Extract to PlaylistManager.createNowPlayingPlaylist(trackIds, description)
@@ -49,7 +47,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
                 "trackIds" => trackIds
             } as PlaylistAssetType);
 
-            _playlistStore.save(playlist.getId(), playlist.serialize());
+            AppStores.playlists.save(playlist.getId(), playlist.serialize());
 
             $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");
 
@@ -61,7 +59,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
             Ui.pushView(
                 new $.Rez.Menus.LibraryMenu(), 
                 new LibraryController(), 
-                self._transition
+                _transition
             );
 
         } 
@@ -86,8 +84,8 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
             Ui.pushView(
                 new $.Rez.Menus.SettingsMenu(), 
-                new $.SettingsMenuController(), 
-                self._transition
+                new $.SettingsMenuController(_state), 
+                _transition
             );
         }
     }
@@ -98,7 +96,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         Ui.pushView(
             new ResourceView(resources),
             new ResourceInputController(resources),
-            self._transition
+            _transition
         );
     }
 
@@ -106,9 +104,9 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         _overlay.end(:GetPlaylists);
         
         Ui.pushView(
-            new PlaylistSyncView(playlists, _playlistStore.loadIndexIds()),
+            new PlaylistSyncView(playlists, AppStores.playlists.getIds()),
             new PlaylistSyncController(playlists),
-            self._transition
+            _transition
         );
     }
 

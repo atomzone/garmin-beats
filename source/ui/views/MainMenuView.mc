@@ -1,33 +1,43 @@
+using Toybox.WatchUi as Ui;
 import Toybox.Lang;
 
 class MainMenuView extends $.Rez.Menus.MainMenu {
 
-    // lets dynamically set the visibility
-    // lets extend the store to have an index for number of tracks
-    // also refactor to to create a delete all (for storage cleanup)
-    function initialize() {
+    private var _state as AppState;
+    private var _revision as Number;
+    private var _menuItems as Array<Ui.MenuItem> = [];
+
+    function initialize(state as AppState) {
         $.Rez.Menus.MainMenu.initialize();
 
+        _state = state;
+        _revision = _state.getRevision(); // TBC
+        
         // Clarify the use of...
         MenuUtils.deleteMenuItem(self, :NowPlaying);
         MenuUtils.deleteMenuItem(self, :ContinueListening);
+
+        // cache menu items (for restore)
+        _menuItems = MenuUtils.getMenuItems(self);
     }
 
-    // rebuild menu items is not a suitable approach
-    // best have multple menu types OR build dynamically
     public function onShow() as Void {
-        // Hide library if no cached assets
-        // Can we use application state to trigger these updates?
+        
+        // MAYBE THIS IS NOT NEEDED
+        // TODO: We only want to do-work, IF! the state has changed!
+        if (_state.hasRevisionChanged(_revision)) {
+            $.am.debug("** STATE CHANGED ** " + _revision + " != " + _state.getRevision());
+        }
 
-        // $.Rez.Menus.MainMenu.initialize();
+        if (_state.hasMedia()) {
 
-        // TODO: NEW SCHOOL COOL
-        // var storage = new IndexedStore(IndexedStore.TRACK);
-        // var hasAssets = storage.count() > 0;
+            // Could avoid this if we know its the first render!
+            MenuUtils.setMenuItems(self, _menuItems);
 
-        // if (!hasAssets) {
-            // MenuUtils.deleteMenuItem(self, :PlayAll);
-            // MenuUtils.deleteMenuItem(self, :Library);
-        // }
+            return;
+        }
+
+        MenuUtils.deleteMenuItem(self, :PlayAll);
+        MenuUtils.deleteMenuItem(self, :Library);
     }
 }

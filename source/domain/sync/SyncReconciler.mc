@@ -38,7 +38,7 @@ class SyncReconciler {
 
     private function findOrphanedMedia() as Array<String> {
 
-        var orphanMedia = createLookup(AppStores.media.loadIndexIds());
+        var orphanMedia = createLookup(AppStores.media.getIds());
         var tracks = AudioAsset.fromArray(AppStores.tracks.loadAll() as Array<AudioAssetType>);
 
         for (var i = 0, limit = tracks.size(); i < limit; i++) {
@@ -50,7 +50,7 @@ class SyncReconciler {
 
     private function findOrphanedTracks() as Array<String> {
 
-        var orphanTracks = createLookup(AppStores.tracks.loadIndexIds());
+        var orphanTracks = createLookup(AppStores.tracks.getIds());
         var playlists = PlaylistAsset.fromArray(AppStores.playlists.loadAll() as Array<PlaylistAssetType>);
 
         for (var i = 0, plLimit = playlists.size(); i < plLimit; i++) {
@@ -67,7 +67,7 @@ class SyncReconciler {
     private function findMissingTrackReferences() as Array<MissingTrackReferenceType> {
 
         var results = [] as Array<MissingTrackReferenceType>;
-        var trackExists = createLookup(AppStores.tracks.loadIndexIds());
+        var trackExists = createLookup(AppStores.tracks.getIds());
         var playlists = PlaylistAsset.fromArray(AppStores.playlists.loadAll() as Array<PlaylistAssetType>);
 
         for (var i = 0, plLimit = playlists.size(); i < plLimit; i++) {

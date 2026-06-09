@@ -3,13 +3,12 @@ import Toybox.Lang;
 
 class SettingsMenuController extends Ui.Menu2InputDelegate {
 
-    private var _totalTracks as Number;
-
-    function initialize() {
+    private var _state as AppState;
+    
+    function initialize(state as AppState) {
         Ui.Menu2InputDelegate.initialize();
 
-        // get from app state, right!
-        _totalTracks = AppStores.tracks.count();
+        _state = state;
     }
 
     function onSelect(item as Ui.MenuItem) as Void {
@@ -19,8 +18,8 @@ class SettingsMenuController extends Ui.Menu2InputDelegate {
             // (speed, quality, autoplay)
         } else if (id == :Storage) {
             Ui.pushView(
-                new StorageMenuView(_totalTracks),
-                new StorageMenuController(_totalTracks),
+                new StorageMenuView(_state),
+                new StorageMenuController(_state.getTrackCount()),
                 Ui.SLIDE_IMMEDIATE
             );
         } else if (id == :Donate) {

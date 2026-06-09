@@ -23,5 +23,35 @@ class MenuUtils {
         item.setLabel(label);
         menu.updateItem(item, index);
     }
+
+    static function getMenuItems(menu as Ui.Menu2) as Array<Ui.MenuItem> {
+        var index = 0;
+        var menuItems = [] as Array<Ui.MenuItem>;
+
+        // while true :')
+        while (true) {
+            var item = menu.getItem(index);
+            if (item == null) {
+                break;
+            } 
+            
+            var id = item.getId();
+            if (id != null) {
+                menuItems.add(item);
+            }
+
+            ++index;
+        }
+
+        return menuItems;
+    }
+
+    static function setMenuItems(menu as Ui.Menu2, items as Array<Ui.MenuItem>) as Ui.Menu2 {
+        for (var i = 0, limit = items.size(); i < limit; i++) {
+            menu.updateItem(items[i], i);
+        }
+
+        return menu;
+    }
 }
 

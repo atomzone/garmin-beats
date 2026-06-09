@@ -8,8 +8,12 @@ var am as ApplicationManager = new ApplicationManager();
 
 class AppEntry extends App.AudioContentProviderApp {
 
+    private var _state as AppState;
+
     function initialize() {
         App.AudioContentProviderApp.initialize();
+
+        _state = new AppState();
 
         // Do we need to track drift between system storage and the app?
         var reconciler = new SyncReconciler();
@@ -42,7 +46,7 @@ class AppEntry extends App.AudioContentProviderApp {
     }
 
     function getPlaybackConfigurationView() {
-        return [ new MainMenuView(), new MainMenuController() ];
+        return [ new MainMenuView(_state), new MainMenuController(_state) ];
     }
 
     function getSyncConfigurationView() {
