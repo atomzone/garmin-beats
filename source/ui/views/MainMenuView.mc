@@ -4,14 +4,14 @@ import Toybox.Lang;
 class MainMenuView extends $.Rez.Menus.MainMenu {
 
     private var _state as AppState;
-    private var _revision as Number;
+    private var _revision as String;
     private var _menuItems as Array<Ui.MenuItem> = [];
 
     function initialize(state as AppState) {
         $.Rez.Menus.MainMenu.initialize();
 
         _state = state;
-        _revision = _state.getRevision(); // TBC
+        _revision = _state.getRevision();
         
         // Clarify the use of...
         MenuUtils.deleteMenuItem(self, :NowPlaying);
@@ -22,17 +22,13 @@ class MainMenuView extends $.Rez.Menus.MainMenu {
     }
 
     public function onShow() as Void {
-        
-        // MAYBE THIS IS NOT NEEDED
-        // TODO: We only want to do-work, IF! the state has changed!
-        if (_state.hasRevisionChanged(_revision)) {
-            $.am.debug("** STATE CHANGED ** " + _revision + " != " + _state.getRevision());
-        }
 
         if (_state.hasMedia()) {
 
-            // Could avoid this if we know its the first render!
-            MenuUtils.setMenuItems(self, _menuItems);
+            // Did the state change after initialization?
+            if (!_revision.equals(_state.getRevision())) {
+                MenuUtils.setMenuItems(self, _menuItems);
+            }
 
             return;
         }

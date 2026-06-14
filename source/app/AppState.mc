@@ -3,25 +3,21 @@ import Toybox.Lang;
 
 class AppState {
     
-    private var _revision as Number = 0;
-
-    public function getRevision() as Number {
-        return _revision;
+    public function getRevision() as String {
+        return Lang.format(
+            "$1$:$2$:$3$", [
+                AppStores.playlists.getRevision(),
+                AppStores.tracks.getRevision(),
+                AppStores.media.getRevision()
+            ]
+        );
     }
 
     public function getTrackCount() as Number {
         return AppStores.tracks.count();
     }
 
-    public function hasRevisionChanged(revision as Number) as Boolean {
-        return revision != _revision;
-    }
-
     public function hasMedia() as Boolean {
         return AppStores.playlists.count() > 0;
-    } 
-
-    public function notifyChanged() as Void {
-        _revision += 1;
     }
 }
