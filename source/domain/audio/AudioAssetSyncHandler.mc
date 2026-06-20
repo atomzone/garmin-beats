@@ -6,12 +6,12 @@ class AudioAssetSyncHandler extends SyncTransactionHandler {
         SyncTransactionHandler.initialize();
     }
 
-    function execute(transaction as QueueTransactionType) as String {
+    function execute(transaction as QueueTransactionType) as SyncTransactionHandler.TransactionResult {
         var id = transaction["tid"];
         var operation = transaction["op"];
 
         if (id == null || operation == null) {
-            return "FAILED";
+            return SyncTransactionHandler.FAILED;
         }
 
         if (operation.equals("CREATE")) {
@@ -33,6 +33,6 @@ class AudioAssetSyncHandler extends SyncTransactionHandler {
             AppStores.tracks.remove(id);
         }
 
-        return "COMPLETE";
+        return SyncTransactionHandler.COMPLETE;
     }
 }

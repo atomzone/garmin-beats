@@ -44,14 +44,14 @@ class SyncQueueProcessor {
 
             // sync complete
             // continue loop
-            if (result.equals("COMPLETE")) {
+            if (result == SyncTransactionHandler.COMPLETE) {
                 completeCurrent();
                 continue; // next please
             }
 
             // async "pending"
             // stop loop & wait for callback
-            if (result.equals("PENDING")) {
+            if (result == SyncTransactionHandler.PENDING) {
                 return;
             }
 

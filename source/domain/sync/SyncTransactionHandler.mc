@@ -1,11 +1,5 @@
 import Toybox.Lang;
 
-// enum TransactionResult {
-//     COMPLETE,
-//     PENDING,
-//     FAILED
-// }
-
 typedef QueueTransactionType as {
     "tid" as String, // target id
     "op" as String,
@@ -15,10 +9,16 @@ typedef QueueTransactionType as {
 
 class SyncTransactionHandler {
 
+    enum TransactionResult {
+        COMPLETE,
+        PENDING,
+        FAILED
+    }
+
     // COMPLETE -> sync completion
     // PENDING  -> async completion later
     // FAILED   -> immediate failure
-    function execute(transaction as QueueTransactionType) as String {
+    function execute(transaction as QueueTransactionType) as TransactionResult {
         var tid = transaction["tid"];
         var op = transaction["op"];
         var entity = transaction["entity"];
@@ -28,7 +28,7 @@ class SyncTransactionHandler {
         $.am.debug("entity " + entity);
         $.am.debug("payload " + payload);
 
-        return "COMPLETE";
+        return COMPLETE;
     }
 }
 
@@ -41,7 +41,7 @@ class TransactionAsyncHandler extends SyncTransactionHandler {
         _onComplete = onComplete;
     }
 
-    function execute(transaction as QueueTransactionType) as String {
+    function execute(transaction as QueueTransactionType) as SyncTransactionHandler.TransactionResult {
         var op = transaction["op"];
         var entity = transaction["entity"];
         var payload = transaction["payload"];
@@ -54,7 +54,7 @@ class TransactionAsyncHandler extends SyncTransactionHandler {
         var cbTimer = new Timer.Timer();
         cbTimer.start(method(:success), 100, false);
 
-        return "PENDING";
+        return PENDING;
     }
 
     function success() as Void {

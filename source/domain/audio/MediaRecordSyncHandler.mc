@@ -14,7 +14,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         _onProgress = onProgress;
     }
 
-    function execute(transaction as QueueTransactionType) as String {
+    function execute(transaction as QueueTransactionType) as SyncTransactionHandler.TransactionResult {
         var payload = transaction["payload"] as Dictionary;
         var source = new AudioSource(payload["source"] as AudioSourceType);
         
@@ -31,7 +31,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         
         request.downloadMp3(context, method(:onProgress));
 
-        return "PENDING";
+        return SyncTransactionHandler.PENDING;
     }
 
     function onProgress(totalBytesTransferred as Number, filesize as Number?) as Void {

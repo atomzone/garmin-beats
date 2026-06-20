@@ -6,12 +6,12 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
         SyncTransactionHandler.initialize();
     }
 
-    function execute(transaction as QueueTransactionType) as String {
+    function execute(transaction as QueueTransactionType) as SyncTransactionHandler.TransactionResult {
         var id = transaction["tid"];
         var operation = transaction["op"];
 
         if (id == null || operation == null) {
-            return "FAILED";
+            return SyncTransactionHandler.FAILED;
         }
 
         // build asset and persist against targetId
@@ -34,6 +34,6 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
             AppStores.playlists.remove(id);
         }
 
-        return "COMPLETE";
+        return SyncTransactionHandler.COMPLETE;
     }
 }
