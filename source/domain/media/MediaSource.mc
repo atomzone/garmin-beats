@@ -1,16 +1,16 @@
 import Toybox.Lang;
 
-typedef AudioSourceType as { 
+typedef MediaSourceType as { 
     "url" as String 
 };
 
 // Track exists remotely
-class AudioSource {
+class MediaSource {
 
     private var _url as String;
     private var _checksum as String?;
 
-    function initialize(source as AudioSourceType) {
+    function initialize(source as MediaSourceType) {
         _url = source["url"] as String;
     }
 
@@ -31,7 +31,7 @@ class AudioSource {
         return _url;
     }
 
-    public function serialize() as AudioSourceType {
+    public function serialize() as MediaSourceType {
         return {
             "url" => _url
         };

@@ -32,6 +32,8 @@ class SyncQueueBuilder {
             
             // new playlist - create
             queue.add(enqueuePlaylistCreate(playlist.getId(), playlist));
+
+            // var imageSource = playlist.getMetadata().getArtwork();
         
         } else {
             
@@ -115,10 +117,19 @@ class SyncQueueBuilder {
 
     private function enqueueMediaDownload(
         mediaId as String,
-        source as AudioSource
+        source as MediaSource
     ) as QueueTransactionType {
         return buildTransaction(
             mediaId, "DOWNLOAD", "MEDIA", { "source" => source.serialize() }
+        );
+    }
+
+    private function enqueueImageDownload(
+        imageId as String,
+        source as MediaSource
+    ) as QueueTransactionType {
+        return buildTransaction(
+            imageId, "DOWNLOAD", "IMAGE", { "source" => source.serialize() }
         );
     }
 

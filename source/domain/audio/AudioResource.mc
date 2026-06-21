@@ -2,7 +2,7 @@ import Toybox.Application;
 import Toybox.Lang;
 
 typedef AudioResourceType as {
-    "source" as AudioSourceType,
+    "source" as MediaSourceType,
     "meta" as AudioMetadataType?
 };
 
@@ -11,14 +11,14 @@ typedef AudioResourceType as {
 class AudioResource {   
 
     private var _checksum as String?;
-    private var _source as AudioSource;
+    private var _source as MediaSource;
     private var _metadata as AudioMetadata;
 
     function initialize(raw as AudioResourceType) {
-        var source = raw["source"] as AudioSourceType;
+        var source = raw["source"] as MediaSourceType;
         var metadata = raw["meta"] as AudioMetadataType?;
 
-        _source = new AudioSource(source);
+        _source = new MediaSource(source);
         _metadata = new AudioMetadata(metadata);
     }
 
@@ -38,7 +38,7 @@ class AudioResource {
         return _metadata.getAlbum();
     }
 
-    public function getSource() as AudioSource {
+    public function getSource() as MediaSource {
         return _source;
     }
 

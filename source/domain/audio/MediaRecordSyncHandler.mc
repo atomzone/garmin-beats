@@ -17,7 +17,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
 
     function execute() as SyncTransactionHandler.TransactionResult {
         var payload = getTransaction()["payload"] as Dictionary;
-        var source = new AudioSource(payload["source"] as AudioSourceType);
+        var source = new MediaSource(payload["source"] as MediaSourceType);
         
         var request = new HttpRequest({
             :href => source.getUrl(),
@@ -27,7 +27,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         var context = { 
             :mediaId => getTransaction()["tid"], 
             :entity => getTransaction()["entity"] as String,
-            :source => payload["source"] as AudioSourceType
+            :source => payload["source"] as MediaSourceType
         };
         
         request.downloadMp3(context, method(:onProgress));
@@ -51,7 +51,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         context as { 
             :mediaId as String, 
             :entity as String,
-            :source as AudioSourceType
+            :source as MediaSourceType
         }
     ) as Void {
         var data = response[:data];
@@ -63,7 +63,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         }
 
         var mediaId = context[:mediaId] as String;
-        var source = context[:source] as AudioSourceType;
+        var source = context[:source] as MediaSourceType;
 
         var mediaRecord = new MediaRecord({ 
             "source" => source,
