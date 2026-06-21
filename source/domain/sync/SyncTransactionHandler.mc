@@ -15,14 +15,24 @@ class SyncTransactionHandler {
         FAILED
     }
 
+    private var _transaction as QueueTransactionType;
+
+    function initialize(transaction as QueueTransactionType) {
+        _transaction = transaction;
+    }
+
+    public function getTransaction() as QueueTransactionType {
+        return _transaction;
+    }
+
     // COMPLETE -> sync completion
     // PENDING  -> async completion later
     // FAILED   -> immediate failure
-    function execute(transaction as QueueTransactionType) as TransactionResult {
-        var tid = transaction["tid"];
-        var op = transaction["op"];
-        var entity = transaction["entity"];
-        var payload = transaction["payload"];
+    function execute() as TransactionResult {
+        var tid = getTransaction()["tid"];
+        var op = getTransaction()["op"];
+        var entity = getTransaction()["entity"];
+        var payload = getTransaction()["payload"];
 
         $.am.debug("[SYNC] op " + op + " ID " + tid);
         $.am.debug("entity " + entity);
@@ -36,15 +46,18 @@ class TransactionAsyncHandler extends SyncTransactionHandler {
 
     private var _onComplete as Method(Boolean) as Void;
 
-    function initialize(onComplete as Method(Boolean) as Void) {
-        SyncTransactionHandler.initialize();
+    function initialize(
+        transaction as QueueTransactionType,
+        onComplete as Method(Boolean) as Void
+    ) {
+        SyncTransactionHandler.initialize(transaction);
         _onComplete = onComplete;
     }
 
-    function execute(transaction as QueueTransactionType) as SyncTransactionHandler.TransactionResult {
-        var op = transaction["op"];
-        var entity = transaction["entity"];
-        var payload = transaction["payload"];
+    function execute() as SyncTransactionHandler.TransactionResult {
+        var op = getTransaction()["op"];
+        var entity = getTransaction()["entity"];
+        var payload = getTransaction()["payload"];
 
         $.am.debug("[ASYNC] op " + op);
         $.am.debug("entity " + entity);

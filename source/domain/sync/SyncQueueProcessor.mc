@@ -40,7 +40,7 @@ class SyncQueueProcessor {
                 return;
             }
 
-            var result = handler.execute(transaction);
+            var result = handler.execute();
 
             // sync complete
             // continue loop
@@ -117,21 +117,23 @@ class SyncQueueProcessor {
         if (entity.equals("PLAYLIST")) {
 
             // all CRUD actions are sync
-            return new PlaylistAssetSyncHandler();
+            return new PlaylistAssetSyncHandler(transaction);
         }
 
         // Tracks
         if (entity.equals("TRACK")) {
 
             // create/delete 
-            return new AudioAssetSyncHandler();
+            return new AudioAssetSyncHandler(transaction);
         }
 
         if (entity.equals("MEDIA")) {
 
             // Download
             return new MediaRecordSyncHandler(
-                method(:onTransactionComplete), method(:notifyProgressChange)
+                transaction,
+                method(:onTransactionComplete), 
+                method(:notifyProgressChange)
             );
         }
 

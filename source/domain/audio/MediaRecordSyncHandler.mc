@@ -6,16 +6,17 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
     private var _onProgress as Method(Number) as Void;
 
     function initialize(
+        transaction as QueueTransactionType,
         onComplete as Method(Boolean) as Void, 
         onProgress as Method(Number) as Void
     ) {
-        TransactionAsyncHandler.initialize(onComplete);
+        TransactionAsyncHandler.initialize(transaction, onComplete);
 
         _onProgress = onProgress;
     }
 
-    function execute(transaction as QueueTransactionType) as SyncTransactionHandler.TransactionResult {
-        var payload = transaction["payload"] as Dictionary;
+    function execute() as SyncTransactionHandler.TransactionResult {
+        var payload = getTransaction()["payload"] as Dictionary;
         var source = new AudioSource(payload["source"] as AudioSourceType);
         
         var request = new HttpRequest({
@@ -24,8 +25,8 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         }, method(:onResponse));
 
         var context = { 
-            :mediaId => transaction["tid"], 
-            :entity => transaction["entity"] as String,
+            :mediaId => getTransaction()["tid"], 
+            :entity => getTransaction()["entity"] as String,
             :source => payload["source"] as AudioSourceType
         };
         

@@ -2,13 +2,13 @@ import Toybox.Lang;
 
 class PlaylistAssetSyncHandler extends SyncTransactionHandler {
 
-    function initialize() {
-        SyncTransactionHandler.initialize();
+    function initialize(transaction as QueueTransactionType) {
+        SyncTransactionHandler.initialize(transaction);
     }
 
-    function execute(transaction as QueueTransactionType) as SyncTransactionHandler.TransactionResult {
-        var id = transaction["tid"];
-        var operation = transaction["op"];
+    function execute() as SyncTransactionHandler.TransactionResult {
+        var id = getTransaction()["tid"];
+        var operation = getTransaction()["op"];
 
         if (id == null || operation == null) {
             return SyncTransactionHandler.FAILED;
@@ -16,7 +16,7 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
 
         // build asset and persist against targetId
         if (operation.equals("CREATE") || operation.equals("UPDATE")) {
-            var payload = transaction["payload"] as Dictionary;
+            var payload = getTransaction()["payload"] as Dictionary;
 
             var asset = new PlaylistAsset({
                 "id" => id,

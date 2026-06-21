@@ -64,11 +64,11 @@ class SyncQueueBuilder {
 
         // Queue and Media we didnt know about yet
         if (existingMediaAsset == null && _queuedMediaChecksums[mediaId] == null) {
-            queue.add(enqueueMediaDownload(mediaId, track));
+            queue.add(enqueueMediaDownload(mediaId, track.getSource()));
             _queuedMediaChecksums[mediaId] = true;
         }   
 
-        return queue.add(enqueueTrackCreate(assetId, mediaId, track));
+        return queue.add(enqueueTrackCreate(assetId, track));
     }
 
     private function buildTrackTransactionFromArray(tracks as Array<AudioResource>) as Array<QueueTransactionType> {
@@ -103,7 +103,6 @@ class SyncQueueBuilder {
     
     private function enqueueTrackCreate(
         trackId as String, 
-        refId as Object, 
         resource as AudioResource
     ) as QueueTransactionType {
         var payload = {
@@ -116,13 +115,11 @@ class SyncQueueBuilder {
 
     private function enqueueMediaDownload(
         mediaId as String,
-        track as AudioResource
+        source as AudioSource
     ) as QueueTransactionType {
-        var payload = {
-            "source" => track.getSource().serialize()
-        };
-
-        return buildTransaction(mediaId, "DOWNLOAD", "MEDIA", payload);
+        return buildTransaction(
+            mediaId, "DOWNLOAD", "MEDIA", { "source" => source.serialize() }
+        );
     }
 
     private function buildTransaction(
