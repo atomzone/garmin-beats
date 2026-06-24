@@ -1,7 +1,7 @@
 using Toybox.Application.Storage as Storage;
 import Toybox.Lang;
 
-// "{PARTITION_KEY}:I" = [<ID1>, <ID2>]
+// "{PARTITION_KEY}:{INDEX_KEY}" = [<ID1>, <ID2>]
 class PartitionIndex {
 
     private var _indexKey as String;

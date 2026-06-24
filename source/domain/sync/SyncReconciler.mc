@@ -23,7 +23,7 @@ class SyncReconciler {
     public function reconcile() as Void {
         var audit = runAudit();
 
-        cleanupMedia(audit["orphanedMedia"] as Array<String>);
+        // cleanupMedia(audit["orphanedMedia"] as Array<String>);
         cleanupTracks(audit["orphanedTracks"] as Array<String>);
         cleanupPlaylists(audit["missingTrackReferences"] as Array<MissingTrackReferenceType>);
     }

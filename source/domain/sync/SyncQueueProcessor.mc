@@ -113,28 +113,30 @@ class SyncQueueProcessor {
     private function getTransactionHandler(transaction as QueueTransactionType) as SyncTransactionHandler? {
         var entity = transaction["entity"] as String;
 
-        // Playlist
-        if (entity.equals("PLAYLIST")) {
+        switch (entity) {
 
-            // all CRUD actions are sync
-            return new PlaylistAssetSyncHandler(transaction);
-        }
+            // Playlist
+            case "PLAYLIST":
+                return new PlaylistAssetSyncHandler(transaction);
 
-        // Tracks
-        if (entity.equals("TRACK")) {
+            // Tracks
+            case "TRACK":
+                return new AudioAssetSyncHandler(transaction); // create/delete 
 
-            // create/delete 
-            return new AudioAssetSyncHandler(transaction);
-        }
+            // Audio download async
+            case "MEDIA":
+                return new MediaRecordSyncHandler(
+                    transaction,
+                    method(:onTransactionComplete),
+                    method(:notifyProgressChange)
+                );
 
-        if (entity.equals("MEDIA")) {
-
-            // Download
-            return new MediaRecordSyncHandler(
-                transaction,
-                method(:onTransactionComplete), 
-                method(:notifyProgressChange)
-            );
+            // Image download async
+            case "IMAGE":
+                return new ImageSyncHandler(
+                    transaction,
+                    method(:onTransactionComplete)
+                );
         }
 
         return null;

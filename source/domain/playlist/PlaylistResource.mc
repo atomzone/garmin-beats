@@ -3,6 +3,7 @@ import Toybox.Lang;
 typedef PlaylistResourceType as {
     "id" as String,
     "title" as String,
+    "artwork" as String?,
     "description" as String?,
     "tracks" as Array<AudioResourceType>
 };
@@ -17,8 +18,11 @@ class PlaylistResource {
 
     function initialize(raw as PlaylistResourceType) {
         _id = raw["id"] as String;
+
+        var artwork = (raw["artwork"] == null) ? null : { "url" => raw["artwork"] } as MediaSourceType;
         _metadata = new PlaylistMetadata({
             "title" => raw["title"] as String,
+            "artwork" => artwork,
             "description" => raw["description"]
         });
         

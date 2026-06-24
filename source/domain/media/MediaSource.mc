@@ -5,6 +5,12 @@ typedef MediaSourceType as {
 };
 
 // Track exists remotely
+// class AudioSource extends MediaSource {} 
+
+// Image exists remotely
+// how does this convert to loading from strage or n/a
+// class AudioSource extends MediaSource {} 
+
 class MediaSource {
 
     private var _url as String;
@@ -12,6 +18,10 @@ class MediaSource {
 
     function initialize(source as MediaSourceType) {
         _url = source["url"] as String;
+    }
+
+    public function getId() as String {
+        return getChecksum();
     }
 
     public function getUrl() as String {

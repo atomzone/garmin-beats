@@ -1,7 +1,12 @@
 using Toybox.Application.Storage as Storage;
+using Toybox.WatchUi as Ui;
+using Toybox.Graphics as Graphics;
 import Toybox.Lang;
 
-// "{PARTITION_KEY}:I" = [<ID1>, <ID2>]
+// not sure about the null trail...
+typedef IndexedStoreValueType as Dictionary or Ui.BitmapResource or Graphics.BitmapReference or Null;
+
+// "{PARTITION_KEY}:IDX" = [<ID1>, <ID2>]
 // "{PARTITION_KEY}:<ID1>" = model1
 // "{PARTITION_KEY}:<ID2>" = model2
 class IndexedStore {
@@ -18,7 +23,7 @@ class IndexedStore {
 
     function initialize(partitionId as PartitionEnum) {
         _partitionId = partitionId;
-        _index = new PartitionIndex(buildPartitionKey("I"));
+        _index = new PartitionIndex(buildPartitionKey("IDX"));
     }
 
     public function load(id as String) as Storage.ValueType? {
@@ -44,7 +49,7 @@ class IndexedStore {
         return records;
     }
     
-    public function save(id as String, value as Dictionary?) as Void {
+    public function save(id as String, value as IndexedStoreValueType) as Void {
         StorageManager.save(buildPartitionKey(id), value as Storage.ValueType?);
         _index.add(id);
         bumpRevision();

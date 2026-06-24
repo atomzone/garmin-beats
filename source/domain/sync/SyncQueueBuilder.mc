@@ -33,7 +33,11 @@ class SyncQueueBuilder {
             // new playlist - create
             queue.add(enqueuePlaylistCreate(playlist.getId(), playlist));
 
-            // var imageSource = playlist.getMetadata().getArtwork();
+            // playlist artwork - download
+            var source = playlist.getMetadata().getArtwork();
+            if (source != null) {
+                queue.add(enqueueImageDownload(source.getId(), source));
+            }
         
         } else {
             
