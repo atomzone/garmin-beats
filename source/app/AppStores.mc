@@ -11,4 +11,7 @@ class AppStores {
     public static var media as IndexedStore
         = new IndexedStore(IndexedStore.MEDIA);
 
+    public static var images as IndexedStore
+        = new IndexedStore(IndexedStore.IMAGE);
+
 }

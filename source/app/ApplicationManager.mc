@@ -32,6 +32,9 @@ class ApplicationManager {
         // REMOVE MEDIA RECORDS
         AppStores.media.clear();
 
+        // REMOVE IMAGES RAW
+        AppStores.images.clear();
+
         // REMOVE PLAYBACK STATE
         PlaybackStateStore.clear();
 

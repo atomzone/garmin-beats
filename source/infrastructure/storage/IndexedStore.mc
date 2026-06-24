@@ -14,7 +14,8 @@ class IndexedStore {
     enum PartitionEnum {
         PLAYLIST,
         TRACK,
-        MEDIA
+        MEDIA,
+        IMAGE
     }
     
     private var _revision as Number = 0;

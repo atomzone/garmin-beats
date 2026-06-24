@@ -7,6 +7,7 @@ typedef MissingTrackReferenceType as {
 };
 
 typedef AuditResultType as {
+    "images" as Array<String>,
     "orphanedMedia" as Array<String>,
     "orphanedTracks" as Array<String>,
     "missingTrackReferences" as Array<MissingTrackReferenceType>
@@ -23,13 +24,14 @@ class SyncReconciler {
     public function reconcile() as Void {
         var audit = runAudit();
 
-        // cleanupMedia(audit["orphanedMedia"] as Array<String>);
+        cleanupMedia(audit["orphanedMedia"] as Array<String>);
         cleanupTracks(audit["orphanedTracks"] as Array<String>);
         cleanupPlaylists(audit["missingTrackReferences"] as Array<MissingTrackReferenceType>);
     }
 
     private function runAudit() as AuditResultType {
         return {
+            "images" => ["TODO: IMAGES"],
             "orphanedMedia" => findOrphanedMedia(),
             "orphanedTracks" => findOrphanedTracks(),
             "missingTrackReferences" => findMissingTrackReferences()
@@ -91,9 +93,17 @@ class SyncReconciler {
         return results;
     }
 
+    // TODO: improve the is pattern....
+    // REEFACTOR!
     private function cleanupMedia(mediaIds as Array<String>) as Void {
         for (var i = 0, limit = mediaIds.size(); i < limit; i++) {
             AppStores.media.remove(mediaIds[i]);
+        }
+    }
+
+    private function cleanupImages(imageIds as Array<String>) as Void {
+        for (var i = 0, limit = imageIds.size(); i < limit; i++) {
+            AppStores.images.remove(imageIds[i]);
         }
     }
 

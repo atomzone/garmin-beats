@@ -5,10 +5,11 @@ class AppState {
     
     public function getRevision() as String {
         return Lang.format(
-            "$1$:$2$:$3$", [
+            "$1$:$2$:$3$:$4$", [
                 AppStores.playlists.getRevision(),
                 AppStores.tracks.getRevision(),
-                AppStores.media.getRevision()
+                AppStores.media.getRevision(),
+                AppStores.images.getRevision()
             ]
         );
     }

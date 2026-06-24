@@ -54,10 +54,11 @@ class ImageSyncHandler extends TransactionAsyncHandler {
 
         var id = getTransaction()["tid"] as String;
     
+        // try/catch needed? best practice now
         try {
 
             $.am.debug("[IMAGE.SAVE.ID]" + id);
-            AppStores.media.save(id, data);
+            AppStores.images.save(id, data);
 
         } catch (e) {
 
