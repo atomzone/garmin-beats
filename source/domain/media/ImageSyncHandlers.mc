@@ -4,8 +4,6 @@ using Toybox.WatchUi as Ui;
 using Toybox.Communications as Comms;
 import Toybox.Lang;
 
-// we cannot transport the meta data with the makeImageRequest
-// need someother way of know the context so we can assiotte the image with an playlist asset
 class ImageSyncHandler extends TransactionAsyncHandler {
 
     function initialize(transaction as QueueTransactionType, onComplete as Method(Boolean) as Void) {
@@ -13,29 +11,19 @@ class ImageSyncHandler extends TransactionAsyncHandler {
     }
 
     function execute() as SyncTransactionHandler.TransactionResult {
-        
         var payload = getTransaction()["payload"] as Dictionary;
-        $.am.debug("PAYLOAD " + payload);
-
-        var source = "https://fastly.picsum.photos/id/533/100/100.jpg";
-        $.am.debug("FAKE SOURCE " + source);
-        
-        var params = { 
-            "hmac" => "OUcoPZYUPb7rDoU4STh-uw-899VtngRJqnP1drjWRgc"
-        };
-
-        var options = { 
-            // :palette as Lang.Array<Lang.Number>, 
-            :maxWidth => 50, 
-            :maxHeight => 50, 
-            // :dithering as Communications.Dithering, 
-            // :packingFormat as Communications.PackingFormat 
-        };
+        var source = new MediaSource(payload["source"] as MediaSourceType);
 
         Comms.makeImageRequest(
-            source,
-            params, 
-            options,
+            source.getUrl(),
+            null,
+            { 
+                // :palette as Lang.Array<Lang.Number>, 
+                :maxWidth => 48, 
+                :maxHeight => 48, 
+                :dithering => Comms.IMAGE_DITHERING_NONE, 
+                :packingFormat => Comms.PACKING_FORMAT_DEFAULT 
+            },
             method(:onResponse)
         );
 
@@ -54,15 +42,10 @@ class ImageSyncHandler extends TransactionAsyncHandler {
 
         var id = getTransaction()["tid"] as String;
     
-        // try/catch needed? best practice now
         try {
-
-            $.am.debug("[IMAGE.SAVE.ID]" + id);
             AppStores.images.save(id, data);
-
         } catch (e) {
-
-            $.am.debug("[BADTIMES]" + e);
+            $.am.debug("[ImageSyncHandler.onResponse]" + e.getErrorMessage());
             fail();
         }
 

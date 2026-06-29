@@ -1,4 +1,5 @@
 using Toybox.WatchUi as Ui;
+using Toybox.Graphics as Graphics;
 import Toybox.Lang;
 
 class PlaylistBrowserView extends Ui.Menu2 {
@@ -12,12 +13,25 @@ class PlaylistBrowserView extends Ui.Menu2 {
             var asset = assets[index];
             var meta = asset.getMetadata();
 
-            addItem(new Ui.MenuItem(
-                meta.getTitle(),
-                meta.getDescription(),
-                index,
-                {}
-            ));
+            // create ?icon from storage object
+            var bmp = MediaUtils.createBitmapFromSource(meta.getArtwork());
+
+            if (bmp != null) {
+                addItem(new Ui.IconMenuItem(
+                    meta.getTitle(),
+                    meta.getDescription(),
+                    index,
+                    bmp,
+                    {}
+                ));
+            } else {
+                addItem(new Ui.MenuItem(
+                    meta.getTitle(),
+                    meta.getDescription(),
+                    index,
+                    {}
+                ));
+            }
         }
     }
 

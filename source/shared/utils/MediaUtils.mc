@@ -1,4 +1,6 @@
 using Toybox.Media;
+using Toybox.WatchUi as Ui;
+using Toybox.Graphics as Graphics;
 import Toybox.Lang;
 
 class MediaUtils {
@@ -56,5 +58,28 @@ class MediaUtils {
 
     static function delete(refId as Object) as Void {
         Media.deleteCachedItem(getContentRef(refId));
+    }
+
+    public static function createBitmapFromSource(source as MediaSource?) as Ui.Bitmap? {
+        if (source == null) {
+            return null;
+        }
+
+        try {
+            var image = AppStores.images.load(source.getId());
+            if (image == null) {
+                return null;
+            }
+
+            return new Ui.Bitmap({
+                :bitmap => image as Graphics.BitmapReference
+            });
+        }
+        catch (e) {
+            $.am.debug("[MediaUtils.createBitmapFromSource] source='" 
+                + source.serialize() + "', error='" + e.getErrorMessage() + "'");
+        }
+
+        return null;
     }
 }

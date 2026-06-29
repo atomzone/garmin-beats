@@ -113,7 +113,7 @@ class SyncQueueBuilder {
     ) as QueueTransactionType {
         var payload = {
             "mediaId" => resource.getSource().getChecksum(),
-            "metadata" => resource.getMetadata().serialize()
+            "source" => resource.serialize()
         };
 
         return buildTransaction(trackId, "CREATE", "TRACK", payload);

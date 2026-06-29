@@ -3,7 +3,8 @@ import Toybox.Lang;
 
 typedef AudioResourceType as {
     "source" as MediaSourceType,
-    "meta" as AudioMetadataType?
+    "meta" as AudioMetadataType?,
+    "chapters" as Array<AudioChapterType>?
 };
 
 // Transient track snapshot
@@ -13,6 +14,7 @@ class AudioResource {
     private var _checksum as String?;
     private var _source as MediaSource;
     private var _metadata as AudioMetadata;
+    private var _chapters as Array<AudioChapter> = [];
 
     function initialize(raw as AudioResourceType) {
         var source = raw["source"] as MediaSourceType;
@@ -20,6 +22,10 @@ class AudioResource {
 
         _source = new MediaSource(source);
         _metadata = new AudioMetadata(metadata);
+
+        if (raw["chapters"] != null) {
+            _chapters = AudioChapter.fromArray(raw["chapters"] as Array<AudioChapterType>);
+        }
     }
 
     public function getSourceUrl() as String {
@@ -46,6 +52,10 @@ class AudioResource {
         return _metadata;
     }
 
+    public function getChapters() as Array<AudioChapter>? {
+        return _chapters;
+    }
+
     public function getChecksum() as String {
         if (_checksum != null) {
             return _checksum;
@@ -62,7 +72,8 @@ class AudioResource {
     public function serialize() as AudioResourceType {
         return {
             "source" => _source.serialize(),
-            "meta" => _metadata.serialize()
+            "meta" => _metadata.serialize(),
+            "chapters" => AudioChapter.serializeArray(_chapters)
         };
     }
 
