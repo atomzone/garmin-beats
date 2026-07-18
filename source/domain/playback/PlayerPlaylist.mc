@@ -38,6 +38,10 @@ class PlayerPlaylist {
         return new AudioAsset(track as AudioAssetType);
     }
 
+    function getCurrentAsset() as AudioAsset {
+        return getAssetByIndex(_playFromIndex);
+    }
+
     function getCurrentTrackIndex() as Number {
         return _playFromIndex;
     }

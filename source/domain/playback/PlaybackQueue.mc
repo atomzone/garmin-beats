@@ -4,58 +4,59 @@ import Toybox.Lang;
 // Owns where playback goes next
 class PlaybackQueue extends Media.ContentIterator {
 
-    private var _playerPlaylist as PlayerPlaylist;
     private var _shuffle as Boolean = false;
+    private var _playlist as PlayerPlaylist;
+    private var _session as PlaybackSession;
 
-    function initialize(playerPlaylist as PlayerPlaylist) {
-        Media.ContentIterator.initialize();
-
-        _playerPlaylist = playerPlaylist;
+    function initialize(
+        playlist as PlayerPlaylist,
+        session as PlaybackSession
+    ) {
+        _playlist = playlist;
+        _session = session;
     }
 
     function get() as Media.Content? {
-        return getMediaContent(_playerPlaylist.getCurrentTrackIndex());
+        return getMediaContent(_playlist.getCurrentTrackIndex());
     }
 
     function next() as Media.Content? {
-        var nextIndex = _playerPlaylist.getCurrentTrackIndex() + 1;
-        var content = getMediaContent(nextIndex);
-
-        if (content != null) {
-            $.am.debug("[Queue.next] index " + _playerPlaylist.getCurrentTrackIndex() + " > " + nextIndex);
-            _playerPlaylist.setTrackIndex(nextIndex);
-            _playerPlaylist.setCurrentTrackPosition(0);
+        if (_session.nextInternal() != null) {
+            return get();
         }
-
-        return content;
+        
+        return nextTrack();
     }
 
     function previous() as Media.Content? {
-        var previousIndex = _playerPlaylist.getCurrentTrackIndex() - 1;
-        var content = getMediaContent(previousIndex);
-
-        if (content != null) {
-            $.am.debug("[Queue.previous] index " + _playerPlaylist.getCurrentTrackIndex() + " > " + previousIndex);
-            _playerPlaylist.setTrackIndex(previousIndex);
-            _playerPlaylist.setCurrentTrackPosition(0);
+        if (_session.previousInternal() != null) {
+            return get();
         }
 
-        return content;
+        return previousTrack();
     }
 
     function peekNext() as Media.Content? {
-        return getMediaContent(_playerPlaylist.getCurrentTrackIndex() + 1);
+        if (_session.nextInternal() != null) {
+            return get();
+        }
+
+        return getMediaContent(_playlist.getCurrentTrackIndex() + 1);
     }
 
     function peekPrevious() as Media.Content? {
-        return getMediaContent(_playerPlaylist.getCurrentTrackIndex() - 1);
+        if (_session.previousInternal() != null) {
+            return get();
+        }
+
+        return getMediaContent(_playlist.getCurrentTrackIndex() - 1);
     }
 
     // Determine if the current track can be skipped forward.
     // Returning false on a physical device prevents both user-skip AND auto-advance after completion.
     function canSkip() as Boolean {
-        var isValid = _playerPlaylist.isValidIndex(_playerPlaylist.getCurrentTrackIndex() + 1);
-        $.am.debug("[Queue.canSkip] " + isValid + " (index=" + _playerPlaylist.getCurrentTrackIndex() + " size=" + _playerPlaylist.getAssetCount() + ")");
+        var isValid = _playlist.isValidIndex(_playlist.getCurrentTrackIndex() + 1);
+        $.am.debug("[Queue.canSkip] " + isValid + " (index=" + _playlist.getCurrentTrackIndex() + " size=" + _playlist.getAssetCount() + ")");
 
         return isValid;
     }
@@ -93,8 +94,10 @@ class PlaybackQueue extends Media.ContentIterator {
         }
         // The number of seconds a song must play to trigger a "played" notification.
         profile.playbackNotificationThreshold = 10;
-        profile.requirePlaybackNotification = false;
+        profile.requirePlaybackNotification = true;
         profile.skipPreviousThreshold = 1;
+        profile.skipBackwardTimeDelta = 23;
+        profile.skipForwardTimeDelta = 23;
         
         return profile;
     }
@@ -104,13 +107,41 @@ class PlaybackQueue extends Media.ContentIterator {
         return self._shuffle;
     }
 
-    private function getMediaContent(index as Number) as Media.Content? {
-        if (!_playerPlaylist.isValidIndex(index)) {
-            $.am.debug("[Queue.getMediaContent] null - index=" + index + "/" + (_playerPlaylist.getAssetCount() - 1));
+    private function nextTrack() as Media.Content? {
+        var nextIndex = _playlist.getCurrentTrackIndex() + 1;
+
+        if (!_playlist.isValidIndex(nextIndex)) {
             return null;
         }
 
-        var asset = _playerPlaylist.getAssetByIndex(index);
+        _playlist.setTrackIndex(nextIndex);
+        _playlist.setCurrentTrackPosition(0);
+        _session.onTrackChanged();
+
+        return get();
+    }
+
+    private function previousTrack() as Media.Content? {
+        var previousIndex = _playlist.getCurrentTrackIndex() - 1;
+
+        if (!_playlist.isValidIndex(previousIndex)) {
+            return null;
+        }
+
+        _playlist.setTrackIndex(previousIndex);
+        _playlist.setCurrentTrackPosition(0);
+        _session.onTrackChanged();
+
+        return get();
+    }
+
+    private function getMediaContent(index as Number) as Media.Content? {
+        if (!_playlist.isValidIndex(index)) {
+            $.am.debug("[Queue.getMediaContent] null - index=" + index + "/" + (_playlist.getAssetCount() - 1));
+            return null;
+        }
+
+        var asset = _playlist.getAssetByIndex(index);
         var refId = getRefId(asset);
 
         if (refId == null) {
@@ -122,14 +153,14 @@ class PlaybackQueue extends Media.ContentIterator {
             asset.getMetadata()
         );
 
-        var position = _playerPlaylist.getCurrentTrackPosition();
+        var position = _playlist.getCurrentTrackPosition();
 
         if (position > 0) {
-            $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playerPlaylist.getAssetCount() - 1) + " position=" + position);
+            $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playlist.getAssetCount() - 1) + " position=" + position);
             return MediaUtils.getActiveContentWithMetadata(refId, metadata, position);
         }
 
-        $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playerPlaylist.getAssetCount() - 1));
+        $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playlist.getAssetCount() - 1));
         return MediaUtils.getContentWithMetadata(refId, metadata);
     }
 

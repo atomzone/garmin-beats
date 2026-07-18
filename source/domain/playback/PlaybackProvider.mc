@@ -12,7 +12,7 @@ class PlaybackProvider extends Media.ContentDelegate {
 
         _playlist = playlist;
         _session = session;
-        _iterator = new PlaybackQueue(playlist);
+        _iterator = new PlaybackQueue(playlist, session);
     }
 
     function getContentIterator() as Media.ContentIterator? {
@@ -27,7 +27,7 @@ class PlaybackProvider extends Media.ContentDelegate {
         $.am.debug("[PlaybackProvider.resetContentIterator]");
 
         // reset iterator to the beginning of the playlist
-        self._iterator = new PlaybackQueue(_playlist);
+        self._iterator = new PlaybackQueue(_playlist, _session);
 
         return self._iterator;
     }
