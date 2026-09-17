@@ -21,7 +21,7 @@ class PlaybackQueue extends Media.ContentIterator {
     }
 
     function next() as Media.Content? {
-        if (_session.nextInternal() != null) {
+        if (_session.nextInternal()) {
             return get();
         }
         
@@ -29,7 +29,7 @@ class PlaybackQueue extends Media.ContentIterator {
     }
 
     function previous() as Media.Content? {
-        if (_session.previousInternal() != null) {
+        if (_session.previousInternal()) {
             return get();
         }
 
@@ -37,7 +37,7 @@ class PlaybackQueue extends Media.ContentIterator {
     }
 
     function peekNext() as Media.Content? {
-        if (_session.nextInternal() != null) {
+        if (_session.nextInternal()) {
             return get();
         }
 
@@ -45,7 +45,7 @@ class PlaybackQueue extends Media.ContentIterator {
     }
 
     function peekPrevious() as Media.Content? {
-        if (_session.previousInternal() != null) {
+        if (_session.previousInternal()) {
             return get();
         }
 
