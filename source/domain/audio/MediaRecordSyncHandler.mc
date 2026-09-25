@@ -25,12 +25,12 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         }, method(:onResponse));
 
         var context = { 
-            :mediaId => getTransaction()["tid"], 
+            :mediaId => getTransaction()["tid"] as String, 
             :entity => getTransaction()["entity"] as String,
             :source => payload["source"] as MediaSourceType
-        };
+        } as AudioDownloadContextType;
         
-        request.downloadMp3(context, method(:onProgress));
+        request.getAudio(context, method(:onProgress));
 
         return SyncTransactionHandler.PENDING;
     }
@@ -48,11 +48,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
 
     function onResponse(
         response as ResponseType,
-        context as { 
-            :mediaId as String, 
-            :entity as String,
-            :source as MediaSourceType
-        }
+        context as AudioDownloadContextType
     ) as Void {
         var data = response[:data];
 

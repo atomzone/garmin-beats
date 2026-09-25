@@ -1,7 +1,8 @@
 import Toybox.Lang;
 
 typedef MediaSourceType as { 
-    "url" as String 
+    "url" as String,
+    "format" as String?
 };
 
 // Track exists remotely
@@ -14,10 +15,20 @@ typedef MediaSourceType as {
 class MediaSource {
 
     private var _url as String;
+    private var _format as String = "mp3";
     private var _checksum as String?;
 
     function initialize(source as MediaSourceType) {
         _url = source["url"] as String;
+        _format = parseFormat(source["format"]);
+    }
+
+    private function parseFormat(format as String?) as String {
+        if (format != null && (format.equals("mp3") || format.equals("m4a"))) {
+            return format;
+        }
+
+        return "mp3";
     }
 
     public function getId() as String {
@@ -26,6 +37,10 @@ class MediaSource {
 
     public function getUrl() as String {
         return _url;
+    }
+
+    public function getFormat() as String {
+        return _format;
     }
 
     public function getChecksum() as String {
@@ -43,7 +58,8 @@ class MediaSource {
 
     public function serialize() as MediaSourceType {
         return {
-            "url" => _url
+            "url" => _url,
+            "format" => _format
         };
     }
 }

@@ -15,6 +15,12 @@ typedef ResponseType as {
     :error as String?
 };
 
+typedef AudioDownloadContextType as {
+    :mediaId as String,
+    :entity as String,
+    :source as MediaSourceType
+};
+
 typedef HandlerType as Method(response as ResponseType, context as Object) as Void;
 
 class HttpRequest {
@@ -34,11 +40,19 @@ class HttpRequest {
         );
     }
 
-    function downloadMp3(
-        context as Object,
+    function getAudio(
+        context as AudioDownloadContextType,
         onProgressCallback as Method(totalBytesTransferred as Number, filesize as Number?) as Void
     ) as Void {
-        var settings = new HttpRequestOptions(context).get().mp3();
+        var settings = new HttpRequestOptions(context).get();
+        var source = new MediaSource(context[:source] as MediaSourceType);
+
+        if (source.getFormat().equals("m4a")) {
+            settings.m4a();
+        } else {
+            settings.mp3();
+        }
+
         settings.options[:fileDownloadProgressCallback] = onProgressCallback;
 
         self.makeRequest(settings);
