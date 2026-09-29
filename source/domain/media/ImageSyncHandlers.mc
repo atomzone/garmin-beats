@@ -14,6 +14,7 @@ class ImageSyncHandler extends TransactionAsyncHandler {
         var payload = getTransaction()["payload"] as Dictionary;
         var source = new MediaSource(payload["source"] as MediaSourceType);
 
+        // could be included in HttpRequest
         Comms.makeImageRequest(
             source.getUrl(),
             null,

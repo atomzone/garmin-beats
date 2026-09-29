@@ -7,6 +7,7 @@ class AudioResourceLoader {
         self._href = href;
     }
 
+    // we need error callbacks!
     function fetchPlaylists(callback as Method) as Void {
         var request = new HttpRequest({
             :href => self._href,
@@ -36,6 +37,7 @@ class AudioResourceLoader {
         (context[:callback] as Method).invoke(model);
     }
 
+    // we need error callbacks!
     function fetchResources(callback as Method) as Void {
         var request = new HttpRequest({
             :href => self._href,

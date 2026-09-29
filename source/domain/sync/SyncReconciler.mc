@@ -126,6 +126,11 @@ class SyncReconciler {
                 trackIds.remove(missingTrackIds[j]);
             }
 
+            if (trackIds.size() == 0) {
+                AppStores.playlists.remove(playlistId);
+                continue;
+            }
+
             playlist.setTrackIds(trackIds);
             AppStores.playlists.save(playlist.getId(), playlist.serialize());
         }

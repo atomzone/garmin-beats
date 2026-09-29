@@ -32,6 +32,9 @@ class SyncManager extends Comm.SyncDelegate {
             _processor.stop();
         }
 
+        $.am.debug("[SyncManager] Sync aborted, running reconciliation");
+        new SyncReconciler().reconcile();
+
         Comm.notifySyncComplete(null);
         Comm.cancelAllRequests();
     }
@@ -43,7 +46,7 @@ class SyncManager extends Comm.SyncDelegate {
     // can we redirect to the playlist menu?
     function onComplete(error as String?) as Void {
 
-        // Should we run on Error?
+        // [TODO] Should we run on Error?
         if (error == null) {
             $.am.debug("[SyncManager] Sync completed successfully, running reconciliation");
             new SyncReconciler().reconcile();

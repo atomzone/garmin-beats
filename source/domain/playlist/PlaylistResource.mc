@@ -10,6 +10,12 @@ typedef PlaylistResourceType as {
 
 class PlaylistResource {
 
+    enum ResourceState {
+        MISSING,
+        CURRENT,
+        UPDATE_AVAILABLE
+    }
+
     private var _id as String;
     private var _checksum as String?;
     private var _tracks as Array<AudioResource> = [];
@@ -64,6 +70,20 @@ class PlaylistResource {
 
         _checksum = StringUtils.checksum(canonicalize());
         return _checksum;
+    }
+
+    public function getResourceState() as ResourceState {
+        var localAsset = AppStores.playlists.load(getId()) as PlaylistAssetType?;
+        if (localAsset == null) {
+            return MISSING;
+        }
+
+        var localChecksum = new PlaylistAsset(localAsset).getChecksum();
+        if (getChecksum().equals(localChecksum) == false) {
+            return UPDATE_AVAILABLE;
+        }
+
+        return CURRENT;
     }
 
     public function canonicalize() as String {
