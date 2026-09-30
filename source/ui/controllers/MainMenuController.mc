@@ -90,8 +90,15 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         }
     }
     
-    function displayResources(resources as Array<AudioResource>) as Void {
+    function displayResources(result as Object?, error as String?) as Void {
         _overlay.end(:GetTracks);
+
+        if (error != null) {
+            $.am.debug("[main.displayResources.fail] " + error);
+            return;
+        }
+
+        var resources = result as Array<AudioResource>;
 
         Ui.pushView(
             new ResourceView(resources),
@@ -100,8 +107,15 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         );
     }
 
-    function displayPlaylists(playlists as Array<PlaylistResource>) as Void {
+    function displayPlaylists(result as Object?, error as String?) as Void {
         _overlay.end(:GetPlaylists);
+
+        if (error != null) {
+            $.am.debug("[main.displayPlaylists.fail] " + error);
+            return;
+        }
+
+        var playlists = result as Array<PlaylistResource>;
         
         Ui.pushView(
             new PlaylistSyncView(playlists, AppStores.playlists.getIds()),

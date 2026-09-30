@@ -7,8 +7,7 @@ class AudioResourceLoader {
         self._href = href;
     }
 
-    // we need error callbacks!
-    function fetchPlaylists(callback as Method) as Void {
+    function fetchPlaylists(callback as ResultCallbackType) as Void {
         var request = new HttpRequest({
             :href => self._href,
             :parameters => {}
@@ -19,11 +18,12 @@ class AudioResourceLoader {
 
     function onResponseBuildPlaylists(
         response as ResponseType,
-        context as { :callback as Method }
+        context as { :callback as ResultCallbackType }
     ) as Void {
         if (response[:ok] != true || !(response[:data] instanceof Dictionary)) {
-            $.am.debug("[loader.onResponseBuildPlaylists.fail] code=" + response[:code]);
-            (context[:callback] as Method).invoke([]);
+            var error = response[:error] == null ? "Unable to load playlists" : response[:error];
+            $.am.debug("[loader.onResponseBuildPlaylists.fail] code=" + response[:code] + ", error=" + error);
+            (context[:callback] as ResultCallbackType).invoke([], error);
             return;
         }
 
@@ -34,11 +34,10 @@ class AudioResourceLoader {
         }
 
         var model = PlaylistResource.fromArray(playlists);
-        (context[:callback] as Method).invoke(model);
+        (context[:callback] as ResultCallbackType).invoke(model, null);
     }
 
-    // we need error callbacks!
-    function fetchResources(callback as Method) as Void {
+    function fetchResources(callback as ResultCallbackType) as Void {
         var request = new HttpRequest({
             :href => self._href,
             :parameters => {}
@@ -49,11 +48,12 @@ class AudioResourceLoader {
 
     function onResponseBuildResources(
         response as ResponseType,
-        context as { :callback as Method }
+        context as { :callback as ResultCallbackType }
     ) as Void {
         if (response[:ok] != true || !(response[:data] instanceof Dictionary)) {
-            $.am.debug("[loader.onResponseBuildResources.fail] code=" + response[:code]);
-            (context[:callback] as Method).invoke([]);
+            var error = response[:error] == null ? "Unable to load tracks" : response[:error];
+            $.am.debug("[loader.onResponseBuildResources.fail] code=" + response[:code] + ", error=" + error);
+            (context[:callback] as ResultCallbackType).invoke([], error);
             return;
         }
 
@@ -64,6 +64,6 @@ class AudioResourceLoader {
         }
 
         var models = AudioResource.fromArray(resources);
-        (context[:callback] as Method).invoke(models);
+        (context[:callback] as ResultCallbackType).invoke(models, null);
     }
 }
