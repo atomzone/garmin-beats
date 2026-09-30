@@ -94,6 +94,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         _overlay.end(:GetTracks);
 
         if (error != null) {
+            MessageUtils.show("Tracks failed to load: " + error);
             $.am.debug("[main.displayResources.fail] " + error);
             return;
         }
@@ -111,6 +112,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         _overlay.end(:GetPlaylists);
 
         if (error != null) {
+            MessageUtils.show("Playlists failed to load: " + error);
             $.am.debug("[main.displayPlaylists.fail] " + error);
             return;
         }
