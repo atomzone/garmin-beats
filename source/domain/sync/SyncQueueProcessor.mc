@@ -68,10 +68,10 @@ class SyncQueueProcessor {
         _cancelled = true;
     }
 
-    function onTransactionComplete(success as Boolean) as Void {
+    function onTransactionComplete(success as Boolean, errorMessage as String?) as Void {
 
         if (!success) {
-            fail("Transaction failed");
+            fail(errorMessage != null ? errorMessage : "Transaction failed");
             return;
         }
 

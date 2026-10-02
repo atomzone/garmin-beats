@@ -6,7 +6,7 @@ import Toybox.Lang;
 
 class ImageSyncHandler extends TransactionAsyncHandler {
 
-    function initialize(transaction as QueueTransactionType, onComplete as Method(Boolean) as Void) {
+    function initialize(transaction as QueueTransactionType, onComplete as TransactionCompleteCallbackType) {
         TransactionAsyncHandler.initialize(transaction, onComplete);
     }
 
@@ -37,7 +37,7 @@ class ImageSyncHandler extends TransactionAsyncHandler {
     ) as Void {
 
         if (data == null || responseCode != 200) {
-            fail();
+            fail("Image download failed");
             return;
         }
 
@@ -47,7 +47,7 @@ class ImageSyncHandler extends TransactionAsyncHandler {
             AppStores.images.save(id, data);
         } catch (e) {
             $.am.debug("[ImageSyncHandler.onResponse]" + e.getErrorMessage());
-            fail();
+            fail("Image could not be saved");
         }
 
         success();

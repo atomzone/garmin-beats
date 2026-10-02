@@ -7,6 +7,8 @@ typedef QueueTransactionType as {
     "payload" as Dictionary
 };
 
+typedef TransactionCompleteCallbackType as Method(success as Boolean, error as String?) as Void;
+
 class SyncTransactionHandler {
 
     enum TransactionResult {
@@ -44,11 +46,11 @@ class SyncTransactionHandler {
 
 class TransactionAsyncHandler extends SyncTransactionHandler {
 
-    private var _onComplete as Method(Boolean) as Void;
+    private var _onComplete as TransactionCompleteCallbackType;
 
     function initialize(
         transaction as QueueTransactionType,
-        onComplete as Method(Boolean) as Void
+        onComplete as TransactionCompleteCallbackType
     ) {
         SyncTransactionHandler.initialize(transaction);
         _onComplete = onComplete;
@@ -71,10 +73,10 @@ class TransactionAsyncHandler extends SyncTransactionHandler {
     }
 
     function success() as Void {
-        _onComplete.invoke(true);
+        _onComplete.invoke(true, null);
     }
 
-    function fail() as Void {
-        _onComplete.invoke(false);
+    function fail(errorMessage as String?) as Void {
+        _onComplete.invoke(false, errorMessage != null ? errorMessage : "Transaction failed");
     }
 }

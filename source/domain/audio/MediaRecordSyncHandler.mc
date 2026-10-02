@@ -7,7 +7,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
 
     function initialize(
         transaction as QueueTransactionType,
-        onComplete as Method(Boolean) as Void, 
+        onComplete as TransactionCompleteCallbackType,
         onProgress as Method(Number) as Void
     ) {
         TransactionAsyncHandler.initialize(transaction, onComplete);
@@ -54,7 +54,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
 
         // TODO: can we remove instanceOf check?
         if (response[:ok] != true || !(data instanceof Media.ContentRef)) {
-            fail();
+            fail(response[:error] != null ? response[:error] : "Media download failed");
             return;
         }
 

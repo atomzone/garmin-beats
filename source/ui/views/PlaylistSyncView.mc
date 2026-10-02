@@ -11,28 +11,29 @@ class PlaylistSyncView extends Ui.CheckboxMenu {
 
         for (var index = 0, limit = playlists.size(); index < limit; index++) {
             var playlist = playlists[index];
+            var state = playlist.getResourceState();
+
+            // skip playlists that are already up to date
+            if (state == PlaylistResource.CURRENT) {
+                continue;
+            }
 
             addItem(new Ui.CheckboxMenuItem(
                 playlist.getTitle() as String,
-                getSyncStateLabel(playlist.getResourceState()), // playlist.getDescription();
+                getSyncStateLabel(state) + playlist.getDescription(),
                 index,
                 false,
-                // activePlaylistIds.indexOf(playlist.getId()) > -1, // this is good, but, unticking will not delete the assets
                 {}
             ));
         }
     }
 
     private function getSyncStateLabel(state as PlaylistResource.ResourceState) as String {
-        if (state == PlaylistResource.MISSING) {
-            return "[Missing]";
-        }
-
         if (state == PlaylistResource.UPDATE_AVAILABLE) {
-            return "[Update available]";
+            return "[Update] ";
         }
 
-        return "[Current]";
+        return "";
     }
 
     function onShow() as Void {
