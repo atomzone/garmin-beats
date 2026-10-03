@@ -98,6 +98,7 @@ class PlaylistResource {
 
     public function serialize() as PlaylistResourceType {
         var tracks = [];
+        var artwork = getMetadata().getArtwork();
 
         for (var i = 0; i < _tracks.size(); i++) {
             tracks.add(_tracks[i].serialize());
@@ -107,6 +108,7 @@ class PlaylistResource {
             "id" => _id,
             "title" => getTitle(),
             "description" => getDescription(),
+            "artwork" => (artwork == null) ? null : artwork.getUrl(),
             "tracks" => tracks
         };
     }
