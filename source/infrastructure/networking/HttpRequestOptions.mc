@@ -3,10 +3,9 @@ using Toybox.Media as Media;
 import Toybox.Lang;
 
 class HttpRequestOptions {
-    public var options as { :context as Lang.Object, :headers as Dictionary } = {};
+    public var options as { :headers as Dictionary } = {};
 
-    function initialize(context as Lang.Object) {
-        self.options[:context] = context;
+    function initialize() {
         self.options[:headers] = {};
         // self.setAuthorization("MediaBrowser Client=\"client\", Device=\"device\", DeviceId=\"device-id\", Version=\"version\", Token=\"17f2a2b1f5eb4deea49c993a87b23a0a\"");
     }

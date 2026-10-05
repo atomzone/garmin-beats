@@ -23,30 +23,32 @@ typedef AudioDownloadContextType as {
     :source as MediaSourceType
 };
 
-typedef HandlerType as Method(response as ResponseType, context as Object) as Void;
+typedef HandlerType as Method(response as ResponseType, context as Object?) as Void;
 
 class HttpRequest {
     private var _handler as HandlerType;
     private var _href as String;
     private var _parameters as Dictionary<Object, Object>?;
+    private var _context as Object?;
 
-    function initialize(resource as ResourceType, handler as HandlerType) {
-        self._href = resource[:href] as String;
-        self._parameters = resource[:parameters];
-        self._handler = handler;
+    function initialize(resource as ResourceType, context as Object?, handler as HandlerType) {
+        _href = resource[:href] as String;
+        _parameters = resource[:parameters];
+        _context = context;
+        _handler = handler;
     }
 
-    function getJson(context as Object) as Void {
-        self.makeRequest(
-            new HttpRequestOptions(context).get().json()
+    function getJson() as Void {
+        makeRequest(
+            new HttpRequestOptions().get().json()
         );
     }
 
     function getAudio(
-        context as AudioDownloadContextType,
         onProgressCallback as Method(totalBytesTransferred as Number, filesize as Number?) as Void
     ) as Void {
-        var settings = new HttpRequestOptions(context).get();
+        var context = _context as AudioDownloadContextType;
+        var settings = new HttpRequestOptions().get();
         var source = new MediaSource(context[:source] as MediaSourceType);
 
         if (source.getFormat().equals("m4a")) {
@@ -57,13 +59,12 @@ class HttpRequest {
 
         settings.options[:fileDownloadProgressCallback] = onProgressCallback;
 
-        self.makeRequest(settings);
+        makeRequest(settings);
     }
 
     function onResponse(
         responseCode as Number, 
-        data as Dictionary or String or PersistedContent.Iterator or Null, 
-        context as Object
+        data as Dictionary or String or PersistedContent.Iterator or Null
     ) as Void {
         var isOk = isSuccessResponse(responseCode);
         var payload = data as Object?;
@@ -77,11 +78,42 @@ class HttpRequest {
             :error => errorMessage
         } as ResponseType;
 
-        self._handler.invoke(response, context);
+        _handler.invoke(response, _context);
     }
 
     private function isSuccessResponse(responseCode as Number) as Boolean {
         return responseCode >= 200 && responseCode < 300;
+    }
+
+    private function makeRequest(httpRequest as HttpRequestOptions) as Void {
+        if (!hasTransport()) {
+            onResponse(-1008, null);
+            return;
+        }
+
+        $.am.debug("[http.request] url=" + _href);
+        Comm.makeWebRequest(
+            _href, 
+            _parameters, 
+            httpRequest.options,
+            method(:onResponse)
+        ); 
+    }
+    
+    private function hasTransport() as Boolean {
+        var connectionInfo = System.getDeviceSettings().connectionInfo;
+        var bluetooth = connectionInfo[:bluetooth];
+        var wifi = connectionInfo[:wifi];
+
+        var bluetoothConnected =
+            bluetooth != null &&
+            bluetooth.state == System.CONNECTION_STATE_CONNECTED;
+
+        var wifiConnected =
+            wifi != null &&
+            wifi.state == System.CONNECTION_STATE_CONNECTED;
+        
+        return bluetoothConnected || wifiConnected;
     }
 
     private function getErrorMessage(responseCode as Number) as String? {
@@ -124,18 +156,13 @@ class HttpRequest {
                 return "UNABLE_TO_PROCESS_IMAGE: Downloaded image file was unable to be processed.";
             case -1007:
                 return "UNABLE_TO_PROCESS_HLS: HLS content could not be downloaded. Most often occurs when requested and provided bit rates do not match.";
+
+            // custom
+            case -1008:
+                return "NO_TRANSPORT: Network transport is not available.";
+
             default:
                 return "HTTP request failed (" + responseCode + ")";
         }
-    }
-
-    private function makeRequest(httpRequest as HttpRequestOptions) as Void {
-        $.am.debug("[http.request] url=" + self._href);
-        Comm.makeWebRequest(
-            self._href, 
-            self._parameters, 
-            httpRequest.options,
-            method(:onResponse)
-        ); 
     }
 }

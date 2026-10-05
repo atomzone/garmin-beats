@@ -11,9 +11,9 @@ class AudioResourceLoader {
         var request = new HttpRequest({
             :href => self._href,
             :parameters => {}
-        }, method(:onResponseBuildPlaylists));
+        }, { :callback => callback }, method(:onResponseBuildPlaylists));
 
-        request.getJson({ :callback => callback });
+        request.getJson();
     }
 
     function onResponseBuildPlaylists(
@@ -41,9 +41,9 @@ class AudioResourceLoader {
         var request = new HttpRequest({
             :href => self._href,
             :parameters => {}
-        }, method(:onResponseBuildResources));
+        }, { :callback => callback }, method(:onResponseBuildResources));
 
-        request.getJson({ :callback => callback });
+        request.getJson();
     }
 
     function onResponseBuildResources(

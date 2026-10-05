@@ -18,19 +18,19 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
     function execute() as SyncTransactionHandler.TransactionResult {
         var payload = getTransaction()["payload"] as Dictionary;
         var source = new MediaSource(payload["source"] as MediaSourceType);
-        
-        var request = new HttpRequest({
-            :href => source.getUrl(),
-            :parameters => {}
-        }, method(:onResponse));
 
-        var context = { 
+        var context = {
             :mediaId => getTransaction()["tid"] as String, 
             :entity => getTransaction()["entity"] as String,
             :source => payload["source"] as MediaSourceType
         } as AudioDownloadContextType;
-        
-        request.getAudio(context, method(:onProgress));
+
+        var request = new HttpRequest({
+            :href => source.getUrl(),
+            :parameters => {}
+        }, context, method(:onResponse));
+
+        request.getAudio(method(:onProgress));
 
         return SyncTransactionHandler.PENDING;
     }
@@ -46,10 +46,7 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
         _onProgress.invoke(percentageComplete);
     }
 
-    function onResponse(
-        response as ResponseType,
-        context as AudioDownloadContextType
-    ) as Void {
+    function onResponse(response as ResponseType, context as AudioDownloadContextType) as Void {
         var data = response[:data];
 
         // TODO: can we remove instanceOf check?
