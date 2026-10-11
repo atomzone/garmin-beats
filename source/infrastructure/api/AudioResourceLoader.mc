@@ -22,7 +22,6 @@ class AudioResourceLoader {
     ) as Void {
         if (response[:ok] != true || !(response[:data] instanceof Dictionary)) {
             var error = response[:error] == null ? "Unable to load playlists" : response[:error];
-            $.am.debug("[loader.onResponseBuildPlaylists.fail] code=" + response[:code] + ", error=" + error);
             (context[:callback] as ResultCallbackType).invoke([], error);
             return;
         }
@@ -52,7 +51,6 @@ class AudioResourceLoader {
     ) as Void {
         if (response[:ok] != true || !(response[:data] instanceof Dictionary)) {
             var error = response[:error] == null ? "Unable to load tracks" : response[:error];
-            $.am.debug("[loader.onResponseBuildResources.fail] code=" + response[:code] + ", error=" + error);
             (context[:callback] as ResultCallbackType).invoke([], error);
             return;
         }

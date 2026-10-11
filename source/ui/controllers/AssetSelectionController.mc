@@ -40,7 +40,7 @@ class AssetSelectionController extends Ui.Menu2InputDelegate {
         AppStores.playlists.save(playlist.getId(), playlist.serialize());
 
         // Start playback
-        $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");
+        $.am().logger().info("[Media.startPlayback]", playlist.serialize());
         Media.startPlayback(playlist.getId());
     }
 

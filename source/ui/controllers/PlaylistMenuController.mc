@@ -20,7 +20,10 @@ class PlaylistMenuController extends Ui.Menu2InputDelegate {
         var index = item.getId() as Number;
         var playlist = _assets[index];
         
-        $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");
+        $.am().logger().debug(
+            "[NOW PLAYING]", 
+            { "id" => playlist.getId(), "data" => playlist.serialize() }
+        );
         Media.startPlayback(playlist.getId());
     }
 }

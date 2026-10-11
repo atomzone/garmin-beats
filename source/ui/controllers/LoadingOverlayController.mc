@@ -2,7 +2,6 @@ using Toybox.WatchUi as Ui;
 import Toybox.Lang;
 
 class LoadingOverlayController {
-
     private var _progressBar as Ui.ProgressBar;
     private var _operations as Dictionary = {};
 
@@ -11,7 +10,9 @@ class LoadingOverlayController {
     }
 
     function begin(id as Symbol, label as String) as Void {
-        $.am.debug("[LoadingOverlayController.begin] " + id.toString() + " (" + label + ")");
+        $.am().logger().debug(
+            "[LoadingOverlayController.begin]", { "id" => id.toString(), "label" => label }
+        );
 
         _operations[id] = label;
         refresh();
@@ -22,7 +23,9 @@ class LoadingOverlayController {
     }
 
     function end(id as Symbol) as Void {
-        $.am.debug("[LoadingOverlayController.end] " + id.toString() + " (" + _operations.get(id) + ")");
+        $.am().logger().debug(
+            "[LoadingOverlayController.end]", { "id" => id.toString(),  "label" => _operations.get(id) }
+        );
 
         if (_operations.hasKey(id)) {
             _operations.remove(id);

@@ -18,7 +18,7 @@ class SyncQueueBuilder {
         }
 
         for (var index = 0, limit = queue.size(); index < limit; index++) {
-            $.am.debug("::[" + queue[index]["entity"] + " > " + queue[index]["op"] + "]:: " + queue[index]["payload"]);
+            $.am().logger().debug("[SyncQueueBuilder.buildQueue]", queue[index]);
         }
 
         return queue;
@@ -47,7 +47,7 @@ class SyncQueueBuilder {
                 queue.add(enqueuePlaylistUpdate(asset.getId(), playlist));
             }
             else {
-                $.am.debug("::[SKIP playlist]:: id='" + playlist.getId() + "' - no changes detected");
+                $.am().logger().debug("[SyncQueueBuilder] No changes detected", { "id" => playlist.getId() });
             }
         }
 

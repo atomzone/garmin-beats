@@ -5,20 +5,26 @@ import Toybox.System;
 
 class ApplicationManager {
     private var _version as String;
+    private var _logger as Logger;
+    private var _logStore as LimitedStore;
 
     public function initialize() {
-        self._version = getTimestamp();
-        debug("Initializing ApplicationManager (Build | " + self._version + ")");
+        _version = getTimestamp();
+        _logStore = new LimitedStore("APP_LOGS", 100);
+        _logger = new Logger([
+            new ConsoleLogWriter(),
+            new StorageLogWriter(_logStore)
+        ]);
+
+        _logger.debug("ApplicationManager initialized", { "version" => _version });
     }
 
-    public function debug(message as String) as Void {
-        // var timestamp = getTimestamp();
-        // System.println("[" + timestamp + "] " + message);
-        System.println(message);
+    public function logger() as Logger {
+        return _logger;
     }
 
-    public function debugWithArgs(message as String, args as Object) as Void {
-        self.debug(message + "(" + self.parseArgs(args) + ")");
+    public function getLogs() as Array<String> {
+        return _logStore.read();
     }
 
     public function clearAll() as Void {
@@ -43,10 +49,6 @@ class ApplicationManager {
         for (var index = 0, limit = cachedMedia.size(); index < limit; index++) {
             MediaUtils.delete(cachedMedia[index]);
         }
-    }
-
-    private function parseArgs(args as Object?) as String {
-        return (args == null) ? "null" : args.toString();
     }
 
     private function getTimestamp() as String {

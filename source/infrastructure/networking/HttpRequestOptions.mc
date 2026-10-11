@@ -30,11 +30,23 @@ class HttpRequestOptions {
         return self;
     }
 
-    function json() as HttpRequestOptions {
-        self.options[:responseType] = Comm.HTTP_RESPONSE_CONTENT_TYPE_JSON;
+    function post() as HttpRequestOptions {
+        self.options[:method] = Comm.HTTP_REQUEST_METHOD_POST;
         return self;
     }
 
+    function json() as HttpRequestOptions {
+        self.options[:responseType] = Comm.HTTP_RESPONSE_CONTENT_TYPE_JSON;
+        // self.setHeader("Content-Type", "application/json");
+
+        return self;
+    }
+
+    private function setHeader(key as String, value as String) as Void {
+        var headers = self.options[:headers] as Dictionary;
+        headers[key] = value;
+    }
+    
     // function setAuthorization(authorization as Lang.String) as Void {
     //     self.options[:headers]["Authorization"] = authorization;
     // }

@@ -76,8 +76,10 @@ class MediaUtils {
             });
         }
         catch (e) {
-            $.am.debug("[MediaUtils.createBitmapFromSource] source='" 
-                + source.serialize() + "', error='" + e.getErrorMessage() + "'");
+            $.am().logger().warn("[createBitmapFromSource]", {
+                "source" => source.serialize(),
+                "error" => e.getErrorMessage()
+            });
         }
 
         return null;

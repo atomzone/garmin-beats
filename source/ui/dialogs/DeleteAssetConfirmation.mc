@@ -13,7 +13,7 @@ class DeleteAssetConfirmation extends Ui.ConfirmationDelegate {
 
     function onResponse(response as Ui.Confirm) as Boolean {
         if (response == WatchUi.CONFIRM_YES) {
-            $.am.clearAll();
+            $.am().clearAll();
             
             return true;
         }

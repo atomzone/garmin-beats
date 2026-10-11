@@ -12,7 +12,6 @@ class SyncQueueStore {
     }
 
     static function getSize() as Number {
-        $.am.debug("[QueueStore.getSize] CHECK");
         return load().size(); // could cache in mem
     }
 }

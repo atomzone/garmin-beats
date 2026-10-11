@@ -49,8 +49,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
             AppStores.playlists.save(playlist.getId(), playlist.serialize());
 
-            $.am.debug("[NOW PLAYING] id='" + playlist.getId() + "', '" + playlist.serialize() + "'");
-
+            $.am().logger().info("[Media.startPlayback]", playlist.serialize());
             Media.startPlayback(playlist.getId());
 
         // push library view
@@ -87,6 +86,16 @@ class MainMenuController extends Ui.Menu2InputDelegate {
                 new $.SettingsMenuController(_state), 
                 _transition
             );
+        } 
+        // push logs view
+        else if (id == :Logs) {
+            var logs = $.am().getLogs();
+
+            Ui.pushView(
+                new LogMenuView(logs),
+                new LogMenuController(logs),
+                _transition
+            );
         }
     }
     
@@ -95,7 +104,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         if (error != null) {
             MessageUtils.show(error);
-            $.am.debug("[main.displayResources.fail] " + error);
+            // $.am().info("[main.displayResources.fail] " + error, null);
             return;
         }
 
@@ -113,7 +122,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         if (error != null) {
             MessageUtils.show(error);
-            $.am.debug("[main.displayPlaylists.fail] " + error);
+            // $.am().info("[main.displayPlaylists.fail] " + error, null);
             return;
         }
 

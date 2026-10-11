@@ -16,7 +16,7 @@ class PlaybackProvider extends Media.ContentDelegate {
     }
 
     function getContentIterator() as Media.ContentIterator? {
-        $.am.debug("[PlaybackProvider.getContentIterator]");
+        $.am().logger().debug("[PlaybackProvider.getContentIterator]", null);
         
         return self._iterator;
     }
@@ -24,7 +24,7 @@ class PlaybackProvider extends Media.ContentDelegate {
     // Called by the system when the queue needs to restart (e.g. repeat-all, re-entry).
     // Reset the ContentIterator to the beginning of the current playlist
     function resetContentIterator() as Media.ContentIterator? {
-        $.am.debug("[PlaybackProvider.resetContentIterator]");
+        $.am().logger().debug("[PlaybackProvider.resetContentIterator]", null);
 
         // reset iterator to the beginning of the playlist
         self._iterator = new PlaybackQueue(_playlist, _session);
@@ -33,11 +33,11 @@ class PlaybackProvider extends Media.ContentDelegate {
     }
 
     function onAdAction(adContext as Object) as Void {
-        $.am.debugWithArgs("[onAdAction]", adContext);
+        $.am().logger().debug("[onAdAction]", { "context" => adContext });
     }
 
     function onCustomButton(button as Media.CustomButton) as Void {
-        $.am.debugWithArgs("[onCustomButton]", button);
+        $.am().logger().debug("[onCustomButton]", { "button" => button });
     }
 
     // repeatMode() is always null... 
@@ -51,13 +51,13 @@ class PlaybackProvider extends Media.ContentDelegate {
         var mode = _iterator.repeatMode();
         var message = (mode == null) ? "(missing repeat mode)" : repeatModes[mode] as String;
 
-        $.am.debug("[onRepeat] " +  message);
+        $.am().logger().debug("[onRepeat]", { "message" => message });
     }
     
     // Respond to a command to turn shuffle on or off
     // this /seems/ to force a queue.get
     function onShuffle() as Void {
-        $.am.debug("[onShuffle]");
+        $.am().logger().debug("[onShuffle]", null);
     }
 
     // Handles a notification from the system that an event has been triggered for the given song
@@ -66,10 +66,10 @@ class PlaybackProvider extends Media.ContentDelegate {
         songEvent as Media.SongEvent, 
         playbackPosition as Number or Media.PlaybackPosition
     ) as Void {
-        $.am.debug("[PlaybackProvider.onSong] event=" + eventName(songEvent) + " playbackPosition=" + playbackPosition);
-
-        // $.am.debug("[BUG] playlist index=" + _playlist.getCurrentTrackIndex());
-        // $.am.debug("[BUG] playlist position=" + _playlist.getCurrentTrackPosition());
+        $.am().logger().debug("[PlaybackProvider.onSong]", { 
+            "event" => eventName(songEvent),
+            "playbackPosition" => playbackPosition
+        });
 
         // Active track changed
         if (
@@ -116,14 +116,14 @@ class PlaybackProvider extends Media.ContentDelegate {
 
     // Respond to a thumbs-down action
     function onThumbsDown(contentRefId as Object) as Void {
-        $.am.debugWithArgs("[onThumbsDown]", contentRefId);
+        $.am().logger().debug("[onThumbsDown]", { "contentRefId" => contentRefId });
 
         // _session.setThumbsUp(true);
     }
 
     // Respond to a thumbs-up action
     function onThumbsUp(contentRefId as Object) as Void {
-        $.am.debugWithArgs("[onThumbsUp]", contentRefId);
+        $.am().logger().debug("[onThumbsUp]", { "contentRefId" => contentRefId });
 
         // _session.setThumbsUp(false);
     }

@@ -56,7 +56,11 @@ class PlaybackQueue extends Media.ContentIterator {
     // Returning false on a physical device prevents both user-skip AND auto-advance after completion.
     function canSkip() as Boolean {
         var isValid = _playlist.isValidIndex(_playlist.getCurrentTrackIndex() + 1);
-        $.am.debug("[Queue.canSkip] " + isValid + " (index=" + _playlist.getCurrentTrackIndex() + " size=" + _playlist.getAssetCount() + ")");
+        $.am().logger().debug("[Queue.canSkip]", {
+            "isValid" => isValid,
+            "index" => _playlist.getCurrentTrackIndex(),
+            "size" => _playlist.getAssetCount()
+        });
 
         return isValid;
     }
@@ -137,7 +141,10 @@ class PlaybackQueue extends Media.ContentIterator {
 
     private function getMediaContent(index as Number) as Media.Content? {
         if (!_playlist.isValidIndex(index)) {
-            $.am.debug("[Queue.getMediaContent] null - index=" + index + "/" + (_playlist.getAssetCount() - 1));
+            $.am().logger().debug("[Queue.getMediaContent] Invalid index", {
+              "index" => + index,
+              "count" => _playlist.getAssetCount() - 1
+            });
             return null;
         }
 
@@ -156,11 +163,18 @@ class PlaybackQueue extends Media.ContentIterator {
         var position = _playlist.getCurrentTrackPosition();
 
         if (position > 0) {
-            $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playlist.getAssetCount() - 1) + " position=" + position);
+            $.am().logger().debug("[Queue.getMediaContent] Invalid index", {
+              "index" => + index,
+              "count" => _playlist.getAssetCount() - 1,
+              "position" => position
+            });
             return MediaUtils.getActiveContentWithMetadata(refId, metadata, position);
         }
 
-        $.am.debug("[Queue.getMediaContent] index=" + index + "/" + (_playlist.getAssetCount() - 1));
+        $.am().logger().debug("[Queue.getMediaContent] Invalid index", {
+            "index" => + index,
+            "count" => _playlist.getAssetCount() - 1
+        });
         return MediaUtils.getContentWithMetadata(refId, metadata);
     }
 
@@ -180,7 +194,7 @@ class PlaybackQueue extends Media.ContentIterator {
     // think avout changing to a stragih lookup
     // get(asset.mediaId) -> refId -> getContent(refId)
     private function getRefId(asset as AudioAsset) as Object? {
-        $.am.debug("[PlaybackQueue.getRefId] sourceChecksum='" + asset.getMediaId() + "'");
+        $.am().logger().debug("[PlaybackQueue.getRefId]", { "sourceChecksum" => asset.getMediaId() });
 
         var mediaAssetType = AppStores.media.load(asset.getMediaId()) as MediaRecordType?;
 

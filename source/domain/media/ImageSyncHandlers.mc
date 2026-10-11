@@ -37,6 +37,9 @@ class ImageSyncHandler extends TransactionAsyncHandler {
     ) as Void {
 
         if (data == null || responseCode != 200) {
+            $.am().logger().error("[ImageSyncHandler.onResponse]", {
+                "code" => responseCode, "data" => data
+            });
             fail("Image download failed");
             return;
         }
@@ -46,7 +49,10 @@ class ImageSyncHandler extends TransactionAsyncHandler {
         try {
             AppStores.images.save(id, data);
         } catch (e) {
-            $.am.debug("[ImageSyncHandler.onResponse]" + e.getErrorMessage());
+            $.am().logger().warn("[ImageSyncHandler.onResponse]", {
+                "id" => id,
+                "error" => e.getErrorMessage()
+            });
             fail("Image could not be saved");
         }
 

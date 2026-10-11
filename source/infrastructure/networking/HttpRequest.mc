@@ -33,15 +33,19 @@ class HttpRequest {
 
     function initialize(resource as ResourceType, context as Object?, handler as HandlerType) {
         _href = resource[:href] as String;
-        _parameters = resource[:parameters];
+        var parameters = resource[:parameters];
+        _parameters = parameters == null ? {} : parameters;
         _context = context;
         _handler = handler;
     }
 
     function getJson() as Void {
-        makeRequest(
-            new HttpRequestOptions().get().json()
-        );
+        makeRequest(new HttpRequestOptions().get().json());
+    }
+
+    function postJson(body as Dictionary?) as Void {
+        var requestBody = body == null ? _parameters : body;
+        makeRequestWithBody(new HttpRequestOptions().post().json(), requestBody);
     }
 
     function getAudio(
@@ -59,7 +63,7 @@ class HttpRequest {
 
         settings.options[:fileDownloadProgressCallback] = onProgressCallback;
 
-        makeRequest(settings);
+        makeRequestWithBody(settings, _parameters);
     }
 
     function onResponse(
@@ -69,7 +73,6 @@ class HttpRequest {
         var isOk = isSuccessResponse(responseCode);
         var payload = data as Object?;
         var errorMessage = isOk ? null : getErrorMessage(responseCode);
-        $.am.debug("[http.response] " + (isOk ? "ok" : "fail") + " code=" + responseCode + " error=" + (errorMessage == null ? "none" : errorMessage));
 
         var response = {
             :ok => isOk,
@@ -77,6 +80,15 @@ class HttpRequest {
             :data => payload,
             :error => errorMessage
         } as ResponseType;
+
+        if (isOk) {
+            $.am().logger().info("[http.response]", { "code" => responseCode, "payload" => payload });
+        }
+        else {
+            $.am().logger().error("[http.response]", { 
+                "code" => responseCode, "payload" => payload, "error" => errorMessage 
+            });
+        }
 
         _handler.invoke(response, _context);
     }
@@ -86,15 +98,24 @@ class HttpRequest {
     }
 
     private function makeRequest(httpRequest as HttpRequestOptions) as Void {
+        makeRequestWithBody(httpRequest, _parameters);
+    }
+
+    private function makeRequestWithBody(httpRequest as HttpRequestOptions, body as Dictionary?) as Void {
         if (!hasTransport()) {
             onResponse(-1008, null);
             return;
         }
 
-        $.am.debug("[http.request] url=" + _href);
+        var requestBody = body == null ? {} : body as Dictionary;
+        var methodName = httpRequest.options[:method] as String;
+
+        $.am().logger().info(
+            "[http.request]", { "url" => _href, "method" => methodName }
+        );
         Comm.makeWebRequest(
             _href, 
-            _parameters, 
+            requestBody,
             httpRequest.options,
             method(:onResponse)
         ); 

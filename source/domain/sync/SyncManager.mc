@@ -32,7 +32,7 @@ class SyncManager extends Comm.SyncDelegate {
             _processor.stop();
         }
 
-        $.am.debug("[SyncManager] Sync aborted, running reconciliation");
+        $.am().logger().info("[SyncManager] Sync aborted, running reconciliation", null);
         new SyncReconciler().reconcile();
 
         Comm.notifySyncComplete(null);
@@ -48,7 +48,7 @@ class SyncManager extends Comm.SyncDelegate {
 
         // [TODO] Should we run on Error?
         if (error == null) {
-            $.am.debug("[SyncManager] Sync completed successfully, running reconciliation");
+            $.am().logger().info("[SyncManager] Sync completed successfully, running reconciliation", null);
             new SyncReconciler().reconcile();
         }
 

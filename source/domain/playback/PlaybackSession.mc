@@ -20,14 +20,20 @@ class PlaybackSession {
     }
 
     function onResumeCheckpoint(position as Number) as Void {
-        $.am.debug("[onPlaybackPosition] index=" + _playlist.getCurrentTrackIndex() + " Current=" + _playlist.getCurrentTrackPosition() + ", New=" + position);
+        $.am().logger().debug("[onPlaybackPosition]", {
+            "index" => _playlist.getCurrentTrackIndex(),
+            "current" => _playlist.getCurrentTrackPosition(),
+            "position" => position
+        });
 
         _playlist.setCurrentTrackPosition(position);
         savePlaybackState();
     }
 
     function onTrackChanged() as Void {
-        $.am.debug("[onTrackChanged] index=" + _playlist.getCurrentTrackIndex());
+        $.am().logger().debug("[onTrackChanged]", {
+            "index" => _playlist.getCurrentTrackIndex()
+        });
 
         _playlist.setCurrentTrackPosition(0);
         savePlaybackState();

@@ -9,7 +9,7 @@ class MenuLifecycleBehavior {
     private var _isClosed as Boolean? = null;
 
     function handleAutoCloseOnShow() as Void {
-        $.am.debug("[MenuLifecycleBehavior.onShow] isClosed=" + _isClosed);
+        $.am().logger().debug("[MenuLifecycleBehavior.onShow]", { "isClosed" => _isClosed });
         
         if (_isClosed == true) {
             Ui.popView(Ui.SLIDE_IMMEDIATE);
@@ -20,7 +20,7 @@ class MenuLifecycleBehavior {
     }
 
     function markClosedOnHide() as Void {
-        $.am.debug("[MenuLifecycleBehavior.onHide] isClosed=" + _isClosed);
+        $.am().logger().debug("[MenuLifecycleBehavior.onHide]", { "isClosed" => _isClosed });
         _isClosed = true;
     }
 }

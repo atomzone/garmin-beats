@@ -36,9 +36,12 @@ class SyncTransactionHandler {
         var entity = getTransaction()["entity"];
         var payload = getTransaction()["payload"];
 
-        $.am.debug("[SYNC] op " + op + " ID " + tid);
-        $.am.debug("entity " + entity);
-        $.am.debug("payload " + payload);
+        $.am().logger().debug("[SyncTransactionHandler.execute]", {
+            "tid" => tid,
+            "operation" => op,
+            "entity" => entity,
+            "payload" => payload
+        });
 
         return COMPLETE;
     }
@@ -56,14 +59,19 @@ class TransactionAsyncHandler extends SyncTransactionHandler {
         _onComplete = onComplete;
     }
 
+    // BASE CLASS; IS THIS EVER CALLED?
     function execute() as SyncTransactionHandler.TransactionResult {
+        var tid = getTransaction()["tid"];
         var op = getTransaction()["op"];
         var entity = getTransaction()["entity"];
         var payload = getTransaction()["payload"];
 
-        $.am.debug("[ASYNC] op " + op);
-        $.am.debug("entity " + entity);
-        $.am.debug("payload " + payload);
+        $.am().logger().debug("[TransactionAsyncHandler.execute]", {
+            "tid" => tid,
+            "operation" => op,
+            "entity" => entity,
+            "payload" => payload
+        });
 
         // dummy async
         var cbTimer = new Timer.Timer();

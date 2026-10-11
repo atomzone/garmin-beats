@@ -25,8 +25,11 @@ class AudioAssetSyncHandler extends SyncTransactionHandler {
                 "chapters" => source["chapters"]
             } as AudioAssetType);
 
-            $.am.debug("[AudioAssetSyncHandler.execute][" + operation 
-                + "][AudioAsset] :: targetId='" + id + "', data='" + asset.serialize() + "'");
+            $.am().logger().debug("[AudioAssetSyncHandler.execute]", {
+                "operation" => operation,
+                "targetId" => id,
+                "data" => asset.serialize()
+            });
 
             AppStores.tracks.save(id, asset.serialize());
         }

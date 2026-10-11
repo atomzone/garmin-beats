@@ -55,7 +55,11 @@ class IndexedStore {
         _index.add(id);
         bumpRevision();
 
-        $.am.debug("[IndexedStore][Save][" + _partitionId + "] :: id='" + id + "', value='" + value + "'");
+        $.am().logger().debug("[IndexedStore][Save]", {
+            "partitionId" => _partitionId,
+            "id" => id,
+            "value" => value
+        });
     }
 
     public function remove(id as String) as Void {

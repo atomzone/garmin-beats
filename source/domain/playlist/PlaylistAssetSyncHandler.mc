@@ -24,8 +24,11 @@ class PlaylistAssetSyncHandler extends SyncTransactionHandler {
                 "trackIds" => payload["trackIds"] as Array<String>,
             } as PlaylistAssetType);
 
-            $.am.debug("[PlaylistAssetSyncHandler.execute][" + operation 
-                + "][PlaylistAsset] :: targetId='" + id + "', data='" + asset.serialize() + "'");
+            $.am().logger().debug("[PlaylistAssetSyncHandler.execute]", {
+                "operation" => operation,
+                "targetId" => id,
+                "data" => asset.serialize()
+            });
 
             AppStores.playlists.save(id, asset.serialize());
         }

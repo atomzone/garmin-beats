@@ -4,7 +4,7 @@ using Toybox.Communications as Comm;
 
 import Toybox.Lang;
 
-var am as ApplicationManager = new ApplicationManager();
+var _am as ApplicationManager?;
 
 class AppEntry extends App.AudioContentProviderApp {
 
@@ -13,11 +13,12 @@ class AppEntry extends App.AudioContentProviderApp {
     function initialize() {
         App.AudioContentProviderApp.initialize();
 
+        _am = new ApplicationManager();
         _state = new AppState();
 
         // Do we need to track drift between system storage and the app?
         var reconciler = new SyncReconciler();
-        $.am.debug("Reconciliation result: " + reconciler.audit());
+        $.am().logger().info("Reconciliation", { "audit" => reconciler.audit() });
     }
 
     function getContentDelegate(playlistId as App.PersistableType) as Media.ContentDelegate {
@@ -30,11 +31,12 @@ class AppEntry extends App.AudioContentProviderApp {
             return new EmptyContentDelegate();
         }
 
-        $.am.debug("[AppEntry.getContentDelegate]"
-            + " assets=" + playerPlaylist.getAssetCount()
-            + " playlist=" + playerPlaylist.getPlaylistId()
-            + " index=" + playerPlaylist.getCurrentTrackIndex() 
-            + " position=" + playerPlaylist.getCurrentTrackPosition());
+        $.am().logger().info("[AppEntry.getContentDelegate]", {
+            "assets" => playerPlaylist.getAssetCount(),
+            "playlist" => playerPlaylist.getPlaylistId(),
+            "index" => playerPlaylist.getCurrentTrackIndex(),
+            "position" => playerPlaylist.getCurrentTrackPosition()
+        });
 
         var session = new PlaybackSession(playerPlaylist);
 
@@ -61,6 +63,13 @@ class AppEntry extends App.AudioContentProviderApp {
 
     // https://developer.garmin.com/connect-iq/api-docs/Toybox/Application/AppBase.html#onSettingsChanged-instance_function
     function onSettingChanged(key as String, value as String) as Void {
-        $.am.debug("Setting changed: " + key + " = " + value);
+        $.am().logger().debug("Setting changed", { "key" => key, "value" => value });
     }
+}
+
+function am() as ApplicationManager {
+    if (_am == null) {
+        _am = new ApplicationManager();
+    }
+    return _am;
 }

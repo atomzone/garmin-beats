@@ -9,5 +9,6 @@
     <menu-item id="GetPlaylists" label="Get Playlists" subLabel="Browse and fetch playlists"/>
     <menu-item id="GetTracks" label="@Strings.GetTracksLabel" subLabel="@Strings.GetTracksDesc"/>
     <menu-item id="Settings" label="@Strings.SettingsLabel" subLabel="@Strings.SettingsDesc"/>
+    <menu-item id="Logs" label="Logs" subLabel="View the system logs"/>
 
 </menu2>
