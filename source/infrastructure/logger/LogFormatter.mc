@@ -14,15 +14,15 @@ class StringLogFormatter {
             return result;
         }
 
-        var argString = "";
+        var argString = "\n\t";
         var keys = (entry.args as Dictionary<String, Object?>).keys();
         var values = (entry.args as Dictionary<String, Object?>).values();
 
         for(var i = 0, max = keys.size(); i < max; i++) {
-            argString += keys[i] + "=" + values[i] + ", ";
+            argString += keys[i] + " = '" + values[i] + "'\n\t";
         }
 
-        return result + " { " + argString.substring(0, argString.length() - 2) + " }";
+        return result + argString.substring(0, argString.length() - 2);
     }
 }
 
