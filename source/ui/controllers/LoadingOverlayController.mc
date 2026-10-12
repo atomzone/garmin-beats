@@ -1,5 +1,19 @@
+using Toybox.Communications as Comm;
 using Toybox.WatchUi as Ui;
 import Toybox.Lang;
+
+class LoadingOverlayDelegate extends Ui.BehaviorDelegate {
+    function initialize() {
+        BehaviorDelegate.initialize();
+    }
+
+    // Cancel all pending JSON and Image requests
+    function onBack() as Boolean {
+        Comm.cancelAllRequests();
+
+        return true;
+    }
+}
 
 class LoadingOverlayController {
     private var _progressBar as Ui.ProgressBar;
@@ -18,7 +32,7 @@ class LoadingOverlayController {
         refresh();
 
         if (_operations.size() == 1) {
-            WatchUi.pushView(_progressBar, null, WatchUi.SLIDE_IMMEDIATE);
+            WatchUi.pushView(_progressBar, new LoadingOverlayDelegate(), WatchUi.SLIDE_IMMEDIATE);
         }
     }
 

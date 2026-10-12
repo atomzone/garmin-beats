@@ -36,7 +36,7 @@ class SyncManager extends Comm.SyncDelegate {
         new SyncReconciler().reconcile();
 
         Comm.notifySyncComplete(null);
-        Comm.cancelAllRequests();
+        Comm.cancelAllRequests(); //  NEEDED? cancelAllRequests is for JSON and Images
     }
 
     function onProgress(progress as Number) as Void {

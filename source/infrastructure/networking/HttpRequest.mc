@@ -26,12 +26,12 @@ typedef AudioDownloadContextType as {
 typedef HandlerType as Method(response as ResponseType, context as Object?) as Void;
 
 class HttpRequest {
-    private var _handler as HandlerType;
+    private var _handler as HandlerType?;
     private var _href as String;
     private var _parameters as Dictionary<Object, Object>?;
     private var _context as Object?;
 
-    function initialize(resource as ResourceType, context as Object?, handler as HandlerType) {
+    function initialize(resource as ResourceType, context as Object?, handler as HandlerType?) {
         _href = resource[:href] as String;
         var parameters = resource[:parameters];
         _parameters = parameters == null ? {} : parameters;
@@ -90,7 +90,9 @@ class HttpRequest {
             });
         }
 
-        _handler.invoke(response, _context);
+        if (_handler != null) {
+            _handler.invoke(response, _context);
+        }
     }
 
     private function isSuccessResponse(responseCode as Number) as Boolean {

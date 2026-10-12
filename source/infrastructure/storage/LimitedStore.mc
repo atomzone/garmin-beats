@@ -11,19 +11,19 @@ class LimitedStore {
         _maxEntries = maxEntries;
     }
 
-    function append(entry as String) as Void {
-        var entries = StorageManager.loadOrDefault(_key, []) as Array<String>;
+    function append(entry as Storage.ValueType) as Void {
+        var entries = StorageManager.loadOrDefault(_key, []) as Array<Storage.ValueType>;
 
         if (entries.size() >= _maxEntries) {
             entries.remove(entries[0]);
         }
 
         entries.add(entry);
-        StorageManager.save(_key, entries as Array<Storage.ValueType>);
+        StorageManager.save(_key, entries);
     }
 
-    function read() as Array<String> {
-        return StorageManager.loadOrDefault(_key, []) as Array<String>;
+    function read() as Array<Storage.ValueType> {
+        return StorageManager.loadOrDefault(_key, []) as Array<Storage.ValueType>;
     }
 
     function clear() as Void {

@@ -18,7 +18,7 @@ class AppEntry extends App.AudioContentProviderApp {
 
         // Do we need to track drift between system storage and the app?
         var reconciler = new SyncReconciler();
-        $.am().logger().info("Reconciliation", { "audit" => reconciler.audit() });
+        $.am().logger().info("Reconciliation", reconciler.audit());
     }
 
     function getContentDelegate(playlistId as App.PersistableType) as Media.ContentDelegate {

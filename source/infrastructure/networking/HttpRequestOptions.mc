@@ -32,17 +32,18 @@ class HttpRequestOptions {
 
     function post() as HttpRequestOptions {
         self.options[:method] = Comm.HTTP_REQUEST_METHOD_POST;
+
         return self;
     }
 
     function json() as HttpRequestOptions {
         self.options[:responseType] = Comm.HTTP_RESPONSE_CONTENT_TYPE_JSON;
-        // self.setHeader("Content-Type", "application/json");
+        self.setHeader("Content-Type", Comm.REQUEST_CONTENT_TYPE_JSON);
 
         return self;
     }
 
-    private function setHeader(key as String, value as String) as Void {
+    private function setHeader(key as String, value as Number) as Void {
         var headers = self.options[:headers] as Dictionary;
         headers[key] = value;
     }
