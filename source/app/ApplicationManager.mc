@@ -23,8 +23,8 @@ class ApplicationManager {
         return _logger;
     }
 
-    public function getLogs() as Array<String> {
-        return _logStore.read();
+    public function getLogs() as Array<StructuredLogType> {
+        return _logStore.read() as Array<StructuredLogType>;
     }
 
     public function clearAll() as Void {

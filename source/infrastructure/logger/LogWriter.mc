@@ -1,3 +1,4 @@
+using Toybox.Application.Storage as Storage;
 import Toybox.Lang;
 
 typedef LogWriter as interface {
@@ -6,35 +7,27 @@ typedef LogWriter as interface {
 };
 
 class ConsoleLogWriter {
-    var _formatter as StringLogFormatter;
-
-    function initialize() {
-        _formatter = new StringLogFormatter();
-    }
-
     function getMinimumLevel() as LogEntry.LogLevel {
         return LogEntry.DEBUG;
     }
 
     function write(entry as LogEntry) as Void {
-        System.println(_formatter.format(entry));
+        System.println(StringLogFormatter.format(entry));
     }
 }
 
 class StorageLogWriter {
     private var _logStore as LimitedStore;
-    private var _formatter as StringLogFormatter;
 
     function initialize(logStore as LimitedStore) {
         _logStore = logStore;
-        _formatter = new StringLogFormatter();
     }
 
     function getMinimumLevel() as LogEntry.LogLevel {
-        return LogEntry.INFO;
+        return LogEntry.DEBUG; // WARN;
     }
 
     function write(entry as LogEntry) as Void {
-        _logStore.append(_formatter.format(entry));
+        _logStore.append(StructuredLogFormatter.format(entry));
     }
 }

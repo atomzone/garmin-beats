@@ -7,26 +7,26 @@ class Logger {
         _writers = writers;
     }
 
-    function debug(message as String, args as Dictionary<String, Object?>?) as Void {
+    function debug(message as String, args as LogEntryArgsType?) as Void {
         log(LogEntry.DEBUG, message, args);
     }
 
-    function info(message as String, args as Dictionary<String, Object?>?) as Void {
+    function info(message as String, args as LogEntryArgsType?) as Void {
         log(LogEntry.INFO, message, args);
     }
 
-    function warn(message as String, args as Dictionary<String, Object?>?) as Void {
+    function warn(message as String, args as LogEntryArgsType?) as Void {
         log(LogEntry.WARN, message, args);
     }
 
-    function error(message as String, args as Dictionary<String, Object?>?) as Void {
+    function error(message as String, args as LogEntryArgsType?) as Void {
         log(LogEntry.ERROR, message, args);
     }
 
     private function log(
         level as LogEntry.LogLevel,
         message as String,
-        args as Dictionary<String, Object?>?
+        args as LogEntryArgsType?
     ) as Void {
         for (var i = 0, max = _writers.size(); i < max; i++) {
             if (LogEntry.isAtLeast(level, _writers[i].getMinimumLevel())) {

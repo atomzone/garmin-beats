@@ -1,4 +1,7 @@
+using Toybox.Application.Storage as Storage;
 import Toybox.Lang;
+
+typedef LogEntryArgsType as Dictionary<String, Object?>;
 
 class LogEntry {
     enum LogLevel {
@@ -11,14 +14,14 @@ class LogEntry {
     var timestamp as Number;
     var level as LogLevel;
     var message as String;
-    var args as Dictionary<String, Object?>?;
+    var args as LogEntryArgsType?;
 
     function initialize(
         level as LogLevel,
         message as String,
-        args as Dictionary<String, Object?>?
+        args as LogEntryArgsType?
     ) {
-        timestamp = Time.now().value();
+        self.timestamp = Time.now().value();
         self.level = level;
         self.message = message;
         self.args = args;

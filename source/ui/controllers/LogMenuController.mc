@@ -2,9 +2,9 @@ using Toybox.WatchUi as Ui;
 import Toybox.Lang;
 
 class LogMenuController extends Ui.Menu2InputDelegate {
-    private var _entries as Array<String>;
+    private var _entries as Array<StructuredLogType>;
 
-    function initialize(entries as Array<String>) {
+    function initialize(entries as Array<StructuredLogType>) {
         Ui.Menu2InputDelegate.initialize();
         _entries = entries;
     }
@@ -14,6 +14,13 @@ class LogMenuController extends Ui.Menu2InputDelegate {
         var message = _entries[index];
 
         System.println("[LogMenuController] Selected log entry: " + message);
+
+        var request = new HttpRequest({
+            :href => "https://mantledb.sh/v2/my-playlists/test",
+            :parameters => {}
+        }, null, null);
+
+        request.postJson({ "logs" => _entries });
 
         // Ui.pushView(
         //     new LogDetailView(message),
