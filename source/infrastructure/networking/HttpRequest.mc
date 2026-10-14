@@ -1,6 +1,7 @@
 using Toybox.Communications as Comm;
 using Toybox.Media as Media;
 using Toybox.PersistedContent as PersistedContent;
+using Toybox.Timer;
 import Toybox.Lang;
 
 typedef ResourceType as { 
@@ -30,6 +31,8 @@ class HttpRequest {
     private var _href as String;
     private var _parameters as Dictionary<Object, Object>?;
     private var _context as Object?;
+    private var _timer as Timer.Timer?;
+    private var _timeout as Number = 5000; // 5s
 
     function initialize(resource as ResourceType, context as Object?, handler as HandlerType?) {
         _href = resource[:href] as String;
@@ -70,6 +73,8 @@ class HttpRequest {
         responseCode as Number, 
         data as Dictionary or String or PersistedContent.Iterator or Null
     ) as Void {
+        stopTimeout();
+
         var isOk = isSuccessResponse(responseCode);
         var payload = data as Object?;
         var errorMessage = isOk ? null : getErrorMessage(responseCode);
@@ -95,6 +100,16 @@ class HttpRequest {
         }
     }
 
+    function onTimeout() as Void {
+        _timer = null;
+
+        $.am().logger().warn("[http.timeout] Cancel all requests", {
+            "timeout" => _timeout
+        });
+
+        Comm.cancelAllRequests();
+    }
+
     private function isSuccessResponse(responseCode as Number) as Boolean {
         return responseCode >= 200 && responseCode < 300;
     }
@@ -109,18 +124,35 @@ class HttpRequest {
             return;
         }
 
+        startTimeout();
+
         var requestBody = body == null ? {} : body as Dictionary;
         var methodName = httpRequest.options[:method] as String;
 
         $.am().logger().info(
             "[http.request]", { "url" => _href, "method" => methodName }
         );
+
         Comm.makeWebRequest(
             _href, 
             requestBody,
             httpRequest.options,
             method(:onResponse)
         ); 
+    }
+
+    private function startTimeout() as Void {
+        stopTimeout();
+
+        _timer = new Timer.Timer();
+        _timer.start(method(:onTimeout), _timeout, false);
+    }
+
+    private function stopTimeout() as Void {
+        if (_timer != null) {
+            _timer.stop();
+            _timer = null;
+        }
     }
     
     private function hasTransport() as Boolean {

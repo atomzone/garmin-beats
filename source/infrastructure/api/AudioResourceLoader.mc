@@ -3,6 +3,9 @@ import Toybox.Lang;
 class AudioResourceLoader {
     private var _href as String;
 
+    // this is a bad design choice
+    // href should be fetch based arg...
+    // playlist vs resources vs ..
     function initialize(href as String) {
         self._href = href;
     }

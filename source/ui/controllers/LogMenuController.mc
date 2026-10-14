@@ -15,17 +15,12 @@ class LogMenuController extends Ui.Menu2InputDelegate {
 
         System.println("[LogMenuController] Selected log entry: " + message);
 
-        var request = new HttpRequest({
-            :href => "https://mantledb.sh/v2/my-playlists/test",
-            :parameters => {}
-        }, null, null);
-
-        request.postJson({ "logs" => _entries });
-
-        // Ui.pushView(
-        //     new LogDetailView(message),
-        //     new LogDetailDelegate(),
-        //     Ui.SLIDE_UP
-        // );
+        var request = new MantleDb("my-playlists/test");
+        request.write({ "logs" => _entries });
+        // request.read(method(:onReadCallback));
     }
+
+    function onReadCallback(result as Object?, error as String?) as Void {
+        $.am().logger().debug("onReadCallback", { "result" => result });
+    } 
 }
