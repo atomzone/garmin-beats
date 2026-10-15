@@ -73,7 +73,7 @@ class HttpRequest {
         responseCode as Number, 
         data as Dictionary or String or PersistedContent.Iterator or Null
     ) as Void {
-        stopTimeout();
+        // stopTimeout();
 
         var isOk = isSuccessResponse(responseCode);
         var payload = data as Object?;
@@ -87,7 +87,7 @@ class HttpRequest {
         } as ResponseType;
 
         if (isOk) {
-            $.am().logger().info("[http.response]", { "code" => responseCode, "payload" => payload });
+            $.am().logger().info("[http.response]", { "code" => responseCode }); //, "payload" => payload });
         }
         else {
             $.am().logger().error("[http.response]", { 
@@ -100,6 +100,7 @@ class HttpRequest {
         }
     }
 
+    // this timeout is canceling ligit long downloads...
     function onTimeout() as Void {
         _timer = null;
 
@@ -124,7 +125,7 @@ class HttpRequest {
             return;
         }
 
-        startTimeout();
+        // startTimeout();
 
         var requestBody = body == null ? {} : body as Dictionary;
         var methodName = httpRequest.options[:method] as String;

@@ -47,10 +47,10 @@ class SyncManager extends Comm.SyncDelegate {
     function onComplete(error as String?) as Void {
 
         // [TODO] Should we run on Error?
-        if (error == null) {
-            $.am().logger().info("[SyncManager] Sync completed successfully, running reconciliation", null);
+        // if (error == null) {
+            $.am().logger().info("[SyncManager] Sync completed successfully, running reconciliation", { "error" => error });
             new SyncReconciler().reconcile();
-        }
+        // }
 
         Comm.notifySyncComplete(error);
     }

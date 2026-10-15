@@ -12,6 +12,7 @@ class PlaybackQueue extends Media.ContentIterator {
         playlist as PlayerPlaylist,
         session as PlaybackSession
     ) {
+        Media.ContentIterator.initialize();
         _playlist = playlist;
         _session = session;
     }
@@ -102,6 +103,9 @@ class PlaybackQueue extends Media.ContentIterator {
         profile.skipPreviousThreshold = 1;
         profile.skipBackwardTimeDelta = 23;
         profile.skipForwardTimeDelta = 23;
+
+        // https://developer.garmin.com/connect-iq/api-docs/Toybox/Media/PlayerColors.html
+        // Toybox.Media.PlayerColors
         
         return profile;
     }

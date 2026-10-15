@@ -10,13 +10,27 @@ class ApplicationManager {
 
     public function initialize() {
         _version = getTimestamp();
-        _logStore = new LimitedStore("APP_LOGS", 100);
+        _logStore = new LimitedStore("APP_LOGS", 50);
         _logger = new Logger([
             new ConsoleLogWriter(),
             new StorageLogWriter(_logStore)
         ]);
 
         _logger.debug("ApplicationManager initialized", { "version" => _version });
+
+        // Storage review
+        var cacheStats = Media.getCacheStatistics();
+        _logger.debug("Stores media cache size in bytes", {
+            "capacity" => cacheStats.capacity,
+            "size" => cacheStats.size
+        });
+
+        var sysStats = System.getSystemStats();
+        _logger.debug("Device memory statistics in bytes", {
+            "freeMemory" => sysStats.freeMemory, // bytes
+            "totalMemory" => sysStats.totalMemory,
+            "usedMemory" => sysStats.usedMemory
+        });
     }
 
     public function logger() as Logger {
@@ -24,10 +38,19 @@ class ApplicationManager {
     }
 
     public function getLogs() as Array<StructuredLogType> {
+        _logger.debug("Reading logs from Store", null);
         return _logStore.read() as Array<StructuredLogType>;
     }
 
+    public function clearLogs() as Void {        
+        _logStore.clear();
+        _logger.debug("Clearing logs from Store", null);
+    }
+
     public function clearAll() as Void {
+
+        // CLEAR LOGS
+        _logStore.clear();
 
         // REMOVE PLAYLISTS
         AppStores.playlists.clear();
@@ -45,6 +68,8 @@ class ApplicationManager {
         PlaybackStateStore.clear();
 
         // REMOVE CACHCED CONTENT
+        // Media.resetContentCache(); ????
+        
         var cachedMedia = MediaUtils.getCachedMediaRefIds(Media.CONTENT_TYPE_AUDIO);
         for (var index = 0, limit = cachedMedia.size(); index < limit; index++) {
             MediaUtils.delete(cachedMedia[index]);

@@ -90,9 +90,22 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         // push logs view
         else if (id == :Logs) {
             var logs = $.am().getLogs();
+            System.println(logs);
+
+            var view;
+
+            try {
+                view = new LogMenuView(logs);
+            } catch(e instanceof Lang.Exception) {
+                $.am().logger().warn("Invalid log records", { "error" => e.getErrorMessage() });
+                $.am().clearLogs();
+                
+                logs = [];
+                view = new LogMenuView(logs);
+            }
 
             Ui.pushView(
-                new LogMenuView(logs),
+                view,
                 new LogMenuController(logs),
                 _transition
             );

@@ -13,6 +13,7 @@ class StorageManager {
     }
     
     static function save(key as Storage.KeyType, value as Storage.ValueType) as Void {
+        // need to try/catch storage LIMITs
         Storage.setValue(key, value);
     }
 
