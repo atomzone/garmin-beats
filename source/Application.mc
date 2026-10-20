@@ -1,5 +1,6 @@
 using Toybox.Application as App;
 using Toybox.Media as Media;
+using Toybox.WatchUi as Ui;
 using Toybox.Communications as Comm;
 
 import Toybox.Lang;
@@ -47,12 +48,12 @@ class AppEntry extends App.AudioContentProviderApp {
         return new SyncManager();
     }
 
-    function getPlaybackConfigurationView() {
-        return [ new MainMenuView(_state), new MainMenuController(_state) ];
+    function getPlaybackConfigurationView() as [Ui.Views] or [Ui.Views, Ui.InputDelegates] {
+        return getSyncConfigurationView();
     }
 
-    function getSyncConfigurationView() {
-        return getPlaybackConfigurationView();
+    function getSyncConfigurationView() as [Ui.Views] or [Ui.Views, Ui.InputDelegates] {
+        return [ new MainMenuView(_state), new MainMenuController(_state) ];
     }
 
     function getProviderIconInfo() as Media.ProviderIconInfo? {
@@ -63,7 +64,7 @@ class AppEntry extends App.AudioContentProviderApp {
 
     // https://developer.garmin.com/connect-iq/api-docs/Toybox/Application/AppBase.html#onSettingsChanged-instance_function
     function onSettingChanged(key as String, value as String) as Void {
-        $.am().logger().debug("Setting changed", { "key" => key, "value" => value });
+        $.am().logger().info("Setting changed", { "key" => key, "value" => value });
     }
 }
 

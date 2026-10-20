@@ -63,23 +63,26 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         } 
         // fetch playlist.json and build navigation
-        else if (id == :GetPlaylists) {
-
+        else if (id == :GetGhPlaylists) {
             var loader = new AudioResourceLoader(getPlaylistUrl());
 
-            _overlay.begin(:GetPlaylists, "Fetching playlists");
+            _overlay.begin(:GetPlaylists, "Fetching Gh playlists");
             loader.fetchPlaylists(method(:displayPlaylists));
+        } 
+        else if (id == :GetWhPlaylists) {
+            var loader = new AudioResourceLoader("https://webhook.site/57d0ad3b-fbcb-4d6b-ae5b-5d4276d97a0a");
 
-        // async fetch then push reources view
-        } else if (id == :GetTracks) {
-            
+            _overlay.begin(:GetPlaylists, "Fetching Wh playlists");
+            loader.fetchPlaylists(method(:displayPlaylists));
+        }
+        else if (id == :GetTracks) {
             var loader = new AudioResourceLoader("https://atomzone.github.io/static/tracks.json");
 
             _overlay.begin(:GetTracks, "Fetching tracks");
             loader.fetchResources(method(:displayResources));
-
+        } 
         // push settings view
-        } else if (id == :Settings) {
+        else if (id == :Settings) {
 
             Ui.pushView(
                 new $.Rez.Menus.SettingsMenu(), 
@@ -99,7 +102,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
             } catch(e instanceof Lang.Exception) {
                 $.am().logger().warn("Invalid log records", { "error" => e.getErrorMessage() });
                 $.am().clearLogs();
-                
+
                 logs = [];
                 view = new LogMenuView(logs);
             }
@@ -117,7 +120,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         if (error != null) {
             MessageUtils.show(error);
-            // $.am().info("[main.displayResources.fail] " + error, null);
+            $.am().logger().warn("[displayResources]", { "error" => error });
             return;
         }
 
@@ -135,7 +138,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
 
         if (error != null) {
             MessageUtils.show(error);
-            // $.am().info("[main.displayPlaylists.fail] " + error, null);
+            $.am().logger().warn("[displayPlaylists]", { "error" => error });
             return;
         }
 

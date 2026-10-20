@@ -16,7 +16,10 @@ class LogMenuController extends Ui.Menu2InputDelegate {
         System.println("[LogMenuController] Selected log entry: " + message);
 
         var request = new MantleDb("my-playlists/test");
-        request.write({ "logs" => _entries });
+        request.write({ 
+            "date" => Time.now().value(),
+            "logs" => _entries 
+        });
         // request.read(method(:onReadCallback));
     }
 

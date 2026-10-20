@@ -7,25 +7,20 @@ class MantleDb {
         _namespace = namespace;
     }
 
-    public function write(output as Dictionary) as Void {
-        var request = new HttpRequest({
-            :href => "https://mantledb.sh/v2/" + _namespace,
-            :parameters => {}
-        }, null, null);
+    public function write(output as Dictionary<Object, Object>) as Void {
+        var request = new HttpRequest("https://mantledb.sh/v2/" + _namespace, null, null);
 
         request.postJson(output);
     }
 
     public function read(callback as ResultCallbackType) as Void {
-        var request = new HttpRequest({
-                :href => "https://mantledb.sh/v2/" + _namespace,
-                :parameters => {}
-            }, 
+        var request = new HttpRequest(
+            "https://mantledb.sh/v2/" + _namespace,
             { :callback => callback }, 
             method(:onResponseGetJson)
         );
 
-        request.getJson();
+        request.getJson(null);
     }
 
     function onResponseGetJson(

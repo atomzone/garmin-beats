@@ -4,11 +4,6 @@ using Toybox.PersistedContent as PersistedContent;
 using Toybox.Timer;
 import Toybox.Lang;
 
-typedef ResourceType as { 
-    :href as String, 
-    :parameters as Dictionary<Object, Object>?
-};
-
 typedef ResponseType as {
     :ok as Boolean,
     :code as Number,
@@ -29,29 +24,32 @@ typedef HandlerType as Method(response as ResponseType, context as Object?) as V
 class HttpRequest {
     private var _handler as HandlerType?;
     private var _href as String;
-    private var _parameters as Dictionary<Object, Object>?;
     private var _context as Object?;
     private var _timer as Timer.Timer?;
     private var _timeout as Number = 5000; // 5s
 
-    function initialize(resource as ResourceType, context as Object?, handler as HandlerType?) {
-        _href = resource[:href] as String;
-        var parameters = resource[:parameters];
-        _parameters = parameters == null ? {} : parameters;
+    function initialize(href as String, context as Object?, handler as HandlerType?) {
+        _href = href;
         _context = context;
         _handler = handler;
     }
 
-    function getJson() as Void {
-        makeRequest(new HttpRequestOptions().get().json());
+    function getJson(queryParameters as Dictionary<Object, Object>?) as Void {
+        makeGetRequest(
+            queryParameters,
+            new HttpRequestOptions().get().expectJson()
+        );
     }
 
-    function postJson(body as Dictionary?) as Void {
-        var requestBody = body == null ? _parameters : body;
-        makeRequestWithBody(new HttpRequestOptions().post().json(), requestBody);
+    function postJson(body as Dictionary<Object, Object>) as Void {
+        makePostRequest(
+            body,
+            new HttpRequestOptions().post().sendJson().expectJson()
+        );
     }
 
     function getAudio(
+        queryParameters as Dictionary<Object, Object>?,
         onProgressCallback as Method(totalBytesTransferred as Number, filesize as Number?) as Void
     ) as Void {
         var context = _context as AudioDownloadContextType;
@@ -66,7 +64,7 @@ class HttpRequest {
 
         settings.options[:fileDownloadProgressCallback] = onProgressCallback;
 
-        makeRequestWithBody(settings, _parameters);
+        makeGetRequest(queryParameters, settings);
     }
 
     function onResponse(
@@ -115,11 +113,24 @@ class HttpRequest {
         return responseCode >= 200 && responseCode < 300;
     }
 
-    private function makeRequest(httpRequest as HttpRequestOptions) as Void {
-        makeRequestWithBody(httpRequest, _parameters);
+    private function makeGetRequest(
+        queryParameters as Dictionary<Object, Object>?,
+        httpRequest as HttpRequestOptions
+    ) as Void {
+        executeRequest(queryParameters, httpRequest);
     }
 
-    private function makeRequestWithBody(httpRequest as HttpRequestOptions, body as Dictionary?) as Void {
+    private function makePostRequest(
+        body as Dictionary<Object, Object>,
+        httpRequest as HttpRequestOptions
+    ) as Void {
+        executeRequest(body, httpRequest);
+    }
+
+    private function executeRequest(
+        parameters as Dictionary<Object, Object>?,
+        httpRequest as HttpRequestOptions
+    ) as Void {
         if (!hasTransport()) {
             onResponse(-1008, null);
             return;
@@ -127,7 +138,6 @@ class HttpRequest {
 
         // startTimeout();
 
-        var requestBody = body == null ? {} : body as Dictionary;
         var methodName = httpRequest.options[:method] as String;
 
         $.am().logger().info(
@@ -135,11 +145,11 @@ class HttpRequest {
         );
 
         Comm.makeWebRequest(
-            _href, 
-            requestBody,
+            _href,
+            parameters,
             httpRequest.options,
             method(:onResponse)
-        ); 
+        );
     }
 
     private function startTimeout() as Void {
@@ -168,6 +178,11 @@ class HttpRequest {
         var wifiConnected =
             wifi != null &&
             wifi.state == System.CONNECTION_STATE_CONNECTED;
+
+        $.am().logger().info("[hasTransport]", { 
+            "bluetoothConnected" => bluetoothConnected, 
+            "wifiConnected" => wifiConnected
+        });
         
         return bluetoothConnected || wifiConnected;
     }
@@ -178,20 +193,42 @@ class HttpRequest {
         }
 
         switch (responseCode) {
-            case 0:
+          case 0:
                 return "UNKNOWN_ERROR: An unknown error has occurred.";
+
+            // BLE errors
+            case -1:
+                return "BLE_ERROR: A generic BLE error has occurred.";
+            case -2:
+                return "BLE_HOST_TIMEOUT: Timed out waiting for a response from the host.";
+            case -3:
+                return "BLE_SERVER_TIMEOUT: Timed out waiting for a response from a server.";
+            case -4:
+                return "BLE_NO_DATA: Response contained no data.";
+            case -5:
+                return "BLE_REQUEST_CANCELLED: Request was cancelled at the request of the system.";
+            case -101:
+                return "BLE_QUEUE_FULL: Too many requests have been made.";
+            case -102:
+                return "BLE_REQUEST_TOO_LARGE: Serialized input data for the request was too large.";
+            case -103:
+                return "BLE_UNKNOWN_SEND_ERROR: Send failed for an unknown reason.";
+            case -104:
+                return "BLE_CONNECTION_UNAVAILABLE: No BLE connection is available.";
+
+            // HTTP request errors
             case -200:
-                return "INVALID_HTTP_HEADER_FIELDS_IN_REQUEST: Request contained invalid http header fields.";
+                return "INVALID_HTTP_HEADER_FIELDS_IN_REQUEST: Request contained invalid HTTP header fields.";
             case -201:
-                return "INVALID_HTTP_BODY_IN_REQUEST: Request contained an invalid http body.";
+                return "INVALID_HTTP_BODY_IN_REQUEST: Request contained an invalid HTTP body.";
             case -202:
-                return "INVALID_HTTP_METHOD_IN_REQUEST: Request used an invalid http method.";
+                return "INVALID_HTTP_METHOD_IN_REQUEST: Request used an invalid HTTP method.";
             case -300:
                 return "NETWORK_REQUEST_TIMED_OUT: Request timed out before a response was received.";
             case -400:
                 return "INVALID_HTTP_BODY_IN_NETWORK_RESPONSE: Response body data is invalid for the request type.";
             case -401:
-                return "INVALID_HTTP_HEADER_FIELDS_IN_NETWORK_RESPONSE: Response contained invalid http header fields.";
+                return "INVALID_HTTP_HEADER_FIELDS_IN_NETWORK_RESPONSE: Response contained invalid HTTP header fields.";
             case -402:
                 return "NETWORK_RESPONSE_TOO_LARGE: Serialized response was too large.";
             case -403:
@@ -199,11 +236,11 @@ class HttpRequest {
             case -1000:
                 return "STORAGE_FULL: Filesystem too full to store response data.";
             case -1001:
-                return "SECURE_CONNECTION_REQUIRED: Indicates an https connection is required for the request.";
+                return "SECURE_CONNECTION_REQUIRED: An HTTPS connection is required.";
             case -1002:
-                return "UNSUPPORTED_CONTENT_TYPE_IN_RESPONSE: Content type given in response is not supported or does not match what is expected.";
+                return "UNSUPPORTED_CONTENT_TYPE_IN_RESPONSE: Response content type is unsupported or does not match what is expected.";
             case -1003:
-                return "REQUEST_CANCELLED: Http request was cancelled by the system.";
+                return "REQUEST_CANCELLED: HTTP request was cancelled by the system.";
             case -1004:
                 return "REQUEST_CONNECTION_DROPPED: Connection was lost before a response could be obtained.";
             case -1005:
@@ -211,9 +248,9 @@ class HttpRequest {
             case -1006:
                 return "UNABLE_TO_PROCESS_IMAGE: Downloaded image file was unable to be processed.";
             case -1007:
-                return "UNABLE_TO_PROCESS_HLS: HLS content could not be downloaded. Most often occurs when requested and provided bit rates do not match.";
+                return "UNABLE_TO_PROCESS_HLS: HLS content could not be downloaded.";
 
-            // custom
+            // Custom application error
             case -1008:
                 return "NO_TRANSPORT: Network transport is not available.";
 

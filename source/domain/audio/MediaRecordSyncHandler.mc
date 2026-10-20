@@ -25,12 +25,9 @@ class MediaRecordSyncHandler extends TransactionAsyncHandler {
             :source => payload["source"] as MediaSourceType
         } as AudioDownloadContextType;
 
-        var request = new HttpRequest({
-            :href => source.getUrl(),
-            :parameters => {}
-        }, context, method(:onResponse));
+        var request = new HttpRequest(source.getUrl(), context, method(:onResponse));
 
-        request.getAudio(method(:onProgress));
+        request.getAudio(null, method(:onProgress));
 
         return SyncTransactionHandler.PENDING;
     }

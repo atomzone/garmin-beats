@@ -11,12 +11,13 @@ class AudioResourceLoader {
     }
 
     function fetchPlaylists(callback as ResultCallbackType) as Void {
-        var request = new HttpRequest({
-            :href => self._href,
-            :parameters => {}
-        }, { :callback => callback }, method(:onResponseBuildPlaylists));
+        var request = new HttpRequest(
+            self._href,
+            { :callback => callback },
+            method(:onResponseBuildPlaylists)
+        );
 
-        request.getJson();
+        request.getJson(null);
     }
 
     function onResponseBuildPlaylists(
@@ -40,12 +41,13 @@ class AudioResourceLoader {
     }
 
     function fetchResources(callback as ResultCallbackType) as Void {
-        var request = new HttpRequest({
-            :href => self._href,
-            :parameters => {}
-        }, { :callback => callback }, method(:onResponseBuildResources));
+        var request = new HttpRequest(
+            self._href,
+            { :callback => callback },
+            method(:onResponseBuildResources)
+        );
 
-        request.getJson();
+        request.getJson(null);
     }
 
     function onResponseBuildResources(

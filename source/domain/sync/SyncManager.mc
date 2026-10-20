@@ -25,18 +25,12 @@ class SyncManager extends Comm.SyncDelegate {
         _processor.start();
     }
 
-    // need to cleanup on error or cancellation
-    // can we redirect to the playlist menu?
     function onStopSync() as Void {
+        Comm.cancelAllRequests(); // this triggers :onComplete
+
         if (_processor != null) {
             _processor.stop();
         }
-
-        $.am().logger().info("[SyncManager] Sync aborted, running reconciliation", null);
-        new SyncReconciler().reconcile();
-
-        Comm.notifySyncComplete(null);
-        Comm.cancelAllRequests();
     }
 
     function onProgress(progress as Number) as Void {

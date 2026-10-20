@@ -16,17 +16,18 @@ class ApplicationManager {
             new StorageLogWriter(_logStore)
         ]);
 
-        _logger.debug("ApplicationManager initialized", { "version" => _version });
+        _logStore.clear();
+        _logger.info("ApplicationManager initialized", { "version" => _version });
 
         // Storage review
         var cacheStats = Media.getCacheStatistics();
-        _logger.debug("Stores media cache size in bytes", {
+        _logger.info("Stores media cache size in bytes", {
             "capacity" => cacheStats.capacity,
             "size" => cacheStats.size
         });
 
         var sysStats = System.getSystemStats();
-        _logger.debug("Device memory statistics in bytes", {
+        _logger.info("Device memory statistics in bytes", {
             "freeMemory" => sysStats.freeMemory, // bytes
             "totalMemory" => sysStats.totalMemory,
             "usedMemory" => sysStats.usedMemory

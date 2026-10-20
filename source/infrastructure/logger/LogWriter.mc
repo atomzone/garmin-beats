@@ -24,7 +24,7 @@ class StorageLogWriter {
     }
 
     function getMinimumLevel() as LogEntry.LogLevel {
-        return LogEntry.DEBUG; // WARN;
+        return LogEntry.INFO;
     }
 
     function write(entry as LogEntry) as Void {
