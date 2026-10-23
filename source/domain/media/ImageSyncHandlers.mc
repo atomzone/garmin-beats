@@ -20,8 +20,8 @@ class ImageSyncHandler extends TransactionAsyncHandler {
             null,
             { 
                 // :palette as Lang.Array<Lang.Number>, 
-                :maxWidth => 48, 
-                :maxHeight => 48, 
+                :maxWidth => 64,
+                :maxHeight => 64,
                 :dithering => Comms.IMAGE_DITHERING_NONE, 
                 :packingFormat => Comms.PACKING_FORMAT_DEFAULT 
             },
