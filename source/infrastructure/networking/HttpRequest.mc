@@ -1,7 +1,9 @@
 using Toybox.Communications as Comm;
+using Toybox.Graphics;
 using Toybox.Media as Media;
 using Toybox.PersistedContent as PersistedContent;
 using Toybox.Timer;
+using Toybox.WatchUi;
 import Toybox.Lang;
 
 typedef ResponseType as {
@@ -22,16 +24,33 @@ typedef AudioDownloadContextType as {
 typedef HandlerType as Method(response as ResponseType, context as Object?) as Void;
 
 class HttpRequest {
+    static const TIMEOUT_CODE as Number = -1009;
+    static const REJECTED_CODE as Number = -1010;
+
     private var _handler as HandlerType?;
     private var _href as String;
     private var _context as Object?;
     private var _timer as Timer.Timer?;
-    private var _timeout as Number = 5000; // 5s
+    private var _inactivityTimeout as Number?;
+    private var _settled as Boolean = false;
+    private var _onProgress as Method?;
 
     function initialize(href as String, context as Object?, handler as HandlerType?) {
         _href = href;
         _context = context;
         _handler = handler;
+    }
+
+    // Fails the request when no response or progress arrives within the window
+    function setInactivityTimeout(milliseconds as Number) as HttpRequest {
+        _inactivityTimeout = milliseconds;
+        return self;
+    }
+
+    // Stop listening; late native callbacks are ignored
+    function abandon() as Void {
+        _settled = true;
+        stopTimeout();
     }
 
     function getJson(queryParameters as Dictionary<Object, Object>?) as Void {
@@ -62,17 +81,93 @@ class HttpRequest {
             settings.mp3();
         }
 
-        settings.options[:fileDownloadProgressCallback] = onProgressCallback;
+        settings.options[:fileDownloadProgressCallback] = method(:onDownloadProgress);
+        _onProgress = onProgressCallback;
 
         makeGetRequest(queryParameters, settings);
+    }
+
+    function getImage(maxWidth as Number, maxHeight as Number) as Void {
+        if (!hasTransport()) {
+            settle(-1008, null);
+            return;
+        }
+
+        $.am().logger().info("[http.request]", { "url" => _href, "method" => "IMAGE" });
+
+        try {
+            Comm.makeImageRequest(_href, null, {
+                :maxWidth => maxWidth,
+                :maxHeight => maxHeight,
+                :dithering => Comm.IMAGE_DITHERING_NONE,
+                :packingFormat => Comm.PACKING_FORMAT_DEFAULT
+            }, method(:onImageResponse));
+        } catch (ex) {
+            reject(ex);
+            return;
+        }
+
+        if (!_settled) {
+            startTimeout();
+        }
+    }
+
+    function onDownloadProgress(totalBytesTransferred as Number, filesize as Number?) as Void {
+        if (_settled) {
+            return;
+        }
+
+        startTimeout();
+
+        if (_onProgress != null) {
+            _onProgress.invoke(totalBytesTransferred, filesize);
+        }
     }
 
     function onResponse(
         responseCode as Number, 
         data as Dictionary or String or PersistedContent.Iterator or Null
     ) as Void {
-        // stopTimeout();
+        settle(responseCode, data);
+    }
 
+    function onImageResponse(
+        responseCode as Number,
+        data as WatchUi.BitmapResource or Graphics.BitmapReference or Null
+    ) as Void {
+        settle(responseCode, data);
+    }
+
+    function onTimeout() as Void {
+        _timer = null;
+
+        if (_settled) {
+            return;
+        }
+
+        _settled = true;
+
+        $.am().logger().warn("[http.timeout]", {
+            "url" => _href, "timeout" => _inactivityTimeout
+        });
+
+        // global cancel is only safe because callers using timeouts run one request at a time;
+        // cancel before deliver so a request started by the handler isn't killed
+        Comm.cancelAllRequests();
+        deliver(TIMEOUT_CODE, null);
+    }
+
+    private function settle(responseCode as Number, data as Object?) as Void {
+        if (_settled) {
+            return;
+        }
+
+        _settled = true;
+        stopTimeout();
+        deliver(responseCode, data);
+    }
+
+    private function deliver(responseCode as Number, data as Object?) as Void {
         var isOk = isSuccessResponse(responseCode);
         var payload = data as Object?;
         var errorMessage = isOk ? null : getErrorMessage(responseCode);
@@ -96,17 +191,6 @@ class HttpRequest {
         if (_handler != null) {
             _handler.invoke(response, _context);
         }
-    }
-
-    // this timeout is canceling ligit long downloads...
-    function onTimeout() as Void {
-        _timer = null;
-
-        $.am().logger().warn("[http.timeout] Cancel all requests", {
-            "timeout" => _timeout
-        });
-
-        Comm.cancelAllRequests();
     }
 
     private function isSuccessResponse(responseCode as Number) as Boolean {
@@ -136,27 +220,49 @@ class HttpRequest {
             return;
         }
 
-        // startTimeout();
-
         var methodName = httpRequest.options[:method] as String;
 
         $.am().logger().info(
             "[http.request]", { "url" => _href, "method" => methodName }
         );
 
-        Comm.makeWebRequest(
-            _href,
-            parameters,
-            httpRequest.options,
-            method(:onResponse)
-        );
+        try {
+            Comm.makeWebRequest(
+                _href,
+                parameters,
+                httpRequest.options,
+                method(:onResponse)
+            );
+        } catch (ex) {
+            reject(ex);
+            return;
+        }
+
+        if (!_settled) {
+            startTimeout();
+        }
+    }
+
+    // native request calls throw on invalid options/unsupported response types
+    private function reject(ex as Exception) as Void {
+        $.am().logger().error("[http.rejected]", {
+            "url" => _href, "error" => ex.getErrorMessage()
+        });
+
+        settle(REJECTED_CODE, null);
     }
 
     private function startTimeout() as Void {
+        var timeout = _inactivityTimeout;
+        if (timeout == null) {
+            return;
+        }
+
         stopTimeout();
 
-        _timer = new Timer.Timer();
-        _timer.start(method(:onTimeout), _timeout, false);
+        var timer = new Timer.Timer();
+        timer.start(method(:onTimeout), timeout, false);
+        _timer = timer;
     }
 
     private function stopTimeout() as Void {
@@ -179,10 +285,10 @@ class HttpRequest {
             wifi != null &&
             wifi.state == System.CONNECTION_STATE_CONNECTED;
 
-        $.am().logger().info("[hasTransport]", { 
-            "bluetoothConnected" => bluetoothConnected, 
-            "wifiConnected" => wifiConnected
-        });
+        // $.am().logger().info("[hasTransport]", { 
+        //     "bluetoothConnected" => bluetoothConnected, 
+        //     "wifiConnected" => wifiConnected
+        // });
         
         return bluetoothConnected || wifiConnected;
     }
@@ -253,6 +359,10 @@ class HttpRequest {
             // Custom application error
             case -1008:
                 return "NO_TRANSPORT: Network transport is not available.";
+            case -1009:
+                return "TIMEOUT: No response or progress within the inactivity timeout.";
+            case -1010:
+                return "REJECTED: The request could not be made.";
 
             default:
                 return "HTTP request failed (" + responseCode + ")";

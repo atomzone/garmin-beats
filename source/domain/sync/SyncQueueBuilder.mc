@@ -1,12 +1,8 @@
 import Toybox.Lang;
 
+// Per playlist: TRACK... [IMAGE] PLAYLIST(commit)
+// Tracks grow the playlist as they land; the commit aligns it with the source.
 class SyncQueueBuilder {
-
-    private var _queuedMediaChecksums as Dictionary<String, Boolean>;
-
-    function initialize() {
-        _queuedMediaChecksums = {};
-    }
 
     function buildQueue(playlists as Array<PlaylistResource>) as Array<QueueTransactionType> {
         var queue = [] as Array<QueueTransactionType>;
@@ -25,115 +21,63 @@ class SyncQueueBuilder {
     }
 
     private function buildPlaylistTransactions(playlist as PlaylistResource) as Array<QueueTransactionType> {
-        var queue = [] as Array<QueueTransactionType>;
-        var rawAsset = AppStores.playlists.load(playlist.getId()) as PlaylistAssetType?;
+        var playlistId = playlist.getId();
+        var trackTransactions = buildTrackTransactions(playlistId, playlist.getTracks());
+        var artwork = playlist.getMetadata().getArtwork();
+        var needsArtwork = artwork != null && !AppStores.images.contains(artwork.getId());
 
-        if (rawAsset == null) {
-            
-            // new playlist - create
-            queue.add(enqueuePlaylistCreate(playlist.getId(), playlist));
+        var rawAsset = AppStores.playlists.load(playlistId) as PlaylistAssetType?;
+        var isCurrent = rawAsset != null
+            && playlist.getChecksum().equals(new PlaylistAsset(rawAsset).getChecksum());
 
-            // playlist artwork - download
-            var source = playlist.getMetadata().getArtwork();
-            if (source != null) {
-                queue.add(enqueueImageDownload(source.getId(), source));
-            }
-        
-        } else {
-            
-            // existing playlist - check for changes
-            var asset = new PlaylistAsset(rawAsset);
-            if (playlist.getChecksum().equals(asset.getChecksum()) == false) {
-                queue.add(enqueuePlaylistUpdate(asset.getId(), playlist));
-            }
-            else {
-                $.am().logger().debug("[SyncQueueBuilder] No changes detected", { "id" => playlist.getId() });
-            }
-        }
-
-        return queue.addAll(
-            buildTrackTransactionFromArray(playlist.getTracks())
-        );
-    }
-    
-    private function buildTrackTransaction(track as AudioResource) as Array<QueueTransactionType> {
-        var assetId = track.getChecksum();
-        var rawAsset = AppStores.tracks.load(assetId) as AudioAssetType?;
-
-        if (rawAsset != null) {
+        if (isCurrent && trackTransactions.size() == 0 && !needsArtwork) {
+            $.am().logger().debug("[SyncQueueBuilder] No changes detected", { "id" => playlistId });
             return [];
         }
 
+        PlaylistManifest.save(playlist);
+
         var queue = [] as Array<QueueTransactionType>;
-        var mediaId = track.getSource().getChecksum();
-        var existingMediaAsset = AppStores.media.load(mediaId) as MediaRecordType?;
 
-        // Queue and Media we didnt know about yet
-        if (existingMediaAsset == null && _queuedMediaChecksums[mediaId] == null) {
-            queue.add(enqueueMediaDownload(mediaId, track.getSource()));
-            _queuedMediaChecksums[mediaId] = true;
-        }   
+        queue.addAll(trackTransactions);
 
-        return queue.add(enqueueTrackCreate(assetId, track));
+        // after tracks: artwork is only worth fetching once the playlist exists
+        if (needsArtwork) {
+            queue.add(enqueueImageDownload(playlistId, artwork as MediaSource));
+        }
+
+        queue.add(buildTransaction(playlistId, "COMMIT", "PLAYLIST", {}));
+
+        return queue;
     }
 
-    private function buildTrackTransactionFromArray(tracks as Array<AudioResource>) as Array<QueueTransactionType> {
-        var queue = [];
+    private function buildTrackTransactions(
+        playlistId as String,
+        tracks as Array<AudioResource>
+    ) as Array<QueueTransactionType> {
+        var queue = [] as Array<QueueTransactionType>;
 
         for (var index = 0, limit = tracks.size(); index < limit; index++) {
-            queue.addAll(
-                buildTrackTransaction(tracks[index])
-            );
+            var track = tracks[index];
+            var trackId = track.getChecksum();
+
+            if (AppStores.tracks.contains(trackId)) {
+                continue;
+            }
+
+            queue.add(buildTransaction(trackId, "CREATE", "TRACK", {
+                "playlistId" => playlistId,
+                "mediaId" => track.getSource().getChecksum(),
+                "source" => track.serialize()
+            }));
         }
 
         return queue;
     }
 
-    private function enqueuePlaylistCreate(id as String, resource as PlaylistResource) as QueueTransactionType {
-        var payload = {
-            "metadata" => resource.getMetadata().serialize(),
-            "trackIds" => resource.getTrackIds()
-        };
-
-        return buildTransaction(id, "CREATE", "PLAYLIST", payload);       
-    }
-
-    private function enqueuePlaylistUpdate(id as String, resource as PlaylistResource) as QueueTransactionType {
-        var payload = {
-            "metadata" => resource.getMetadata().serialize(),
-            "trackIds" => resource.getTrackIds()
-        };
-
-        return buildTransaction(id, "UPDATE", "PLAYLIST", payload);
-    }
-    
-    private function enqueueTrackCreate(
-        trackId as String, 
-        resource as AudioResource
-    ) as QueueTransactionType {
-        var payload = {
-            "mediaId" => resource.getSource().getChecksum(),
-            "source" => resource.serialize()
-        };
-
-        return buildTransaction(trackId, "CREATE", "TRACK", payload);
-    }
-
-    private function enqueueMediaDownload(
-        mediaId as String,
-        source as MediaSource
-    ) as QueueTransactionType {
+    private function enqueueImageDownload(playlistId as String, source as MediaSource) as QueueTransactionType {
         return buildTransaction(
-            mediaId, "DOWNLOAD", "MEDIA", { "source" => source.serialize() }
-        );
-    }
-
-    private function enqueueImageDownload(
-        imageId as String,
-        source as MediaSource
-    ) as QueueTransactionType {
-        return buildTransaction(
-            imageId, "DOWNLOAD", "IMAGE", { "source" => source.serialize() }
+            source.getId(), "DOWNLOAD", "IMAGE", { "playlistId" => playlistId, "source" => source.serialize() }
         );
     }
 

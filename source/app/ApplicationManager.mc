@@ -65,6 +65,10 @@ class ApplicationManager {
         // REMOVE IMAGES RAW
         AppStores.images.clear();
 
+        // REMOVE IN-FLIGHT SYNC STATE
+        AppStores.playlistManifests.clear();
+        SyncQueueStore.clear();
+
         // REMOVE PLAYBACK STATE
         PlaybackStateStore.clear();
 

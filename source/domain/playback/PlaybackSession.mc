@@ -19,6 +19,14 @@ class PlaybackSession {
         return seekChapter(-1);
     }
 
+    function peekNextChapter() as Number? {
+        return peekChapter(1);
+    }
+
+    function peekPreviousChapter() as Number? {
+        return peekChapter(-1);
+    }
+
     function onResumeCheckpoint(position as Number) as Void {
         $.am().logger().debug("[onPlaybackPosition]", {
             "index" => _playlist.getCurrentTrackIndex(),
@@ -82,7 +90,7 @@ class PlaybackSession {
     private function buildStateFromPlaylist() as PlaybackStateType {
         return {
             "playlistId" => _playlist.getPlaylistId(),
-            "trackIndex" => _playlist.getCurrentTrackIndex(),
+            "trackId" => _playlist.getCurrentTrackId(),
             "trackPosition" => _playlist.getCurrentTrackPosition()
         };
     }

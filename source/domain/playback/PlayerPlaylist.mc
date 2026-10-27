@@ -46,6 +46,10 @@ class PlayerPlaylist {
         return _playFromIndex;
     }
 
+    function getCurrentTrackId() as String {
+        return _playlist.getTrackIds()[_playFromIndex];
+    }
+
     function setTrackIndex(index as Number) as Void {
         _playFromIndex = index;
     }
@@ -69,14 +73,18 @@ class PlayerPlaylist {
         var playlistId = requestedPlaylistId;
 
         if (playlistId == null && storedState != null) {
-            playlistId = storedState["playlistId"] as String;
+            playlistId = storedState["playlistId"] as String?;
         }
 
         if (playlistId == null) {
             return null;
         }
 
-        var raw = AppStores.playlists.load(playlistId) as PlaylistAssetType;
+        var raw = AppStores.playlists.load(playlistId) as PlaylistAssetType?;
+        if (raw == null) {
+            return null;
+        }
+
         var playlistAsset = new PlaylistAsset(raw);
         var cursor = PlaybackStartPosition.getCursor(playlistAsset, storedState);
 
