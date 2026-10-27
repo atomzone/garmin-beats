@@ -4,6 +4,7 @@ import Toybox.Lang;
 class SyncManager extends Comm.SyncDelegate {
 
     private var _processor as SyncQueueProcessor?;
+    private var _notified as Boolean = false;
 
     function initialize() {
         Comm.SyncDelegate.initialize();
@@ -14,38 +15,50 @@ class SyncManager extends Comm.SyncDelegate {
     }
 
     function onStartSync() as Void {
-        var queue = SyncQueueStore.load();
+        _notified = false;
 
-        _processor = new SyncQueueProcessor(
-            queue,
+        var processor = new SyncQueueProcessor(
+            SyncQueueStore.load(),
             method(:onProgress),
             method(:onComplete)
         );
 
-        _processor.start();
+        _processor = processor;
+        processor.start();
     }
 
+    // Queue head is kept; its persisted attempt count decides whether it is retried
     function onStopSync() as Void {
-        Comm.cancelAllRequests(); // this triggers :onComplete
-
         if (_processor != null) {
             _processor.stop();
+            _processor = null;
         }
+
+        Comm.cancelAllRequests();
+        notifyComplete("Sync cancelled");
     }
 
     function onProgress(progress as Number) as Void {
         Comm.notifySyncProgress(progress);
     }
 
-    // can we redirect to the playlist menu?
     function onComplete(error as String?) as Void {
+        _processor = null;
 
-        // [TODO] Should we run on Error?
-        // if (error == null) {
-            $.am().logger().info("[SyncManager] Sync completed successfully, running reconciliation", { "error" => error });
-            new SyncReconciler().reconcile();
-        // }
+        $.am().logger().info("[SyncManager] Sync finished", {
+            "error" => error,
+            "remaining" => SyncQueueStore.getSize()
+        });
 
+        notifyComplete(error);
+    }
+
+    private function notifyComplete(error as String?) as Void {
+        if (_notified) {
+            return;
+        }
+
+        _notified = true;
         Comm.notifySyncComplete(error);
     }
 }

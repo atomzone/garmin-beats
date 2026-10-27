@@ -12,26 +12,22 @@ class PlaylistBrowserView extends Ui.Menu2 {
         for (var index = 0, limit = assets.size(); index < limit; index++) {
             var asset = assets[index];
             var meta = asset.getMetadata();
+            // var bitmap = null;
 
-            // create ?icon from storage object
-            var bmp = MediaUtils.createBitmapFromSource(meta.getArtwork());
+            var bitmap = MediaUtils.createBitmapFromSource(meta.getArtwork());
 
-            if (bmp != null) {
-                addItem(new Ui.IconMenuItem(
-                    meta.getTitle(),
-                    meta.getDescription(),
-                    index,
-                    bmp,
-                    {}
-                ));
-            } else {
-                addItem(new Ui.MenuItem(
-                    meta.getTitle(),
-                    meta.getDescription(),
-                    index,
-                    {}
-                ));
+            if (bitmap == null) {
+                var bitmapRef = MediaUtils.createArtwork(asset.getChecksum(), 64);
+                bitmap = new Ui.Bitmap({ :bitmap => bitmapRef });
             }
+
+            addItem(new Ui.IconMenuItem(
+                meta.getTitle(),
+                meta.getDescription(),
+                index,
+                bitmap,
+                {}
+            ));
         }
     }
 

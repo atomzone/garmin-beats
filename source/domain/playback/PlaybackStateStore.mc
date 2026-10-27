@@ -3,7 +3,7 @@ import Toybox.Lang;
 
 typedef PlaybackStateType as {
     "playlistId" as String,
-    "trackIndex" as Number,
+    "trackId" as String,
     "trackPosition" as Number
 };
 

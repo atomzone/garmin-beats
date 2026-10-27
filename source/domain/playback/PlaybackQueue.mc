@@ -18,7 +18,7 @@ class PlaybackQueue extends Media.ContentIterator {
     }
 
     function get() as Media.Content? {
-        return getMediaContent(_playlist.getCurrentTrackIndex());
+        return getMediaContent(_playlist.getCurrentTrackIndex(), _playlist.getCurrentTrackPosition());
     }
 
     function next() as Media.Content? {
@@ -37,20 +37,23 @@ class PlaybackQueue extends Media.ContentIterator {
         return previousTrack();
     }
 
+    // Peeks must not move the cursor or persist state
     function peekNext() as Media.Content? {
-        if (_session.nextInternal()) {
-            return get();
+        var chapterPosition = _session.peekNextChapter();
+        if (chapterPosition != null) {
+            return getMediaContent(_playlist.getCurrentTrackIndex(), chapterPosition);
         }
 
-        return getMediaContent(_playlist.getCurrentTrackIndex() + 1);
+        return getMediaContent(_playlist.getCurrentTrackIndex() + 1, 0);
     }
 
     function peekPrevious() as Media.Content? {
-        if (_session.previousInternal()) {
-            return get();
+        var chapterPosition = _session.peekPreviousChapter();
+        if (chapterPosition != null) {
+            return getMediaContent(_playlist.getCurrentTrackIndex(), chapterPosition);
         }
 
-        return getMediaContent(_playlist.getCurrentTrackIndex() - 1);
+        return getMediaContent(_playlist.getCurrentTrackIndex() - 1, 0);
     }
 
     // Determine if the current track can be skipped forward.
@@ -143,7 +146,7 @@ class PlaybackQueue extends Media.ContentIterator {
         return get();
     }
 
-    private function getMediaContent(index as Number) as Media.Content? {
+    private function getMediaContent(index as Number, position as Number) as Media.Content? {
         if (!_playlist.isValidIndex(index)) {
             $.am().logger().debug("[Queue.getMediaContent] Invalid index", {
               "index" => + index,
@@ -163,8 +166,6 @@ class PlaybackQueue extends Media.ContentIterator {
             MediaUtils.getContent(refId).getMetadata(),
             asset.getMetadata()
         );
-
-        var position = _playlist.getCurrentTrackPosition();
 
         if (position > 0) {
             $.am().logger().debug("[Queue.getMediaContent] Invalid index", {

@@ -1,4 +1,5 @@
 using Toybox.Media as Media;
+using Toybox.Graphics as Graphics;
 import Toybox.Lang;
 
 class PlaybackProvider extends Media.ContentDelegate {
@@ -70,6 +71,16 @@ class PlaybackProvider extends Media.ContentDelegate {
             "event" => eventName(songEvent),
             "playbackPosition" => playbackPosition
         });
+
+        // move to session
+        // if (songEvent == Media.SONG_EVENT_START) {
+            var images = AppStores.images.loadAll();
+            System.println(images);
+
+            if (images.size() > 0) {
+                Media.setAlbumArt(images[0] as Graphics.BitmapType);
+            }
+        // }
 
         // Active track changed
         if (

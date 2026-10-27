@@ -1,42 +1,26 @@
 import Toybox.Lang;
 
+// Final step per playlist: align stored playlist with its manifest, then drop the manifest
 class PlaylistAssetSyncHandler extends SyncTransactionHandler {
 
     function initialize(transaction as QueueTransactionType) {
         SyncTransactionHandler.initialize(transaction);
     }
 
-    function execute() as SyncTransactionHandler.TransactionResult {
-        var id = getTransaction()["tid"];
-        var operation = getTransaction()["op"];
+    function execute() as Void {
+        var id = getTransaction()["tid"] as String?;
 
-        if (id == null || operation == null) {
-            return SyncTransactionHandler.FAILED;
+        if (id == null) {
+            complete(SyncTransactionHandler.ITEM_FAILED, "Invalid playlist transaction");
+            return;
         }
 
-        // build asset and persist against targetId
-        if (operation.equals("CREATE") || operation.equals("UPDATE")) {
-            var payload = getTransaction()["payload"] as Dictionary;
-
-            var asset = new PlaylistAsset({
-                "id" => id,
-                "metadata" => payload["metadata"] as PlaylistMetadata,
-                "trackIds" => payload["trackIds"] as Array<String>,
-            } as PlaylistAssetType);
-
-            $.am().logger().debug("[PlaylistAssetSyncHandler.execute]", {
-                "operation" => operation,
-                "targetId" => id,
-                "data" => asset.serialize()
-            });
-
-            AppStores.playlists.save(id, asset.serialize());
+        if (!PlaylistManifest.rebuild(id)) {
+            complete(SyncTransactionHandler.ENV_FAILED, "Storage full");
+            return;
         }
 
-        if (operation.equals("DELETE")) {
-            AppStores.playlists.remove(id);
-        }
-
-        return SyncTransactionHandler.COMPLETE;
+        PlaylistManifest.remove(id);
+        complete(SyncTransactionHandler.OK, null);
     }
 }

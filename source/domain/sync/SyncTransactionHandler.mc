@@ -7,17 +7,21 @@ typedef QueueTransactionType as {
     "payload" as Dictionary
 };
 
-typedef TransactionCompleteCallbackType as Method(success as Boolean, error as String?) as Void;
+typedef TransactionDoneCallbackType as Method(outcome as Number, error as String?) as Void;
 
+// Every handler is async: execute() must eventually call complete() exactly once.
+// Synchronous work simply calls complete() before execute() returns.
 class SyncTransactionHandler {
 
-    enum TransactionResult {
-        COMPLETE,
-        PENDING,
-        FAILED
+    enum Outcome {
+        OK,          // done, remove from queue
+        SKIP,        // non-critical failure, remove from queue
+        ITEM_FAILED, // item at fault, remove from queue and continue
+        ENV_FAILED   // device/network at fault, keep item and stop
     }
 
     private var _transaction as QueueTransactionType;
+    private var _done as TransactionDoneCallbackType?;
 
     function initialize(transaction as QueueTransactionType) {
         _transaction = transaction;
@@ -27,64 +31,39 @@ class SyncTransactionHandler {
         return _transaction;
     }
 
-    // COMPLETE -> sync completion
-    // PENDING  -> async completion later
-    // FAILED   -> immediate failure
-    function execute() as TransactionResult {
-        var tid = getTransaction()["tid"];
-        var op = getTransaction()["op"];
-        var entity = getTransaction()["entity"];
-        var payload = getTransaction()["payload"];
-
-        $.am().logger().debug("[SyncTransactionHandler.execute]", {
-            "tid" => tid,
-            "operation" => op,
-            "entity" => entity,
-            "payload" => payload
-        });
-
-        return COMPLETE;
-    }
-}
-
-class TransactionAsyncHandler extends SyncTransactionHandler {
-
-    private var _onComplete as TransactionCompleteCallbackType;
-
-    function initialize(
-        transaction as QueueTransactionType,
-        onComplete as TransactionCompleteCallbackType
-    ) {
-        SyncTransactionHandler.initialize(transaction);
-        _onComplete = onComplete;
+    public function start(done as TransactionDoneCallbackType) as Void {
+        _done = done;
+        execute();
     }
 
-    // BASE CLASS; IS THIS EVER CALLED?
-    function execute() as SyncTransactionHandler.TransactionResult {
-        var tid = getTransaction()["tid"];
-        var op = getTransaction()["op"];
-        var entity = getTransaction()["entity"];
-        var payload = getTransaction()["payload"];
-
-        $.am().logger().debug("[TransactionAsyncHandler.execute]", {
-            "tid" => tid,
-            "operation" => op,
-            "entity" => entity,
-            "payload" => payload
-        });
-
-        // dummy async
-        var cbTimer = new Timer.Timer();
-        cbTimer.start(method(:success), 100, false);
-
-        return PENDING;
+    // Detach so late native callbacks are ignored
+    public function cancel() as Void {
+        _done = null;
     }
 
-    function success() as Void {
-        _onComplete.invoke(true, null);
+    function execute() as Void {
+        complete(OK, null);
     }
 
-    function fail(errorMessage as String?) as Void {
-        _onComplete.invoke(false, errorMessage != null ? errorMessage : "Transaction failed");
+    function complete(outcome as Outcome, error as String?) as Void {
+        var done = _done;
+        if (done == null) {
+            return;
+        }
+
+        _done = null;
+        done.invoke(outcome, error);
+    }
+
+    static function outcomeForResponseCode(code as Number) as Outcome {
+        switch (code) {
+            case -2:    // BLE_HOST_TIMEOUT
+            case -104:  // BLE_CONNECTION_UNAVAILABLE
+            case -1000: // STORAGE_FULL
+            case -1008: // NO_TRANSPORT
+                return ENV_FAILED;
+        }
+
+        return ITEM_FAILED;
     }
 }

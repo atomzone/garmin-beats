@@ -14,4 +14,8 @@ class AppStores {
     public static var images as IndexedStore
         = new IndexedStore(IndexedStore.IMAGE);
 
+    // desired playlist state while a sync is in flight
+    public static var playlistManifests as IndexedStore
+        = new IndexedStore(IndexedStore.PLAYLIST_MANIFEST);
+
 }

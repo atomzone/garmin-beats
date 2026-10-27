@@ -1,62 +1,61 @@
-using Toybox.Media as Media;
 using Toybox.Graphics as Graphics;
-using Toybox.WatchUi as Ui;
-using Toybox.Communications as Comms;
 import Toybox.Lang;
 
-class ImageSyncHandler extends TransactionAsyncHandler {
+// Artwork is non-critical: every failure is a SKIP
+class ImageSyncHandler extends SyncTransactionHandler {
 
-    function initialize(transaction as QueueTransactionType, onComplete as TransactionCompleteCallbackType) {
-        TransactionAsyncHandler.initialize(transaction, onComplete);
+    private static const INACTIVITY_TIMEOUT_MS as Number = 30000;
+
+    private var _request as HttpRequest?;
+
+    function initialize(transaction as QueueTransactionType) {
+        SyncTransactionHandler.initialize(transaction);
     }
 
-    function execute() as SyncTransactionHandler.TransactionResult {
+    function execute() as Void {
+        if (AppStores.images.contains(getTransaction()["tid"] as String)) {
+            complete(SyncTransactionHandler.OK, null);
+            return;
+        }
+
         var payload = getTransaction()["payload"] as Dictionary;
+        if (!AppStores.playlists.contains(payload["playlistId"] as String)) {
+            complete(SyncTransactionHandler.SKIP, "No tracks synced, artwork not needed");
+            return;
+        }
+
         var source = new MediaSource(payload["source"] as MediaSourceType);
-
-        // could be included in HttpRequest
-        Comms.makeImageRequest(
-            source.getUrl(),
-            null,
-            { 
-                // :palette as Lang.Array<Lang.Number>, 
-                :maxWidth => 48, 
-                :maxHeight => 48, 
-                :dithering => Comms.IMAGE_DITHERING_NONE, 
-                :packingFormat => Comms.PACKING_FORMAT_DEFAULT 
-            },
-            method(:onResponse)
-        );
-
-        return SyncTransactionHandler.PENDING;
+        var request = new HttpRequest(source.getUrl(), null, method(:onResponse));
+        _request = request;
+        request.setInactivityTimeout(INACTIVITY_TIMEOUT_MS);
+        request.getImage(48, 48);
     }
 
-    function onResponse(
-        responseCode as Number,
-        data as Ui.BitmapResource or Graphics.BitmapReference or Null
-    ) as Void {
+    function cancel() as Void {
+        SyncTransactionHandler.cancel();
 
-        if (data == null || responseCode != 200) {
-            $.am().logger().error("[ImageSyncHandler.onResponse]", {
-                "code" => responseCode, "data" => data
-            });
-            fail("Image download failed");
+        if (_request != null) {
+            _request.abandon();
+        }
+    }
+
+    function onResponse(response as ResponseType, context as Object?) as Void {
+        _request = null;
+        var data = response[:data];
+
+        if (response[:ok] != true || data == null) {
+            complete(SyncTransactionHandler.SKIP, response[:error] != null ? response[:error] : "Image download failed");
             return;
         }
 
         var id = getTransaction()["tid"] as String;
-    
-        try {
-            AppStores.images.save(id, data);
-        } catch (e) {
-            $.am().logger().warn("[ImageSyncHandler.onResponse]", {
-                "id" => id,
-                "error" => e.getErrorMessage()
-            });
-            fail("Image could not be saved");
+
+        if (!AppStores.images.save(id, data as Graphics.BitmapReference)) {
+            complete(SyncTransactionHandler.SKIP, "Image could not be saved");
+            return;
         }
 
-        success();
+        complete(SyncTransactionHandler.OK, null);
     }
 }
 

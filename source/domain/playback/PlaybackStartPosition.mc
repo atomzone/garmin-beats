@@ -40,8 +40,14 @@ class PlaybackStartPosition {
             return defaultCursor();
         }
 
+        // resume by track identity so playlist changes from a sync don't shift the cursor
+        var trackIndex = playlist.getTrackIds().indexOf(storedState["trackId"] as String);
+        if (trackIndex < 0) {
+            return defaultCursor();
+        }
+
         return {
-            "trackIndex" => storedState["trackIndex"],
+            "trackIndex" => trackIndex,
             "trackPosition" => storedState["trackPosition"]
         } as PlaybackCursorType;
     }

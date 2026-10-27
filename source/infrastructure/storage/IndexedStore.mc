@@ -11,11 +11,13 @@ typedef IndexedStoreValueType as Dictionary or Ui.BitmapResource or Graphics.Bit
 // "{PARTITION_KEY}:<ID2>" = model2
 class IndexedStore {
 
+    // values form persisted storage keys: append only, never reorder or remove
     enum PartitionEnum {
         PLAYLIST,
         TRACK,
         MEDIA,
-        IMAGE
+        IMAGE,
+        PLAYLIST_MANIFEST
     }
     
     private var _revision as Number = 0;
@@ -50,16 +52,24 @@ class IndexedStore {
         return records;
     }
     
-    public function save(id as String, value as IndexedStoreValueType) as Void {
-        StorageManager.save(buildPartitionKey(id), value as Storage.ValueType?);
+    public function save(id as String, value as IndexedStoreValueType) as Boolean {
+        if (!StorageManager.save(buildPartitionKey(id), value as Storage.ValueType?)) {
+            return false;
+        }
+
         _index.add(id);
         bumpRevision();
 
         $.am().logger().debug("[IndexedStore][Save]", {
             "partitionId" => _partitionId,
-            "id" => id,
-            "value" => value
+            "id" => id
         });
+
+        return true;
+    }
+
+    public function contains(id as String) as Boolean {
+        return _index.contains(id);
     }
 
     public function remove(id as String) as Void {
