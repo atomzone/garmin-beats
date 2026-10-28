@@ -2,9 +2,6 @@ import Toybox.Lang;
 
 class SyncQueueProcessor {
 
-    // runs allowed per item before an interrupted (cancelled/crashed) item is abandoned
-    private static const MAX_ATTEMPTS as Number = 2;
-
     private var _queue as Array<QueueTransactionType>;
 
     private var _onProgress as Method(percentComplete as Number) as Void;
@@ -95,17 +92,6 @@ class SyncQueueProcessor {
 
     private function runHead() as Void {
         var transaction = _queue[0];
-        var tid = transaction["tid"] as String;
-
-        if (SyncQueueStore.incrementHeadAttempts(tid) > MAX_ATTEMPTS) {
-            applyOutcome(
-                SyncTransactionHandler.ITEM_FAILED,
-                "Abandoned after interruption: " + describe(transaction)
-            );
-            _settledInLoop = true;
-            return;
-        }
-
         var handler = getTransactionHandler(transaction);
 
         if (handler == null) {
@@ -140,8 +126,6 @@ class SyncQueueProcessor {
                 $.am().logger().error("[SyncQueueProcessor] Stopped, will retry", {
                     "item" => describe(transaction), "error" => error
                 });
-                // the run completed; only interrupted runs count towards MAX_ATTEMPTS
-                SyncQueueStore.clearHead();
                 _errors.add(error != null ? error : "Sync interrupted");
                 finish();
                 return;
@@ -159,7 +143,6 @@ class SyncQueueProcessor {
     private function advance() as Void {
         _queue = _queue.slice(1, null);
         SyncQueueStore.save(_queue);
-        SyncQueueStore.clearHead();
         _processed++;
         notifyProgressChange(null);
     }

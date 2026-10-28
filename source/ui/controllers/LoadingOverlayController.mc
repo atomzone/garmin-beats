@@ -38,7 +38,7 @@ class LoadingOverlayController {
 
     function end(id as Symbol) as Void {
         $.am().logger().debug(
-            "[LoadingOverlayController.end]", { "id" => id.toString(),  "label" => _operations.get(id) }
+            "[LoadingOverlayController.end]", { "id" => id.toString(),  "label" => _operations.get(id) as String? }
         );
 
         if (_operations.hasKey(id)) {

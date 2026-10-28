@@ -10,6 +10,7 @@ var _am as ApplicationManager?;
 class AppEntry extends App.AudioContentProviderApp {
 
     private var _state as AppState;
+    private var _syncDelegate as SyncManager?;
 
     function initialize() {
         App.AudioContentProviderApp.initialize();
@@ -40,8 +41,13 @@ class AppEntry extends App.AudioContentProviderApp {
         return new PlaybackProvider(playerPlaylist, session);
     }
 
+    // the system asks for the delegate per callback; onStopSync must reach the one running the sync
     function getSyncDelegate() as Comm.SyncDelegate? {
-        return new SyncManager();
+        if (_syncDelegate == null) {
+            _syncDelegate = new SyncManager();
+        }
+
+        return _syncDelegate;
     }
 
     function getPlaybackConfigurationView() as [Ui.Views] or [Ui.Views, Ui.InputDelegates] {

@@ -15,10 +15,17 @@ class SyncManager extends Comm.SyncDelegate {
     }
 
     function onStartSync() as Void {
+        if (_processor != null) {
+            _processor.stop();
+        }
+
         _notified = false;
 
+        var queue = SyncQueueStore.load();
+        $.am().logger().info("[SyncManager] onStartSync", { "queueSize" => queue.size() });
+
         var processor = new SyncQueueProcessor(
-            SyncQueueStore.load(),
+            queue,
             method(:onProgress),
             method(:onComplete)
         );
@@ -27,12 +34,17 @@ class SyncManager extends Comm.SyncDelegate {
         processor.start();
     }
 
-    // Queue head is kept; its persisted attempt count decides whether it is retried
+    // User cancel abandons the remaining work; landed tracks stay and the playlist can be re-synced
     function onStopSync() as Void {
+        $.am().logger().info("[SyncManager] onStopSync", { "hasProcessor" => _processor != null });
+
         if (_processor != null) {
             _processor.stop();
             _processor = null;
         }
+
+        SyncQueueStore.clear();
+        AppStores.playlistManifests.clear();
 
         Comm.cancelAllRequests();
         notifyComplete("Sync cancelled");

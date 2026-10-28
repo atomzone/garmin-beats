@@ -60,11 +60,6 @@ class IndexedStore {
         _index.add(id);
         bumpRevision();
 
-        $.am().logger().debug("[IndexedStore][Save]", {
-            "partitionId" => _partitionId,
-            "id" => id
-        });
-
         return true;
     }
 

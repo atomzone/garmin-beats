@@ -58,8 +58,11 @@ class SyncTransactionHandler {
     static function outcomeForResponseCode(code as Number) as Outcome {
         switch (code) {
             case -2:    // BLE_HOST_TIMEOUT
+            case -5:    // BLE_REQUEST_CANCELLED
+            case -101:  // BLE_QUEUE_FULL
             case -104:  // BLE_CONNECTION_UNAVAILABLE
             case -1000: // STORAGE_FULL
+            case -1003: // REQUEST_CANCELLED
             case -1008: // NO_TRANSPORT
                 return ENV_FAILED;
         }
