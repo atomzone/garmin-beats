@@ -4,7 +4,7 @@ import Toybox.Lang;
 // Ensures media is on the watch, writes the track, then grows its playlist
 class TrackSyncHandler extends SyncTransactionHandler {
 
-    private static const INACTIVITY_TIMEOUT_MS as Number = 30000;
+    private static const INACTIVITY_TIMEOUT_MS as Number = 4000;
 
     private var _onProgress as Method(Number) as Void;
     private var _request as HttpRequest?;

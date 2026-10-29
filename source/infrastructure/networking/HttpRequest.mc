@@ -30,8 +30,11 @@ class HttpRequest {
     private var _handler as HandlerType?;
     private var _href as String;
     private var _context as Object?;
+
     private var _timer as Timer.Timer?;
+    private var _executionTime as Number?;
     private var _inactivityTimeout as Number?;
+
     private var _settled as Boolean = false;
     private var _onProgress as Method?;
 
@@ -96,6 +99,7 @@ class HttpRequest {
         $.am().logger().info("[http.request]", { "url" => _href, "method" => "IMAGE" });
 
         try {
+            _executionTime = System.getTimer();
             Comm.makeImageRequest(_href, null, {
                 :maxWidth => maxWidth,
                 :maxHeight => maxHeight,
@@ -171,6 +175,7 @@ class HttpRequest {
         var isOk = isSuccessResponse(responseCode);
         var payload = data as Object?;
         var errorMessage = isOk ? null : getErrorMessage(responseCode);
+        var duration = _executionTime == null ? null : System.getTimer() - _executionTime;
 
         var response = {
             :ok => isOk,
@@ -180,11 +185,17 @@ class HttpRequest {
         } as ResponseType;
 
         if (isOk) {
-            $.am().logger().info("[http.response]", { "code" => responseCode }); //, "payload" => payload });
+            $.am().logger().info("[http.response]", {
+                "code" => responseCode,
+                "duration_ms" => duration
+            });
         }
         else {
             $.am().logger().error("[http.response]", { 
-                "code" => responseCode, "payload" => payload, "error" => errorMessage 
+                "code" => responseCode,
+                "payload" => payload,
+                "error" => errorMessage,
+                "duration_ms" => duration
             });
         }
 
@@ -227,6 +238,7 @@ class HttpRequest {
         );
 
         try {
+            _executionTime = System.getTimer();
             Comm.makeWebRequest(
                 _href,
                 parameters,
@@ -238,6 +250,9 @@ class HttpRequest {
             return;
         }
 
+        // is this check for _settled needed?
+        // why does this mean you need to start a timer??
+        // infact how can you settle without an unique id?
         if (!_settled) {
             startTimeout();
         }

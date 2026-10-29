@@ -4,7 +4,7 @@ import Toybox.Lang;
 // Artwork is non-critical: every failure is a SKIP
 class ImageSyncHandler extends SyncTransactionHandler {
 
-    private static const INACTIVITY_TIMEOUT_MS as Number = 30000;
+    private static const INACTIVITY_TIMEOUT_MS as Number = 2000;
 
     private var _request as HttpRequest?;
 
