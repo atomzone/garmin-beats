@@ -60,7 +60,7 @@ class AppEntry extends App.AudioContentProviderApp {
 
     function getProviderIconInfo() as Media.ProviderIconInfo? {
         return new Media.ProviderIconInfo(
-            $.Rez.Drawables.ProviderIcon, Toybox.Graphics.COLOR_ORANGE
+            $.Rez.Drawables.AppIcon, Toybox.Graphics.COLOR_ORANGE
         );
     }
 

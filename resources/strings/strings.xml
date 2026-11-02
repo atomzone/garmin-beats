@@ -4,6 +4,9 @@
     <string id="configureSyncMessage">Configure\nSync</string>
     <string id="configurePlaybackMessage">Configure\nPlayback</string>
 
+    <!-- Buttons -->
+    <string id="LibraryButton">Library</string>
+
     <!-- Main Menu -->
     <string id="MainMenuTitle">Menu</string>
 

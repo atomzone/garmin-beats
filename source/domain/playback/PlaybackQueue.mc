@@ -95,7 +95,8 @@ class PlaybackQueue extends Media.ContentIterator {
             PLAYBACK_CONTROL_PREVIOUS,
             PLAYBACK_CONTROL_NEXT,
             PLAYBACK_CONTROL_VOLUME,
-            PLAYBACK_CONTROL_REPEAT
+            PLAYBACK_CONTROL_REPEAT,
+            new LibraryButton(),
         ];
         if (profile has :playbackCapabilities) {
             profile.playbackCapabilities = 1;
