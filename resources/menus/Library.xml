@@ -4,7 +4,7 @@
 
     <menu-item id="Playlists" label="Browse Playlists" subLabel="Playlist collections"/>
     <menu-item id="AllTracks" label="@Strings.AllTracksLabel" subLabel="@Strings.AllTracksDesc"/>
-    <menu-item id="Artists" label="@Strings.ArtistsLabel" subLabel="@Strings.ArtistsDesc"/>
-    <menu-item id="Liked" label="@Strings.LikedLabel" subLabel="@Strings.LikedDesc"/>
+    <!-- <menu-item id="Artists" label="@Strings.ArtistsLabel" subLabel="@Strings.ArtistsDesc"/> -->
+    <!-- <menu-item id="Liked" label="@Strings.LikedLabel" subLabel="@Strings.LikedDesc"/> -->
 
 </menu2>

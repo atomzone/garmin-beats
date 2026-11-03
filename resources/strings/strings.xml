@@ -1,5 +1,5 @@
 <strings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
-    <string id="AppName">gbeat</string>
+    <string id="AppName">FREQUENCY</string>
 
     <string id="configureSyncMessage">Configure\nSync</string>
     <string id="configurePlaybackMessage">Configure\nPlayback</string>
@@ -29,26 +29,26 @@
     <string id="AllTracksLabel">All Tracks</string>
     <string id="AllTracksDesc">Your downloaded collection</string>
 
-    <string id="ArtistsLabel">Artists</string>
-    <string id="ArtistsDesc">Grouped by artist</string>
+    <!-- <string id="ArtistsLabel">Artists</string> -->
+    <!-- <string id="ArtistsDesc">Grouped by artist</string> -->
 
-    <string id="LikedLabel">Liked</string>
-    <string id="LikedDesc">Saved tracks</string>
+    <!-- <string id="LikedLabel">Liked</string> -->
+    <!-- <string id="LikedDesc">Saved tracks</string> -->
 
     <!-- Settings -->
-    <string id="PlaybackLabel">Playback</string>
-    <string id="PlaybackDesc">Audio and playback options</string>
+    <!-- <string id="PlaybackLabel">Playback</string> -->
+    <!-- <string id="PlaybackDesc">Audio and playback options</string> -->
 
     <string id="StorageLabel">Storage</string>
     <string id="StorageDesc">Downloaded tracks and storage</string>
 
-    <string id="DonateLabel">Donate</string>
-    <string id="DonateDesc">Support development</string>
+    <!-- <string id="DonateLabel">Donate</string> -->
+    <!-- <string id="DonateDesc">Support development</string> -->
 
     <!-- Storage -->
     <string id="DeleteLabel">Delete ($1$)</string>
     <string id="DeleteDesc">Remove downloaded tracks</string>
 
-    <string id="CapacityLabel">Capacity</string>
-    <string id="CapacityDesc">Available space</string>
+    <!-- <string id="CapacityLabel">Capacity</string> -->
+    <!-- <string id="CapacityDesc">Available space</string> -->
 </strings>

@@ -3,6 +3,6 @@
     xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
 
     <menu-item id="Delete" label="@Strings.DeleteLabel" subLabel="@Strings.DeleteDesc"/>
-    <menu-item id="Capacity" label="@Strings.CapacityLabel" subLabel="@Strings.CapacityDesc"/>
+    <!-- <menu-item id="Capacity" label="@Strings.CapacityLabel" subLabel="@Strings.CapacityDesc"/> -->
 
 </menu2>
