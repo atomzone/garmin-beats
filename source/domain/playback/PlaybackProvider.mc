@@ -7,6 +7,7 @@ class PlaybackProvider extends Media.ContentDelegate {
     private var _playlist as PlayerPlaylist;
     private var _session as PlaybackSession;
     private var _iterator as Media.ContentIterator;
+    private var _songEventDispatcher as SongEventDispatcher;
 
     function initialize(playlist as PlayerPlaylist, session as PlaybackSession) {
         Media.ContentDelegate.initialize();
@@ -14,6 +15,10 @@ class PlaybackProvider extends Media.ContentDelegate {
         _playlist = playlist;
         _session = session;
         _iterator = new PlaybackQueue(playlist, session);
+
+        _songEventDispatcher = new SongEventDispatcher([
+            (new LogSongEventHandler()).method(:logSongEvent)
+        ]);
     }
 
     function getContentIterator() as Media.ContentIterator? {
@@ -67,15 +72,16 @@ class PlaybackProvider extends Media.ContentDelegate {
         songEvent as Media.SongEvent, 
         playbackPosition as Number or Media.PlaybackPosition
     ) as Void {
-        $.am().logger().debug("[PlaybackProvider.onSong]", { 
-            "event" => eventName(songEvent),
-            "playbackPosition" => playbackPosition
-        });
-
+        _songEventDispatcher.dispatch(
+            contentRefId,
+            songEvent,
+            playbackPosition
+        );
+        
         // move to session
         // if (songEvent == Media.SONG_EVENT_START) {
             var images = AppStores.images.loadAll();
-            System.println(images);
+            // System.println(images);
 
             if (images.size() > 0) {
                 Media.setAlbumArt(images[0] as Graphics.BitmapType);
@@ -102,27 +108,6 @@ class PlaybackProvider extends Media.ContentDelegate {
         ) {
             _session.onResumeCheckpoint(playbackPosition);
         }
-    }
-
-    private function eventName(songEvent as Media.SongEvent) as String {
-        var eventNames = {
-            Media.SONG_EVENT_START => "Start",
-            Media.SONG_EVENT_SKIP_NEXT => "Skip Next",
-            Media.SONG_EVENT_SKIP_PREVIOUS => "Skip Previous",
-            Media.SONG_EVENT_PLAYBACK_NOTIFY => "Playback Notify",
-            Media.SONG_EVENT_COMPLETE => "Complete",
-            Media.SONG_EVENT_STOP => "Stop",
-            Media.SONG_EVENT_PAUSE => "Pause",
-            Media.SONG_EVENT_RESUME => "Resume",
-            Media.SONG_EVENT_SKIP_FORWARD => "Skip Forward",
-            Media.SONG_EVENT_SKIP_BACKWARD => "Skip Backward"
-        } as Dictionary;
-        var value = eventNames[songEvent];
-        if (value instanceof String) {
-            return value as String;
-        }
-
-        return "Unknown(" + songEvent + ")";
     }
 
     // Respond to a thumbs-down action
