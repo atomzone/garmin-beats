@@ -47,6 +47,34 @@ class PlaybackSession {
         savePlaybackState();
     }
 
+    // Handles playback events that affect the persisted session state.
+    function handleSongEvent(
+        contentRefId as Object,
+        songEvent as Media.SongEvent,
+        playbackPosition as Number
+    ) as Void {
+
+        // The active track has changed.
+        if (
+            songEvent == Media.SONG_EVENT_START ||
+            songEvent == Media.SONG_EVENT_SKIP_NEXT ||
+            songEvent == Media.SONG_EVENT_SKIP_PREVIOUS
+        ) {
+            onTrackChanged();
+            return;
+        }
+
+        // The playback position needs checkpointing
+        if (
+            songEvent == Media.SONG_EVENT_SKIP_FORWARD ||
+            songEvent == Media.SONG_EVENT_SKIP_BACKWARD ||
+            songEvent == Media.SONG_EVENT_PAUSE ||
+            songEvent == Media.SONG_EVENT_STOP
+        ) {
+            onResumeCheckpoint(playbackPosition);
+        }
+    }
+
     // Where would we go?
     private function peekChapter(step as Integer) as Number? {
         var chapters = _playlist.getCurrentAsset().getChapters();

@@ -10,7 +10,7 @@ class LogSongEventHandler {
         songEvent as Media.SongEvent,
         playbackPosition as Number or Media.PlaybackPosition
     ) as Void {
-        $.am().logger().debug("[2 - PlaybackProvider.onSong]", { 
+        $.am().logger().debug("[PlaybackProvider.onSong]", { 
             "event" => eventName(songEvent),
             "playbackPosition" => playbackPosition
         });

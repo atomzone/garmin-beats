@@ -17,6 +17,7 @@ class PlaybackProvider extends Media.ContentDelegate {
         _iterator = new PlaybackQueue(playlist, session);
 
         _songEventDispatcher = new SongEventDispatcher([
+            _session.method(:handleSongEvent),
             (new LogSongEventHandler()).method(:logSongEvent)
         ]);
     }
@@ -87,27 +88,6 @@ class PlaybackProvider extends Media.ContentDelegate {
                 Media.setAlbumArt(images[0] as Graphics.BitmapType);
             }
         // }
-
-        // Active track changed
-        if (
-            songEvent == Media.SONG_EVENT_START || 
-            songEvent == Media.SONG_EVENT_SKIP_NEXT ||  // this is handled by next/prev
-            songEvent == Media.SONG_EVENT_SKIP_PREVIOUS // this is handled by next/prev
-        ) {
-            // can we know the change is not needed here
-            // or do we test before save within the playlistOerfect
-            _session.onTrackChanged();
-        }
-
-        // onPlaybackPosition
-        if (
-            songEvent == Media.SONG_EVENT_SKIP_FORWARD ||
-            songEvent == Media.SONG_EVENT_SKIP_BACKWARD ||
-            songEvent == Media.SONG_EVENT_PAUSE ||
-            songEvent == Media.SONG_EVENT_STOP
-        ) {
-            _session.onResumeCheckpoint(playbackPosition);
-        }
     }
 
     // Respond to a thumbs-down action
