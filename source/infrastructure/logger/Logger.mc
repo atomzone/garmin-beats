@@ -1,6 +1,17 @@
 import Toybox.Lang;
 
+// The build-specific threshold lets the optimizer 
+// fold disabled log branches away and remove the 
+// resulting empty methods and calls
+// https://youtu.be/bxjmiD-Qfv4
 class Logger {
+
+    (:debug)
+    static const MIN_SEVERITY = LogEntry.DEBUG;
+
+    (:release)
+    static const MIN_SEVERITY = LogEntry.INFO;
+
     var _writers as Array<LogWriter>;
 
     function initialize(writers as Array<LogWriter>) {
@@ -8,19 +19,27 @@ class Logger {
     }
 
     function debug(message as String, args as LogEntryArgsType?) as Void {
-        log(LogEntry.DEBUG, message, args);
+        if (MIN_SEVERITY <= LogEntry.DEBUG) {
+            log(LogEntry.DEBUG, message, args);
+        }
     }
 
     function info(message as String, args as LogEntryArgsType?) as Void {
-        log(LogEntry.INFO, message, args);
+        if (MIN_SEVERITY <= LogEntry.INFO) {
+            log(LogEntry.INFO, message, args);
+        }
     }
 
     function warn(message as String, args as LogEntryArgsType?) as Void {
-        log(LogEntry.WARN, message, args);
+        if (MIN_SEVERITY <= LogEntry.WARN) {
+            log(LogEntry.WARN, message, args);
+        }
     }
 
     function error(message as String, args as LogEntryArgsType?) as Void {
-        log(LogEntry.ERROR, message, args);
+        if (MIN_SEVERITY <= LogEntry.ERROR) {
+            log(LogEntry.ERROR, message, args);
+        }
     }
 
     private function log(
