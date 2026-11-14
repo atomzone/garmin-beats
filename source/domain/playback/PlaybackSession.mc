@@ -51,28 +51,53 @@ class PlaybackSession {
     function handleSongEvent(
         contentRefId as Object,
         songEvent as Media.SongEvent,
-        playbackPosition as Number
+        playbackPosition as Number or Media.PlaybackPosition
     ) as Void {
 
-        // The active track has changed.
-        if (
-            songEvent == Media.SONG_EVENT_START ||
-            songEvent == Media.SONG_EVENT_SKIP_NEXT ||
-            songEvent == Media.SONG_EVENT_SKIP_PREVIOUS
-        ) {
-            onTrackChanged();
-            return;
+        switch (songEvent) {
+            case Media.SONG_EVENT_SKIP_NEXT:
+            case Media.SONG_EVENT_SKIP_PREVIOUS:
+                onTrackChanged();
+                break;
+
+            case Media.SONG_EVENT_START:
+            case Media.SONG_EVENT_SKIP_FORWARD:
+            case Media.SONG_EVENT_SKIP_BACKWARD:
+            case Media.SONG_EVENT_PAUSE:
+            case Media.SONG_EVENT_STOP:
+            case Media.SONG_EVENT_RESUME:
+            case Media.SONG_EVENT_PLAYBACK_NOTIFY:
+                checkpointReportedPosition(
+                    contentRefId,
+                    songEvent,
+                    playbackPosition
+                );
+                break;
+
+            case Media.SONG_EVENT_COMPLETE:
+                onTrackChanged();
+                break;
+        }
+    }
+
+    private function checkpointReportedPosition(
+        contentRefId as Object,
+        songEvent as Media.SongEvent,
+        playbackPosition as Number or Media.PlaybackPosition
+    ) as Void {
+        if (playbackPosition instanceof Number) {
+            var position = playbackPosition as Number;
+            if (position >= 0) {
+                onResumeCheckpoint(position);
+                return;
+            }
         }
 
-        // The playback position needs checkpointing
-        if (
-            songEvent == Media.SONG_EVENT_SKIP_FORWARD ||
-            songEvent == Media.SONG_EVENT_SKIP_BACKWARD ||
-            songEvent == Media.SONG_EVENT_PAUSE ||
-            songEvent == Media.SONG_EVENT_STOP
-        ) {
-            onResumeCheckpoint(playbackPosition);
-        }
+        $.am().logger().warn("[PlaybackSession] Ignoring event without a valid numeric position", {
+            "event" => songEvent,
+            "playbackPosition" => playbackPosition,
+            "contentRefId" => contentRefId
+        });
     }
 
     // Where would we go?
@@ -123,4 +148,3 @@ class PlaybackSession {
         };
     }
 }
-

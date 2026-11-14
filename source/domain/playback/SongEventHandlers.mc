@@ -12,6 +12,8 @@ class LogSongEventHandler {
     ) as Void {
         $.am().logger().debug("[PlaybackProvider.onSong]", { 
             "event" => eventName(songEvent),
+            "eventValue" => songEvent,
+            "contentRefId" => contentRefId,
             "playbackPosition" => playbackPosition
         });
     }
