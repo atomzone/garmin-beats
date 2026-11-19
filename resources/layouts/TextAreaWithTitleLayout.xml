@@ -1,0 +1,14 @@
+<layout id="TextAreaWithTitleLayout" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://developer.garmin.com/downloads/connect-iq/resources.xsd">
+    <text-area id="MessageTitle" personality="
+        prompt_color_dark__title
+        prompt_size__title
+        prompt_loc__title
+        prompt_font__title
+    " />
+    <text-area id="MessageBody" personality="
+        prompt_color_dark__body
+        prompt_size__body_with_title
+        prompt_loc__body_with_title
+        prompt_font__body_with_title
+    " />
+</layout>
