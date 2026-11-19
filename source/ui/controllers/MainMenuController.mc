@@ -119,7 +119,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         _overlay.end(:GetTracks);
 
         if (error != null) {
-            MessageUtils.show("Error", error);
+            MessageUtils.show("Trail blocked", error);
             $.am().logger().warn("[displayResources]", { "error" => error });
             return;
         }
@@ -137,7 +137,7 @@ class MainMenuController extends Ui.Menu2InputDelegate {
         _overlay.end(:GetPlaylists);
 
         if (error != null) {
-            MessageUtils.show("Error", error);
+            MessageUtils.show("Trail blocked", error);
             $.am().logger().warn("[displayPlaylists]", { "error" => error });
             return;
         }

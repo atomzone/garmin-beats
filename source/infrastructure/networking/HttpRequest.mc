@@ -314,70 +314,70 @@ class HttpRequest {
         }
 
         switch (responseCode) {
-          case 0:
-                return "UNKNOWN_ERROR: An unknown error has occurred.";
+            case 0:
+                return "An unknown error has occurred"; // UNKNOWN_ERROR
 
             // BLE errors
             case -1:
-                return "BLE_ERROR: A generic BLE error has occurred.";
+                return "A generic BLE error has occurred"; // BLE_ERROR
             case -2:
-                return "BLE_HOST_TIMEOUT: Timed out waiting for a response from the host.";
+                return "Timed out waiting for a response from the host"; // BLE_HOST_TIMEOUT
             case -3:
-                return "BLE_SERVER_TIMEOUT: Timed out waiting for a response from a server.";
+                return "Timed out waiting for a response from a server"; // BLE_SERVER_TIMEOUT
             case -4:
-                return "BLE_NO_DATA: Response contained no data.";
+                return "Response contained no data"; // BLE_NO_DATA
             case -5:
-                return "BLE_REQUEST_CANCELLED: Request was cancelled at the request of the system.";
+                return "Request was cancelled at the request of the system"; // BLE_REQUEST_CANCELLED
             case -101:
-                return "BLE_QUEUE_FULL: Too many requests have been made.";
+                return "Too many requests have been made"; // BLE_QUEUE_FULL
             case -102:
-                return "BLE_REQUEST_TOO_LARGE: Serialized input data for the request was too large.";
+                return "Serialized input data for the request was too large"; // BLE_REQUEST_TOO_LARGE
             case -103:
-                return "BLE_UNKNOWN_SEND_ERROR: Send failed for an unknown reason.";
+                return "Send failed for an unknown reason"; // BLE_UNKNOWN_SEND_ERROR
             case -104:
-                return "BLE_CONNECTION_UNAVAILABLE: No BLE connection is available.";
+                return "No BLE connection is available"; // BLE_CONNECTION_UNAVAILABLE
 
             // HTTP request errors
             case -200:
-                return "INVALID_HTTP_HEADER_FIELDS_IN_REQUEST: Request contained invalid HTTP header fields.";
+                return "Request contained invalid HTTP header fields"; // INVALID_HTTP_HEADER_FIELDS_IN_REQUEST
             case -201:
-                return "INVALID_HTTP_BODY_IN_REQUEST: Request contained an invalid HTTP body.";
+                return "Request contained an invalid HTTP body"; // INVALID_HTTP_BODY_IN_REQUEST
             case -202:
-                return "INVALID_HTTP_METHOD_IN_REQUEST: Request used an invalid HTTP method.";
+                return "Request used an invalid HTTP method"; // INVALID_HTTP_METHOD_IN_REQUEST
             case -300:
-                return "NETWORK_REQUEST_TIMED_OUT: Request timed out before a response was received.";
+                return "Request timed out before a response was received"; // NETWORK_REQUEST_TIMED_OUT
             case -400:
-                return "INVALID_HTTP_BODY_IN_NETWORK_RESPONSE: Response body data is invalid for the request type.";
+                return "Response body data is invalid for the request type"; // INVALID_HTTP_BODY_IN_NETWORK_RESPONSE
             case -401:
-                return "INVALID_HTTP_HEADER_FIELDS_IN_NETWORK_RESPONSE: Response contained invalid HTTP header fields.";
+                return "Response contained invalid HTTP header fields"; // INVALID_HTTP_HEADER_FIELDS_IN_NETWORK_RESPONSE
             case -402:
-                return "NETWORK_RESPONSE_TOO_LARGE: Serialized response was too large.";
+                return "Serialized response was too large"; // NETWORK_RESPONSE_TOO_LARGE
             case -403:
-                return "NETWORK_RESPONSE_OUT_OF_MEMORY: Ran out of memory processing network response.";
+                return "Ran out of memory processing network response"; // NETWORK_RESPONSE_OUT_OF_MEMORY
             case -1000:
-                return "STORAGE_FULL: Filesystem too full to store response data.";
+                return "Filesystem too full to store response data"; // STORAGE_FULL
             case -1001:
-                return "SECURE_CONNECTION_REQUIRED: An HTTPS connection is required.";
+                return "An HTTPS connection is required"; // SECURE_CONNECTION_REQUIRED
             case -1002:
-                return "UNSUPPORTED_CONTENT_TYPE_IN_RESPONSE: Response content type is unsupported or does not match what is expected.";
+                return "Response content type is unsupported or does not match what is expected"; // UNSUPPORTED_CONTENT_TYPE_IN_RESPONSE
             case -1003:
-                return "REQUEST_CANCELLED: HTTP request was cancelled by the system.";
+                return "HTTP request was cancelled by the system"; // REQUEST_CANCELLED
             case -1004:
-                return "REQUEST_CONNECTION_DROPPED: Connection was lost before a response could be obtained.";
+                return "Connection was lost before a response could be obtained"; // REQUEST_CONNECTION_DROPPED
             case -1005:
-                return "UNABLE_TO_PROCESS_MEDIA: Downloaded media file was unable to be read.";
+                return "Downloaded media file was unable to be read"; // UNABLE_TO_PROCESS_MEDIA
             case -1006:
-                return "UNABLE_TO_PROCESS_IMAGE: Downloaded image file was unable to be processed.";
+                return "Downloaded image file was unable to be processed"; // UNABLE_TO_PROCESS_IMAGE
             case -1007:
-                return "UNABLE_TO_PROCESS_HLS: HLS content could not be downloaded.";
+                return "HLS content could not be downloaded"; // UNABLE_TO_PROCESS_HLS
 
-            // Custom application error
+            // Custom application errors
             case -1008:
-                return "NO_TRANSPORT: Network transport is not available.";
+                return "Network transport is not available"; // NO_TRANSPORT
             case -1009:
-                return "TIMEOUT: No response or progress within the inactivity timeout.";
+                return "No response or progress within the inactivity timeout"; // TIMEOUT
             case -1010:
-                return "REJECTED: The request could not be made.";
+                return "The request could not be made"; // REJECTED
 
             default:
                 return "HTTP request failed (" + responseCode + ")";
